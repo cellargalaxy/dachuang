@@ -21,6 +21,37 @@ public class Id implements Serializable{
 		this.label = label;
 	}
 	
+	public double[] countDSWithouts(LinkedList<Integer> ms){
+		if (evidences.size() == 0) {
+			return null;
+		} else if (evidences.size() == 1) {
+			return evidences.getFirst();
+		} else {
+			Iterator<double[]> iterator = evidences.iterator();
+			double[] ds1 = null;
+			double[] ds2;
+			main:while (iterator.hasNext()) {
+				ds1 = iterator.next();
+				for (Integer m : ms) {
+					if (ds1[0]==m) {
+						continue main;
+					}
+				}
+				break;
+			}
+			main:while (iterator.hasNext()) {
+				ds2 = iterator.next();
+				for (Integer m : ms) {
+					if (ds2[0]==m) {
+						continue main;
+					}
+				}
+				ds1 = countE_E2E(ds1, ds2);
+			}
+			return ds1;
+		}
+	}
+	
 	/**
 	 * 计算除了证据m的DS合成证据
 	 *
@@ -87,6 +118,10 @@ public class Id implements Serializable{
 		this.id = id;
 	}
 	
+	/**
+	 * ds[0]=证据编号，ds[1]=是（A）证据，ds[2]=否（B）证据
+	 * @return
+	 */
 	public LinkedList<double[]> getEvidences() {
 		return evidences;
 	}

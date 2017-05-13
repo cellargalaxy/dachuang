@@ -14,19 +14,38 @@ import java.util.LinkedList;
 public class AUC {
 	
 	public static void main(String[] args) throws IOException {
-		LinkedList<Id> ids = DataSet.createIds(new File("F:/xi/dachuang/test 合成与AUC 去除totle.csv"), ",",0,1,2,4,6);
+		DataSet dataSet=new DataSet(new File("F:/xi/dachuang/test 合成与AUC 去除totle.csv"), ",",0,1,2,4,6);
+		LinkedList<Integer> ms=new LinkedList<Integer>();
+		ms.add(1);
+		ms.add(2);
+		System.out.println("答案:" + AUC.countAUC(dataSet,ms));
 		
-
 		
-		System.out.println("答案:" + AUC.countAUC(ids,-1));
+		
 	}
 	
-	
-	
-	public static double countAUC(LinkedList<Id> ids, int exceptEvidenceNum) {
+	public static double countAUC(DataSet dataSet, LinkedList<Integer> exceptEvidenceNums) {
 		LinkedList<double[]> As = new LinkedList<double[]>();
 		LinkedList<double[]> Bs = new LinkedList<double[]>();
-		for (Id id : ids) {
+		for (Id id : dataSet.getIds()) {
+			double[] ds = id.countDSWithouts(exceptEvidenceNums);
+			if (isA(id)) As.add(ds);
+			else Bs.add(ds);
+		}
+		double auc = 0;
+		for (double[] a : As) {
+			for (double[] b : Bs) {
+				if (a[1] > b[1]) auc++;
+				else if (a[1] == b[1]) auc += 0.5;
+			}
+		}
+		return auc / As.size() / Bs.size();
+	}
+	
+	public static double countAUC(DataSet dataSet, int exceptEvidenceNum) {
+		LinkedList<double[]> As = new LinkedList<double[]>();
+		LinkedList<double[]> Bs = new LinkedList<double[]>();
+		for (Id id : dataSet.getIds()) {
 			double[] ds = id.countDSWithout(exceptEvidenceNum);
 			if (isA(id)) As.add(ds);
 			else Bs.add(ds);

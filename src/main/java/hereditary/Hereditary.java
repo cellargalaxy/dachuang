@@ -14,24 +14,26 @@ import java.util.*;
  * Created by cellargalaxy on 2017/5/7.
  */
 public class Hereditary {
+	private DataSet dataSet;
 
 
-	public Hereditary(LinkedList<Id> ids) {
+	public Hereditary(DataSet dataSet) {
+		this.dataSet=dataSet;
 
 		//种群
 		chrosNum =30;
 		saveChroPro=0.5;
 		saveChroNum=(int)(chrosNum*saveChroPro);
 		//染色体
-		chroLen=ids.getFirst().getEvidences().size()*2;
+		chroLen=dataSet.getEvidenceCount()*2;
 		geneExPro= 0.5;
 		geneExNum=(int)(chroLen*geneExPro);
 		geneMutNumPro= 0.5;
 		geneMutNum=(int)(chroLen*geneMutNumPro);
 		geneMutPro=0.3;
-		step=0.1;
+		step=0.01;
 		//进化控制
-		iterNum=100;
+		iterNum=500;
 		yetIterCount=0;
 		sameNum=30;
 		yetSameCount=0;
@@ -43,11 +45,10 @@ public class Hereditary {
 	}
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		LinkedList<Id> ids = DataSet.createIds(new File("F:/xi/dachuang/test 合成与AUC 去除totle.csv"), ",",0,1,2,4,6);
+		DataSet dataSet=new DataSet(new File("F:/xi/dachuang/test 合成与AUC 去除totle.csv"), ",",0,1,2,4,6);
 
-//		LinkedList<int[]> labelSet = LabelSet.readLabelSet(new File("F:/xi/大创/test 合成与AUC_Outlabel.csv"), ",");
-		Hereditary hereditary=new Hereditary(ids);
-		hereditary.evolution(ids,-1,Hereditary.USE_Roulette);
+		Hereditary hereditary=new Hereditary(dataSet);
+		hereditary.evolution(-1,Hereditary.USE_Roulette);
 		System.out.println("=========================");
 		System.out.println("maxAUC:"+hereditary.maxAUC);
 		System.out.println("maxChro:"+Arrays.toString(hereditary.maxChro));
@@ -56,13 +57,12 @@ public class Hereditary {
 	
 	/**
 	 * 进化
-	 * @param ids
 	 * @param exceptEvidenceNum
 	 * @param methodNum
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private void evolution(LinkedList<Id> ids,int exceptEvidenceNum,int methodNum) throws IOException, ClassNotFoundException {
+	private void evolution(int exceptEvidenceNum,int methodNum) throws IOException, ClassNotFoundException {
 		double[][] chros=createInitChros();
 		int count=0;
 		do {
@@ -75,7 +75,7 @@ public class Hereditary {
 //			count++;
 //			System.out.println("-------------------------------------------");
 
-			chros=createNewChros(ids,exceptEvidenceNum,chros,methodNum);
+			chros=createNewChros(dataSet,exceptEvidenceNum,chros,methodNum);
 			if (chros==null) {
 				break;
 			}
@@ -84,7 +84,6 @@ public class Hereditary {
 	
 	/**
 	 * 生育
-	 * @param ids
 	 * @param exceptEvidenceNum
 	 * @param oldChros
 	 * @param methodNum
@@ -92,13 +91,13 @@ public class Hereditary {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private double[][] createNewChros(LinkedList<Id> ids,int exceptEvidenceNum,double[][] oldChros,int methodNum) throws IOException, ClassNotFoundException {
+	private double[][] createNewChros(DataSet dataSet,int exceptEvidenceNum,double[][] oldChros,int methodNum) throws IOException, ClassNotFoundException {
 		yetIterCount++;
 		if (yetIterCount>iterNum) {
 			System.out.println("到达最大迭代次数，跳出迭代");
 			return null;
 		}
-		Map<Double,double[]> map=mulChros(ids,exceptEvidenceNum,oldChros);
+		Map<Double,double[]> map=mulChros(dataSet,exceptEvidenceNum,oldChros);
 
 //		System.out.println("每个个体的auc：");
 //		for (Map.Entry<Double, double[]> entry : map.entrySet()) {
@@ -253,26 +252,71 @@ public class Hereditary {
 		return points;
 	}
 
-	private Map<Double,double[]> mulChros(LinkedList<Id> ids,int exceptEvidenceNum,double[][] chros) throws IOException, ClassNotFoundException {
+	private Map<Double,double[]> mulChros(DataSet dataSet,int exceptEvidenceNum,double[][] chros) throws IOException, ClassNotFoundException {
 		Map<Double,double[]> map= new TreeMap<Double, double[]>(new Comparator<Double>(){
 			public int compare(Double a,Double b){ if (a>b) { return -1; }else if(a<b){ return 1; }else { return 0; } } } );
 		for (double[] chro : chros) {
-			LinkedList<Id> newIds=mulChro(ids,chro);
-			map.put(AUC.countAUC(newIds,exceptEvidenceNum),chro);
+			LinkedList<Id> newIds=mulChro(dataSet.getIds(),chro);
+			map.put(AUC.countAUC(new DataSet(newIds,dataSet.getEvidenceCount()),exceptEvidenceNum),chro);
 		}
 		return map;
 	}
-
+	
+//	public static void main(String[] args) throws IOException {
+//		Id id=new Id(-1,null,-1);
+//		LinkedList<double[]> evidences=new LinkedList<double[]>();
+//		double[] evidence3={3,1,1};
+//		evidences.add(evidence3);
+//		double[] evidence4={4,1,1};
+//		evidences.add(evidence4);
+//		double[] evidence5={5,1,1};
+//		evidences.add(evidence5);
+//		id.setEvidences(evidences);
+//
+//		System.out.println("原本证据：");
+//		for (double[] doubles : id.getEvidences()) {
+//			System.out.println(Arrays.toString(doubles));
+//		}
+//		System.out.println("---------------------------------");
+//		double[] chro={1.1,1.2,2.1,2.2,3.1,3.2,4.1,4.2,5.1,5.2,6.1,6.2,7.1,7.2};
+//		int i=0;
+//		int m=1;
+//		for (double[] evidence : id.getEvidences()) {
+//			while (m<evidence[0]){
+//				System.out.println(m+">"+evidence[0]);
+//				m++;
+//				i+=2;
+//				System.out.println("加一个：m:"+m+"  i:"+i);
+//			}
+//			evidence[1]*=chro[i];
+//			i++;
+//			evidence[2]*=chro[i];
+//			i++;
+//			m++;
+//		}
+//
+//		System.out.println("后来证据：");
+//		for (double[] doubles : id.getEvidences()) {
+//			System.out.println(Arrays.toString(doubles));
+//		}
+//		System.out.println("---------------------------------");
+//	}
 
 	private LinkedList<Id> mulChro(LinkedList<Id> oldIds,double[] chro) throws IOException, ClassNotFoundException {
 		LinkedList<Id> newIds=CloneObject.clone(oldIds);
 		for (Id id : newIds) {
 			int i=0;
+			int m=1;
 			for (double[] evidence : id.getEvidences()) {
-				evidence[0]*=chro[i];
-				i++;
+				while (m<evidence[0]){
+					m++;
+					i+=2;
+				}
 				evidence[1]*=chro[i];
 				i++;
+				evidence[2]*=chro[i];
+				i++;
+				m++;
 			}
 		}
 		return newIds;
