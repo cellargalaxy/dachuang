@@ -1,26 +1,22 @@
 package auc;
 
 import dataSet.DataSet;
-import dataSet.LabelSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
  * Created by cellargalaxy on 2017/4/22.
+ * 用于计算AUC的静态类
  */
 public class AUC {
 	
 	public static void main(String[] args) throws IOException {
-		DataSet dataSet=new DataSet(new File("F:/xi/dachuang/test 合成与AUC 去除totle.csv"), ",",0,1,2,4,6);
-		LinkedList<Integer> ms=new LinkedList<Integer>();
-		ms.add(1);
-		ms.add(2);
-		System.out.println("答案:" + AUC.countAUC(dataSet,ms));
-		
-		
+		DataSet dataSet = new DataSet(new File("F:/xi/dachuang/test 合成与AUC 去除totle.csv"), ",", 0, 1, 2, 4, 6);
+		LinkedList<Integer> ms = new LinkedList<Integer>();
+		ms.add(-1);
+		System.out.println("答案:" + AUC.countAUC(dataSet, ms));
 		
 	}
 	
@@ -61,9 +57,9 @@ public class AUC {
 	}
 	
 	private static boolean isA(Id id) {
-		if (id.getLabel() == 1) {
+		if (id.getLabel() == Id.LABEL_A) {
 			return true;
-		} else if (id.getLabel() == 0) {
+		} else if (id.getLabel() == Id.LABEL_B) {
 			return false;
 		} else {
 			throw new RuntimeException("嫌疑人(" + id.getId() + ")标签有误：" + id.getLabel());

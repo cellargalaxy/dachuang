@@ -8,14 +8,12 @@ import java.io.*;
  */
 public class CloneObject {
 	
-	
-	
 	public static <T> T clone(T t) throws IOException, ClassNotFoundException {
-		ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 		objectOutputStream.writeObject(t);
 		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 		ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-		return (T)objectInputStream.readObject();
+		return (T) objectInputStream.readObject();
 	}
 }

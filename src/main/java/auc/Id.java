@@ -5,23 +5,34 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * 关于嫌疑犯对象的类，包括嫌疑犯的id以及对嫌疑犯的各条指控证据
+ * Created by cellargalaxy on 2017/4/22.
+ * 嫌疑犯对象的类
+ * id：嫌疑犯的id
+ * evidences：对嫌疑犯的各条指控证据
  * 证据的数据结构：evidences的double[] ds=new double[3]：
  * ds[0]=证据编号，ds[1]=是（A）证据，ds[2]=否（B）证据
- * Created by cellargalaxy on 2017/4/22.
+ * label：嫌疑犯的标签
  */
-public class Id implements Serializable{
-	private int id;
+public class Id implements Serializable {
+	public static final int LABEL_A = 1;
+	public static final int LABEL_B = 0;
+	private String id;
 	private LinkedList<double[]> evidences;
 	private int label;
 	
-	public Id(int id, LinkedList<double[]> evidences, int label) {
+	public Id(String id, LinkedList<double[]> evidences, int label) {
 		this.id = id;
 		this.evidences = evidences;
 		this.label = label;
 	}
 	
-	public double[] countDSWithouts(LinkedList<Integer> ms){
+	/**
+	 * 计算除了ms包含的证据的DS合成证据
+	 *
+	 * @param ms
+	 * @return
+	 */
+	public double[] countDSWithouts(LinkedList<Integer> ms) {
 		if (evidences.size() == 0) {
 			return null;
 		} else if (evidences.size() == 1) {
@@ -30,19 +41,21 @@ public class Id implements Serializable{
 			Iterator<double[]> iterator = evidences.iterator();
 			double[] ds1 = null;
 			double[] ds2;
-			main:while (iterator.hasNext()) {
+			main:
+			while (iterator.hasNext()) {
 				ds1 = iterator.next();
 				for (Integer m : ms) {
-					if (ds1[0]==m) {
+					if (ds1[0] == m) {
 						continue main;
 					}
 				}
 				break;
 			}
-			main:while (iterator.hasNext()) {
+			main:
+			while (iterator.hasNext()) {
 				ds2 = iterator.next();
 				for (Integer m : ms) {
-					if (ds2[0]==m) {
+					if (ds2[0] == m) {
 						continue main;
 					}
 				}
@@ -110,18 +123,14 @@ public class Id implements Serializable{
 		return 1 - d1[1] * d2[2] - d1[2] * d2[1];
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
-	/**
-	 * ds[0]=证据编号，ds[1]=是（A）证据，ds[2]=否（B）证据
-	 * @return
-	 */
 	public LinkedList<double[]> getEvidences() {
 		return evidences;
 	}
@@ -141,7 +150,7 @@ public class Id implements Serializable{
 	@Override
 	public String toString() {
 		return "Id{" +
-				"id=" + id +
+				"id='" + id + '\'' +
 				", evidences=" + evidences +
 				", label=" + label +
 				'}';
