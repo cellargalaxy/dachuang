@@ -3,10 +3,7 @@ package dataSet;
 import auc.Id;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by cellargalaxy on 2017/4/22.
@@ -15,7 +12,7 @@ import java.util.Map;
  * evidenceCount：对于某个嫌疑犯而言，最多有多少个证据
  * evidNameToId：各个证据的证据名与证据Id的Map
  */
-public class DataSet {
+public class DataSet implements Serializable{
 	private LinkedList<Id> ids;
 	private int evidenceCount;
 	private Map<String, Integer> evidNameToId;
@@ -31,6 +28,15 @@ public class DataSet {
 		this.ids = ids;
 		this.evidenceCount = evidenceCount;
 		this.evidNameToId = evidNameToId;
+	}
+	
+	public void removeMissingId(){
+		Iterator<Id> iterator=ids.iterator();
+		while (iterator.hasNext()) {
+			if (iterator.next().getEvidences().size()<evidenceCount) {
+				iterator.remove();
+			}
+		}
 	}
 	
 	private LinkedList<Id> createIds(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {

@@ -296,7 +296,7 @@ public class Hereditary {
 	}
 	
 	/**
-	 * 将基因与嫌疑人的证据相乘2
+	 * 将基因与嫌疑人的证据相乘
 	 *
 	 * @param oldIds
 	 * @param chro

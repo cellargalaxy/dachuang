@@ -27,8 +27,74 @@ public class Id implements Serializable {
 	}
 	
 	/**
+	 * 计算ms包含的证据的DS合成证据
+	 * @param ms
+	 * @return
+	 */
+	public double[] countDSWiths(LinkedList<Integer> ms) {
+		if (evidences.size() == 0) {
+			return null;
+		} else if (evidences.size() == 1) {
+			return evidences.getFirst();
+		} else {
+			Iterator<double[]> iterator = evidences.iterator();
+			double[] ds1 = null;
+			double[] ds2;
+			while (iterator.hasNext()) {
+				ds1 = iterator.next();
+				if (!ms.contains(ds1[0])) {
+					continue;
+				}
+				break;
+			}
+			while (iterator.hasNext()) {
+				ds2 = iterator.next();
+				if (!ms.contains(ds2[0])) {
+					continue;
+				}
+				ds1 = countE_E2E(ds1, ds2);
+			}
+			return ds1;
+		}
+	}
+	
+	/**
+	 * 计算ms包含的证据的DS合成证据
+	 * @param ms
+	 * @return
+	 */
+	public double[] countDSWiths(int[] ms) {
+		if (evidences.size() == 0) {
+			return null;
+		} else if (evidences.size() == 1) {
+			return evidences.getFirst();
+		} else {
+			Iterator<double[]> iterator = evidences.iterator();
+			double[] ds1 = null;
+			double[] ds2;
+			main:while (iterator.hasNext()) {
+				ds1 = iterator.next();
+				for (int m : ms) {
+					if (m==ds1[0]) {
+						break main;
+					}
+				}
+			}
+			while (iterator.hasNext()) {
+				ds2 = iterator.next();
+				for (int m : ms) {
+					if (m==ds2[0]) {
+						ds1 = countE_E2E(ds1, ds2);
+						break;
+					}
+				}
+			}
+			return ds1;
+		}
+	}
+	
+	/**
 	 * 计算除了ms包含的证据的DS合成证据
-	 *
 	 * @param ms
 	 * @return
 	 */
@@ -41,23 +107,17 @@ public class Id implements Serializable {
 			Iterator<double[]> iterator = evidences.iterator();
 			double[] ds1 = null;
 			double[] ds2;
-			main:
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				for (Integer m : ms) {
-					if (ds1[0] == m) {
-						continue main;
-					}
+				if (ms.contains(ds1[0])) {
+					continue;
 				}
 				break;
 			}
-			main:
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				for (Integer m : ms) {
-					if (ds2[0] == m) {
-						continue main;
-					}
+				if (ms.contains(ds2[0])) {
+					continue;
 				}
 				ds1 = countE_E2E(ds1, ds2);
 			}
