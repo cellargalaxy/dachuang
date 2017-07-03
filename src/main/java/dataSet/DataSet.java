@@ -1,6 +1,5 @@
 package dataSet;
 
-import auc.Id;
 
 import java.io.*;
 import java.util.*;
@@ -29,7 +28,16 @@ public class DataSet implements Serializable{
 		this.evidenceCount = evidenceCount;
 		this.evidNameToId = evidNameToId;
 	}
-	
+
+	public void mulChro(double[] chro){
+		for (Id id : ids) {
+			for (double[] evidence : id.getEvidences()) {
+				evidence[1] *= chro[(int) (evidence[0] * 2)];
+				evidence[2] *= chro[(int) (evidence[0] * 2) + 1];
+			}
+		}
+	}
+
 	public void removeMissingId(){
 		Iterator<Id> iterator=ids.iterator();
 		while (iterator.hasNext()) {

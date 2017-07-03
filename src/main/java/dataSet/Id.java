@@ -1,4 +1,4 @@
-package auc;
+package dataSet;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -19,6 +19,10 @@ public class Id implements Serializable {
 	private String id;
 	private LinkedList<double[]> evidences;
 	private int label;
+
+	///////////////////////////////////////////
+	private double[][] subSpaceDSs;
+	private double[] subSpaceDS;
 	
 	public Id(String id, LinkedList<double[]> evidences, int label) {
 		this.id = id;
@@ -206,7 +210,23 @@ public class Id implements Serializable {
 	public void setLabel(int label) {
 		this.label = label;
 	}
-	
+
+	public double[][] getSubSpaceDSs() {
+		return subSpaceDSs;
+	}
+
+	public void setSubSpaceDSs(double[][] subSpaceDSs) {
+		this.subSpaceDSs = subSpaceDSs;
+	}
+
+	public double[] getSubSpaceDS() {
+		return subSpaceDS;
+	}
+
+	public void setSubSpaceDS(double[] subSpaceDS) {
+		this.subSpaceDS = subSpaceDS;
+	}
+
 	@Override
 	public String toString() {
 		return "Id{" +
