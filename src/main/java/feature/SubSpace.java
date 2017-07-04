@@ -18,11 +18,11 @@ public class SubSpace {
     public static final int SUBTRACTION_ADJUST = 2;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        DataSet dataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/特征选择 - 副本.csv"), ",", 0, 2, 3, 5, 6);
+        DataSet dataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/特征选择 - 副本.csv"), ",", 0, 2, 3, 5, 6);
         FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
         double[][] improFeature = featureSelection.featureSelection(dataSet);
         int[] sn = {1, 2, 3};
-        int[][] subSpaces = createSubSpace(improFeature, POWER_ADJUST, 0.5, sn);
+        int[][] subSpaces = createSubSpace(improFeature, sn,3,POWER_ADJUST, 0.5);
 
         System.out.println("生成子空间：");
         for (int[] subSpace : subSpaces) {
@@ -30,13 +30,17 @@ public class SubSpace {
         }
     }
 
-    public static int[][] createSubSpace(double[][] improFeature, int adjustMethodNum, double d, int[] sn) {
+    public static int[][] createSubSpace(double[][] improFeature, int[] sn,int fnMin,int adjustMethodNum, double d) {
         for (int i : sn) {
             if (i > improFeature.length) {
                 throw new RuntimeException("sn的取值：" + i + "不得大于重要特征数：" + improFeature.length);
             }
         }
-        int fn = (int) Math.pow(2, improFeature.length);
+        int fnMax=(int)Math.pow(2, improFeature.length);
+        if (fnMin>fnMax) {
+            throw new RuntimeException("fnMin的取值：" + fnMin + "不得大于2^|SF|数：" + fnMax);
+        }
+        int fn=fnMin+(int)(Math.random()*(fnMax-fnMin));
         int[][] subSpaces = new int[fn][];
 
         improFeature = adjust(adjustMethodNum, improFeature, d);
@@ -79,7 +83,7 @@ public class SubSpace {
      *
      * @param adjustMethodNum
      * @param improFeature
-     * @param d               如果是选择平方调整，此参数无效
+     * @param d 如果是选择平方调整，此参数无效
      * @return
      */
     private static double[][] adjust(int adjustMethodNum, double[][] improFeature, double d) {

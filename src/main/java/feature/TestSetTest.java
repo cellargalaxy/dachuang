@@ -25,7 +25,7 @@ public class TestSetTest {
 		FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
 		double[][] improFeature = featureSelection.featureSelection(dataSet);
 		int[] sn={1,2,3};
-		int[][] subSpaces=createSubSpace(improFeature,POWER_ADJUST,0.5,sn);
+		int[][] subSpaces=createSubSpace(improFeature,sn,3,POWER_ADJUST,0.5);
 
 		DataSet dataSet1= CloneObject.clone(dataSet);
 		dataSet1.removeMissingId();

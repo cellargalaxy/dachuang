@@ -22,8 +22,6 @@ public class TestRun {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         DataSet trainDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
                 ",",0,2,3,1,5);
-        DataSet testDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testAll.csv"),
-                ",",0,2,3,1,5);
 
         //特征选择
         FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
@@ -35,21 +33,35 @@ public class TestRun {
 
         //特征子空间
         int[] sn = {1, 2};
-        int[][] subSpaces = SubSpace.createSubSpace(improFeature, SubSpace.POWER_ADJUST, 0.5, sn);
+        int[][] subSpaces = SubSpace.createSubSpace(improFeature, sn,3,SubSpace.POWER_ADJUST, 0.5);
         System.out.println("生成子空间：");
         for (int[] subSpace : subSpaces) {
             System.out.println(Arrays.toString(subSpace));
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////
+        //生成子空间testSets
+        DataSet testDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testAll.csv"),
+                ",",0,2,3,1,5);
+        DataSet[] testDataSets=new DataSet[subSpaces.length];
+        for (int i = 0; i < testDataSets.length; i++) {
+            DataSet dataSet=CloneObject.clone(testDataSet);
+            dataSet.saveEvidence(subSpaces[i]);
+            testDataSets[i]=dataSet;
+        }
 
-        //进化算法
-        Hereditary hereditary = new Hereditary(trainDataSet);
-        System.out.println("=========================");
-        hereditary.evolution(-1, Hereditary.USE_Roulette);
-        System.out.println("=========================");
-        System.out.println("maxAUC:" + hereditary.getMaxAUC());
-        System.out.println("maxChro:" + Arrays.toString(hereditary.getMaxChro()));
+        //子空间各进化算法
+        double[][] maxChros=new double[testDataSets.length][];
+        for (int i = 0; i < maxChros.length; i++) {
+            System.out.println("计算子空间："+Arrays.toString(subSpaces[i])+"进化算法");
+            Hereditary hereditary = new Hereditary(testDataSets[i]);
+            hereditary.evolution(-1, Hereditary.USE_Roulette);
+            System.out.println("=========================");
+            System.out.println("maxAUC:" + hereditary.getMaxAUC());
+            System.out.println("maxChro:" + Arrays.toString(hereditary.getMaxChro()));
+        }
+
+
+
 
         //testSet乘以染色体
         DataSet testDataSet1= CloneObject.clone(testDataSet);

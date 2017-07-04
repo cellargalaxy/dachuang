@@ -15,7 +15,22 @@ public class DataSet implements Serializable{
 	private LinkedList<Id> ids;
 	private int evidenceCount;
 	private Map<String, Integer> evidNameToId;
-	
+
+	public static void main(String[] args) throws IOException {
+		DataSet trainDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
+				",",0,2,3,1,5);
+		LinkedList<double[]> evidences1=trainDataSet.getIds().getFirst().getEvidences();
+		for (double[] doubles : evidences1) {
+			System.out.println(Arrays.toString(doubles));
+		}
+		System.out.println("=======================");
+		int[] subSpace={2,3,5};
+		trainDataSet.saveEvidence(subSpace);
+		LinkedList<double[]> evidences2=trainDataSet.getIds().getFirst().getEvidences();
+		for (double[] doubles : evidences2) {
+			System.out.println(Arrays.toString(doubles));
+		}
+	}
 	
 	public DataSet(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {
 		evidenceCount = -1;
@@ -27,6 +42,21 @@ public class DataSet implements Serializable{
 		this.ids = ids;
 		this.evidenceCount = evidenceCount;
 		this.evidNameToId = evidNameToId;
+	}
+
+	public void saveEvidence(int[] evidenceNums){
+		for (Id id : ids) {
+			Iterator<double[]> iterator=id.getEvidences().iterator();
+			main:while (iterator.hasNext()) {
+				double[] evidence=iterator.next();
+				for (int evidenceNum : evidenceNums) {
+					if (evidenceNum==(int)evidence[0]) {
+						continue main;
+					}
+				}
+				iterator.remove();
+			}
+		}
 	}
 
 	public void mulChro(double[] chro){
@@ -74,20 +104,6 @@ public class DataSet implements Serializable{
 			
 			double[] evidence = {createEvidNum(strings[evidCol]), new Double(strings[ACol]), new Double(strings[BCol])};
 			evidences.add(evidence);
-
-//			if (id==null||!id.equals(strings[idClo])) {
-//				if (id != null) {
-//					if(evidences.size()>evidenceCount) evidenceCount=evidences.size();
-//					ids.add(new Id(id, evidences,label));
-//				}
-//
-//				id++;
-//				id=strings[idClo];
-//				label=new Integer(strings[labelCol]);
-//				evidences=new LinkedList<double[]>();
-//			}
-//			double[] evidence={new Double(strings[evidCol].substring(1)),new Double(strings[ACol]),new Double(strings[BCol])};
-//			evidences.add(evidence);
 		}
 		if (id != null) {
 			if (evidences.size() > evidenceCount) evidenceCount = evidences.size();
