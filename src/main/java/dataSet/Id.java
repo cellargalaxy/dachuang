@@ -21,7 +21,6 @@ public class Id implements Serializable {
 	private int label;
 
 	///////////////////////////////////////////
-	private double[][] subSpaceDSs;
 	private double[] subSpaceDS;
 	
 	public Id(String id, LinkedList<double[]> evidences, int label) {
@@ -46,14 +45,14 @@ public class Id implements Serializable {
 			double[] ds2;
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				if (!ms.contains(ds1[0])) {
+				if (!ms.contains((int)ds1[0])) {
 					continue;
 				}
 				break;
 			}
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				if (!ms.contains(ds2[0])) {
+				if (!ms.contains((int)ds2[0])) {
 					continue;
 				}
 				ds1 = countE_E2E(ds1, ds2);
@@ -79,7 +78,7 @@ public class Id implements Serializable {
 			main:while (iterator.hasNext()) {
 				ds1 = iterator.next();
 				for (int m : ms) {
-					if (m==ds1[0]) {
+					if (m==(int)ds1[0]) {
 						break main;
 					}
 				}
@@ -87,7 +86,7 @@ public class Id implements Serializable {
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
 				for (int m : ms) {
-					if (m==ds2[0]) {
+					if (m==(int)ds2[0]) {
 						ds1 = countE_E2E(ds1, ds2);
 						break;
 					}
@@ -96,7 +95,43 @@ public class Id implements Serializable {
 			return ds1;
 		}
 	}
-	
+
+	/**
+	 * 计算除了ms包含的证据的DS合成证据
+	 * @param ms
+	 * @return
+	 */
+	public double[] countDSWithouts(int[] ms) {
+		if (evidences.size() == 0) {
+			return null;
+		} else if (evidences.size() == 1) {
+			return evidences.getFirst();
+		} else {
+			Iterator<double[]> iterator = evidences.iterator();
+			double[] ds1 = null;
+			double[] ds2;
+			main:while (iterator.hasNext()) {
+				ds1 = iterator.next();
+				for (int m : ms) {
+					if (m==(int)ds1[0]) {
+						continue main;
+					}
+				}
+				break;
+			}
+			main:while (iterator.hasNext()) {
+				ds2 = iterator.next();
+				for (int m : ms) {
+					if (m==(int)ds2[0]) {
+						continue main;
+					}
+				}
+				ds1 = countE_E2E(ds1, ds2);
+			}
+			return ds1;
+		}
+	}
+
 	/**
 	 * 计算除了ms包含的证据的DS合成证据
 	 * @param ms
@@ -113,14 +148,14 @@ public class Id implements Serializable {
 			double[] ds2;
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				if (ms.contains(ds1[0])) {
+				if (ms.contains((int)ds1[0])) {
 					continue;
 				}
 				break;
 			}
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				if (ms.contains(ds2[0])) {
+				if (ms.contains((int)ds2[0])) {
 					continue;
 				}
 				ds1 = countE_E2E(ds1, ds2);
@@ -146,16 +181,12 @@ public class Id implements Serializable {
 			double[] ds2;
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				if (ds1[0] != m) break;
+				if ((int)ds1[0] != m) break;
 			}
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				if (ds2[0] != m) ds1 = countE_E2E(ds1, ds2);
+				if ((int)ds2[0] != m) ds1 = countE_E2E(ds1, ds2);
 			}
-//			if (ds1[1]>1) ds1[1]=1;
-//			if (ds1[2]>1) ds1[2]=1;
-//			if (ds1[1]<0) ds1[1]=0;
-//			if (ds1[2]<0) ds1[2]=0;
 			return ds1;
 		}
 	}
@@ -209,14 +240,6 @@ public class Id implements Serializable {
 	
 	public void setLabel(int label) {
 		this.label = label;
-	}
-
-	public double[][] getSubSpaceDSs() {
-		return subSpaceDSs;
-	}
-
-	public void setSubSpaceDSs(double[][] subSpaceDSs) {
-		this.subSpaceDSs = subSpaceDSs;
 	}
 
 	public double[] getSubSpaceDS() {

@@ -17,18 +17,55 @@ public class DataSet implements Serializable{
 	private Map<String, Integer> evidNameToId;
 
 	public static void main(String[] args) throws IOException {
-		DataSet trainDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
-				",",0,2,3,1,5);
-		LinkedList<double[]> evidences1=trainDataSet.getIds().getFirst().getEvidences();
-		for (double[] doubles : evidences1) {
-			System.out.println(Arrays.toString(doubles));
+		double[] ds11={1,1,1};
+		double[] ds12={2,1,1};
+		double[] ds13={3,1,1};
+		LinkedList<double[]> evidences1=new LinkedList<>();
+		evidences1.add(ds11);
+		evidences1.add(ds12);
+		evidences1.add(ds13);
+		Id id1=new Id(null,evidences1,1);
+
+		double[] ds21={1,2,2};
+//		double[] ds22={2,2,2};
+		double[] ds23={3,2,2};
+		LinkedList<double[]> evidences2=new LinkedList<>();
+		evidences2.add(ds21);
+//		evidences2.add(ds22);
+		evidences2.add(ds23);
+		Id id2=new Id(null,evidences2,2);
+
+//		double[] ds31={1,3,3};
+		double[] ds32={2,3,3};
+		double[] ds33={3,3,3};
+		LinkedList<double[]> evidences3=new LinkedList<>();
+//		evidences3.add(ds31);
+		evidences3.add(ds32);
+		evidences3.add(ds33);
+		Id id3=new Id(null,evidences3,3);
+
+		LinkedList<Id> ids=new LinkedList<>();
+		ids.add(id1);
+		ids.add(id2);
+		ids.add(id3);
+
+		DataSet dataSet=new DataSet(ids,3,null);
+		for (Id id : dataSet.getIds()) {
+			System.out.println(id.getLabel());
+			for (double[] doubles : id.getEvidences()) {
+				System.out.println(Arrays.toString(doubles));
+			}
 		}
-		System.out.println("=======================");
-		int[] subSpace={2,3,5};
-		trainDataSet.saveEvidence(subSpace);
-		LinkedList<double[]> evidences2=trainDataSet.getIds().getFirst().getEvidences();
-		for (double[] doubles : evidences2) {
-			System.out.println(Arrays.toString(doubles));
+		LinkedList<Integer> evidenceNums=new LinkedList<Integer>();
+		evidenceNums.add(2);
+		evidenceNums.add(3);
+		dataSet.allSaveEvidence(evidenceNums);
+		System.out.println("==========================");
+		for (Id id : dataSet.getIds()) {
+			System.out.println(id.getLabel());
+			for (double[] doubles : id.getEvidences()) {
+				System.out.println(Arrays.toString(doubles));
+			}
 		}
 	}
 	
@@ -44,38 +81,52 @@ public class DataSet implements Serializable{
 		this.evidNameToId = evidNameToId;
 	}
 
-	public void saveEvidence(int[] evidenceNums){
-		for (Id id : ids) {
-			Iterator<double[]> iterator=id.getEvidences().iterator();
-			main:while (iterator.hasNext()) {
-				double[] evidence=iterator.next();
-				for (int evidenceNum : evidenceNums) {
-					if (evidenceNum==(int)evidence[0]) {
-						continue main;
+	public void allSaveEvidence(LinkedList<Integer> evidenceNums){
+		Iterator<Id> iteratorId=ids.iterator();
+		while (iteratorId.hasNext()) {
+			Id id=iteratorId.next();
+			int count=0;
+			Iterator<double[]> iteratorEvidence=id.getEvidences().iterator();
+			w2:while (iteratorEvidence.hasNext()) {
+				double[] evidence=iteratorEvidence.next();
+				for (Integer evidenceNum : evidenceNums) {
+					if (evidenceNum.equals((int)evidence[0])) {
+						count++;
+						continue w2;
 					}
 				}
-				iterator.remove();
+				iteratorEvidence.remove();
+			}
+			if (count!=evidenceNums.size()) {
+				iteratorId.remove();
 			}
 		}
+		evidenceCount=evidenceNums.size();
 	}
 
+	/**
+	 * 数据集的各个对象乘以染色体
+	 * @param chro
+	 */
 	public void mulChro(double[] chro){
 		for (Id id : ids) {
+			int i=0;
 			for (double[] evidence : id.getEvidences()) {
-				evidence[1] *= chro[(int) (evidence[0] * 2)];
-				evidence[2] *= chro[(int) (evidence[0] * 2) + 1];
+				evidence[1] *= chro[i*2];
+				evidence[2] *= chro[i*2+1];
+				i++;
 			}
 		}
 	}
 
-	public void removeMissingId(){
-		Iterator<Id> iterator=ids.iterator();
-		while (iterator.hasNext()) {
-			if (iterator.next().getEvidences().size()<evidenceCount) {
-				iterator.remove();
-			}
-		}
-	}
+//	public void removeMissingId(){
+//		Iterator<Id> iterator=ids.iterator();
+//		while (iterator.hasNext()) {
+//			if (iterator.next().getEvidences().size()<evidenceCount) {
+//				iterator.remove();
+//			}
+//		}
+//	}
 	
 	private LinkedList<Id> createIds(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {
 		LinkedList<Id> ids = new LinkedList<Id>();
@@ -115,7 +166,7 @@ public class DataSet implements Serializable{
 	private int createEvidNum(String evidName) {
 		Integer i = evidNameToId.get(evidName);
 		if (i == null) {
-			i = evidNameToId.size();
+			i = evidNameToId.size()+1;
 			evidNameToId.put(evidName, i);
 		}
 		return i;

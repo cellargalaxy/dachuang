@@ -27,42 +27,47 @@ public class FeatureSelection {
     //用户输入
     private static final int CUSTOMIZE_MODEL = 3;
 
-    private double stop1 = 0.95;
-    private double stop2 = 0.01;
-    private int methodNum;
-    private double customizeSeparation;
+//    private double stop1 = 0.95;
+//    private double stop2 = 0.01;
+//    private int methodNum;
+//    private double customizeSeparation;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        DataSet dataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/特征选择 - 副本.csv"), ",", 0, 2, 3, 5, 6);
-        FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
-        double[][] ds = featureSelection.featureSelection(dataSet);
+        DataSet trainDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
+                ",",0,2,3,1,5);
+        System.out.println("特征选择前AUC:"+AUC.countAUCWithout(trainDataSet,-1));
+
+        double[][] ds = FeatureSelection.featureSelection(trainDataSet,0.95,0.01,MEDIAN_MODEL,0.5);
+        LinkedList<Integer> improFeatureNums=new LinkedList<>();
         System.out.println("答案：");
         for (double[] doubles : ds) {
             System.out.println(doubles[0] + ":" + doubles[1]);
+            improFeatureNums.add((int)doubles[0]);
         }
+        System.out.println("特征选择后的AUC:"+AUC.countAUCWith(trainDataSet,improFeatureNums));
     }
 
-    public FeatureSelection(double stop1, double stop2, double customizeSeparation) {
-        this.stop1 = stop1;
-        this.stop2 = stop2;
-        this.customizeSeparation = customizeSeparation;
-        this.methodNum = CUSTOMIZE_MODEL;
-    }
-
-    public FeatureSelection(double stop1, double stop2, int methodNum) {
-        this.stop1 = stop1;
-        this.stop2 = stop2;
-        this.methodNum = methodNum;
-    }
-
-    public FeatureSelection(double customizeSeparation) {
-        this.customizeSeparation = customizeSeparation;
-        this.methodNum = CUSTOMIZE_MODEL;
-    }
-
-    public FeatureSelection(int methodNum) {
-        this.methodNum = methodNum;
-    }
+//    public FeatureSelection(double stop1, double stop2, double customizeSeparation) {
+//        this.stop1 = stop1;
+//        this.stop2 = stop2;
+//        this.customizeSeparation = customizeSeparation;
+//        this.methodNum = CUSTOMIZE_MODEL;
+//    }
+//
+//    public FeatureSelection(double stop1, double stop2, int methodNum) {
+//        this.stop1 = stop1;
+//        this.stop2 = stop2;
+//        this.methodNum = methodNum;
+//    }
+//
+//    public FeatureSelection(double customizeSeparation) {
+//        this.customizeSeparation = customizeSeparation;
+//        this.methodNum = CUSTOMIZE_MODEL;
+//    }
+//
+//    public FeatureSelection(int methodNum) {
+//        this.methodNum = methodNum;
+//    }
 
     /**
      * 返回的double[][] ds=new double[][2];
@@ -73,15 +78,13 @@ public class FeatureSelection {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public double[][] featureSelection(DataSet dataSet) throws IOException, ClassNotFoundException {
-        double aucFull = AUC.countAUC(dataSet, -1);
+    public static double[][] featureSelection(DataSet dataSet,double stop1,double stop2,int methodNum,double separation) throws IOException, ClassNotFoundException {
+        double aucFull = AUC.countAUCWithout(dataSet, -1);
         TreeMap<Double, Integer> aucImprotences = new TreeMap<Double, Integer>();
         for (int m = 0; m < dataSet.getEvidenceCount(); m++) {
             //这样减就负的越多越好，好的在前面
-            double auc = AUC.countAUC(dataSet, m) - aucFull;
-            if (auc < 0) {
-                aucImprotences.put(auc, m);
-            }
+            double auc = AUC.countAUCWithout(dataSet, m+1) - aucFull;
+            aucImprotences.put(auc, m+1);
         }
 
 //		System.out.println("各个特征的重要程度：");
@@ -92,10 +95,10 @@ public class FeatureSelection {
 
         LinkedList<Integer> imroEvid = new LinkedList<Integer>();
         LinkedList<Integer> unInproEvid = new LinkedList<Integer>();
-        separation(aucImprotences, imroEvid, unInproEvid);
+        separation(aucImprotences, imroEvid, unInproEvid,methodNum,separation);
 
-        double auc = AUC.countAUC(dataSet, unInproEvid);
-        while (Math.abs(auc - aucFull) * stop1 > stop2) {
+        double auc = AUC.countAUCWithouts(dataSet, unInproEvid);
+        while ((aucFull-auc) * stop1 > stop2) {
             Map<Double, Integer> aucJ = new TreeMap<Double, Integer>(new Comparator<Double>() {
                 public int compare(Double a, Double b) {
                     if (a > b) {
@@ -111,10 +114,12 @@ public class FeatureSelection {
             for (int i = 0; i < unInproEvid.size(); i++) {
                 LinkedList<Integer> newUnInproEvid = CloneObject.clone(unInproEvid);
                 Integer m = newUnInproEvid.remove(i);
-                aucJ.put(AUC.countAUC(dataSet, newUnInproEvid), m);
+                aucJ.put(AUC.countAUCWithouts(dataSet, newUnInproEvid), m);
             }
 
             for (Map.Entry<Double, Integer> entry : aucJ.entrySet()) {
+//                System.out.println("添加回特征:"+entry.getValue()+",AUC:"+entry.getKey());
+
                 imroEvid.add(entry.getValue());
                 unInproEvid.remove(entry.getValue());
                 auc = entry.getKey();
@@ -151,13 +156,13 @@ public class FeatureSelection {
      * @param imroEvid
      * @param unInproEvid
      */
-    private void separation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid) {
+    private static void separation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid,int methodNum,double customizeSeparation) {
         if (methodNum == MEDIAN_MODEL) {
             medianSeparation(aucImprotences, imroEvid, unInproEvid);
         } else if (methodNum == AVERAGE_MODEL) {
             averageSeparation(aucImprotences, imroEvid, unInproEvid);
         } else if (methodNum == CUSTOMIZE_MODEL) {
-            customizeSeparation(aucImprotences, customizeSeparation, imroEvid, unInproEvid);
+            customizeSeparation(aucImprotences, imroEvid, unInproEvid, customizeSeparation);
         } else {
             throw new RuntimeException("核特征选择方法代号有误");
         }
@@ -170,7 +175,7 @@ public class FeatureSelection {
      * @param imroEvid
      * @param unInproEvid
      */
-    private void medianSeparation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid) {
+    private static void medianSeparation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid) {
         int point = aucImprotences.size() / 2;
         int i = 0;
         for (Map.Entry<Double, Integer> entry : aucImprotences.entrySet()) {
@@ -194,13 +199,13 @@ public class FeatureSelection {
      * @param imroEvid
      * @param unInproEvid
      */
-    private void averageSeparation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid) {
+    private static void averageSeparation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid) {
         double count = 0;
         for (Map.Entry<Double, Integer> entry : aucImprotences.entrySet()) {
             count += entry.getKey();
         }
         double avg = count / aucImprotences.size();
-        customizeSeparation(aucImprotences, avg, imroEvid, unInproEvid);
+        customizeSeparation(aucImprotences, imroEvid, unInproEvid,avg);
 //		System.out.println("重要特征：");
 //		System.out.println(imroEvid);
 //		System.out.println("次要特征：");
@@ -208,14 +213,14 @@ public class FeatureSelection {
     }
 
     /**
-     * 用用户输入值分离重要特征与非重要特征
+     * 用某个值分离重要特征与非重要特征
      *
      * @param aucImprotences
      * @param separation
      * @param imroEvid
      * @param unInproEvid
      */
-    private void customizeSeparation(TreeMap<Double, Integer> aucImprotences, double separation, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid) {
+    private static void customizeSeparation(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unInproEvid, double separation) {
         for (Map.Entry<Double, Integer> entry : aucImprotences.entrySet()) {
             if (entry.getKey() <= separation) {
                 imroEvid.add(entry.getValue());

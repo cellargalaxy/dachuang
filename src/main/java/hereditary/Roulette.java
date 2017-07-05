@@ -38,7 +38,6 @@ public class Roulette {
     }
 
     public static int roulette(double[] ds, double count) {
-//		System.out.println("count："+count+"轮盘："+Arrays.toString(ds));
         double point = count * Math.random();
         double floor = 0;
         int i = 0;

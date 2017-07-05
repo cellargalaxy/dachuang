@@ -2,10 +2,12 @@ package feature;
 
 import dataSet.DataSet;
 import hereditary.Roulette;
+import util.CloneObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import static feature.FeatureSelection.MEDIAN_MODEL;
 
@@ -17,65 +19,71 @@ public class SubSpace {
     public static final int POWER_ADJUST = 1;
     public static final int SUBTRACTION_ADJUST = 2;
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        DataSet dataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/特征选择 - 副本.csv"), ",", 0, 2, 3, 5, 6);
-        FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
-        double[][] improFeature = featureSelection.featureSelection(dataSet);
-        int[] sn = {1, 2, 3};
-        int[][] subSpaces = createSubSpace(improFeature, sn,3,POWER_ADJUST, 0.5);
+//    public static void main(String[] args) throws IOException, ClassNotFoundException {
+//        DataSet dataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/特征选择 - 副本.csv"), ",", 0, 2, 3, 5, 6);
+//        FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
+//        double[][] improFeature = featureSelection.featureSelection(dataSet);
+//        System.out.println("重要特征：");
+//        for (double[] doubles : improFeature) {
+//            System.out.println(Arrays.toString(doubles));
+//        }
+//        int[] sn = {1, 2};
+//        LinkedList<LinkedList<Integer>> subSpaces = createSubSpaces(improFeature, sn,1,POWER_ADJUST, 0.5);
+//
+//        System.out.println("生成子空间：");
+//        for (LinkedList<Integer> subSpace : subSpaces) {
+//            System.out.println(subSpace);
+//        }
+//    }
 
-        System.out.println("生成子空间：");
-        for (int[] subSpace : subSpaces) {
-            System.out.println(Arrays.toString(subSpace));
-        }
-    }
-
-    public static int[][] createSubSpace(double[][] improFeature, int[] sn,int fnMin,int adjustMethodNum, double d) {
-        for (int i : sn) {
-            if (i > improFeature.length) {
-                throw new RuntimeException("sn的取值：" + i + "不得大于重要特征数：" + improFeature.length);
-            }
-        }
+    public static LinkedList<LinkedList<Integer>> createSubSpaces(double[][] improFeature, int[] sn, int fnMin, int adjustMethodNum, double d) throws IOException, ClassNotFoundException {
         int fnMax=(int)Math.pow(2, improFeature.length);
-        if (fnMin>fnMax) {
-            throw new RuntimeException("fnMin的取值：" + fnMin + "不得大于2^|SF|数：" + fnMax);
-        }
         int fn=fnMin+(int)(Math.random()*(fnMax-fnMin));
-        int[][] subSpaces = new int[fn][];
 
         improFeature = adjust(adjustMethodNum, improFeature, d);
 
-        double impCount = 0;
-        double[] imps = new double[improFeature.length];
-        for (int i = 0; i < improFeature.length; i++) {
-            imps[i] = improFeature[i][1];
-            impCount += improFeature[i][1];
+        LinkedList<Integer> features=new LinkedList<Integer>();
+        LinkedList<Double> impros=new LinkedList<Double>();
+        for (double[] doubles : improFeature) {
+            features.add((int)doubles[0]);
+            impros.add(doubles[1]);
         }
-
-        for (int i = 0; i < subSpaces.length; i++) {
-            int num = sn[(int) (Math.random() * sn.length)];
-            int[] features = new int[num];
-            for (int j = 0; j < features.length; j++) {
-                features[j] = -1;
+        LinkedList<LinkedList<Integer>> subSpaces=new LinkedList<LinkedList<Integer>>();
+        for (int i = 0; i < fn; i++) {
+            LinkedList<Integer> subSpace=createSubSpace(features,impros,sn[(int)(sn.length*Math.random())]);
+            if (!yetContainSubSpace(subSpaces,subSpace)) {
+                subSpaces.add(subSpace);
+            }else {
+                i--;
             }
-            for (int j = 0; j < features.length; j++) {
-                int point;
-                boolean b;
-                do {
-                    b = false;
-                    point = (int) improFeature[Roulette.roulette(imps, impCount)][0];
-                    for (int feature : features) {
-                        if (feature == point) {
-                            b = true;
-                            break;
-                        }
-                    }
-                } while (b);
-                features[j] = point;
-            }
-            subSpaces[i] = features;
         }
         return subSpaces;
+    }
+
+    private static LinkedList<Integer> createSubSpace(LinkedList<Integer> oldFeatures,LinkedList<Double> oldImpros,int len) throws IOException, ClassNotFoundException {
+        LinkedList<Integer> newFeatures= CloneObject.clone(oldFeatures);
+        LinkedList<Double> newImpros=CloneObject.clone(oldImpros);
+        LinkedList<Integer> subSpace=new LinkedList<Integer>();
+        for (int i = 0; i < len; i++) {
+            int point= Roulette.roulette(newImpros);
+            subSpace.add(newFeatures.get(point));
+            newFeatures.remove(point);
+            newImpros.remove(point);
+        }
+        return subSpace;
+    }
+    private static boolean yetContainSubSpace(LinkedList<LinkedList<Integer>> subSpaces,LinkedList<Integer> features){
+        main:for (LinkedList<Integer> subSpace : subSpaces) {
+            if (subSpace.size()==features.size()) {
+                for (Integer feature : features) {
+                    if (!subSpace.contains(feature)) {
+                        continue main;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

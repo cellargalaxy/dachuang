@@ -2,7 +2,6 @@ package hereditary;
 
 import auc.AUC;
 import dataSet.DataSet;
-import dataSet.Id;
 import util.CloneObject;
 
 import java.io.File;
@@ -110,7 +109,14 @@ public class Hereditary {
             System.out.println("到达最大迭代次数，跳出迭代");
             return null;
         }
+
+//        System.out.println("oldChrosoldChrosoldChros=========================");
+//        for (int k = 0; k < oldChros.length; k++) {
+//            System.out.println(Arrays.toString(oldChros[k]));
+//        }
+
         Map<Double, double[]> map = mulChros(dataSet, exceptEvidenceNum, oldChros);
+//        System.out.println("???????:"+map.size());
 
         double auc = -1;
         double[] chro;
@@ -148,32 +154,50 @@ public class Hereditary {
                 break;
             }
         }
-
-        if (methodNum == USE_Roulette) {
-            double aucCount = 0;
-            for (double v : aucs) {
-                aucCount += v;
-            }
-            for (int j = saveChroNum; j < newChros.length; j++) {
-                double[][] ds = chooseRouletteParentsGene(newChros, aucs, aucCount);
-                ds = geneEx(ds[0], ds[1]);
-                newChros[j] = ds[0];
-                j++;
-                if (j >= newChros.length) break;
-                newChros[j] = ds[1];
-            }
-        } else if (methodNum == USE_ORDER) {
-            for (int j = saveChroNum; j < newChros.length; j++) {
-                double[][] ds = chooseOrderParentsGene(newChros, j - saveChroNum);
-                ds = geneEx(ds[0], ds[1]);
-                newChros[j] = ds[0];
-                j++;
-                if (j >= newChros.length) break;
-                newChros[j] = ds[1];
-            }
-        } else {
-            throw new RuntimeException("选择父母染色体方法参数异常");
+        int startPoint;
+        if (map.size()>saveChroNum) {
+            startPoint=saveChroNum;
+        }else {
+            startPoint=map.size();
         }
+
+//        System.out.println("=========================");
+//        for (int k = 0; k < newChros.length; k++) {
+//            System.out.println(Arrays.toString(newChros[k]));
+//        }
+
+        if (startPoint>1) {
+            if (methodNum == USE_Roulette) {
+                double aucCount = 0;
+                for (double v : aucs) {
+                    aucCount += v;
+                }
+                for (int j = startPoint; j < newChros.length; j++) {
+                    double[][] ds = chooseRouletteParentsGene(newChros, aucs, aucCount);
+                    ds = geneEx(ds[0], ds[1]);
+                    newChros[j] = ds[0];
+                    j++;
+                    if (j >= newChros.length) break;
+                    newChros[j] = ds[1];
+                }
+            } else if (methodNum == USE_ORDER) {
+                for (int j = startPoint; j < newChros.length; j++) {
+                    double[][] ds = chooseOrderParentsGene(newChros, j - startPoint);
+                    ds = geneEx(ds[0], ds[1]);
+                    newChros[j] = ds[0];
+                    j++;
+                    if (j >= newChros.length) break;
+                    newChros[j] = ds[1];
+                }
+            } else {
+                throw new RuntimeException("选择父母染色体方法参数异常");
+            }
+        }
+
+//        System.out.println("=========================");
+//        for (int k = 0; k < newChros.length; k++) {
+//            System.out.println(Arrays.toString(newChros[k]));
+//        }
 
         for (int k = 0; k < newChros.length; k++) {
             newChros[k] = geneMul(newChros[k]);
@@ -291,9 +315,10 @@ public class Hereditary {
         for (double[] chro : chros) {
             DataSet newDataSet=CloneObject.clone(dataSet);
             newDataSet.mulChro(chro);
-            newDataSet.setEvidenceCount(dataSet.getEvidenceCount());
-            newDataSet.setEvidNameToId(dataSet.getEvidNameToId());
-            map.put(AUC.countAUC(newDataSet, exceptEvidenceNum), chro);
+//            newDataSet.setEvidenceCount(dataSet.getEvidenceCount());
+//            newDataSet.setEvidNameToId(dataSet.getEvidNameToId());
+//            System.out.println(AUC.countAUCWithout(newDataSet, exceptEvidenceNum)+" : "+Arrays.toString(chro));
+            map.put(AUC.countAUCWithout(newDataSet, exceptEvidenceNum), chro);
         }
         return map;
     }

@@ -5,12 +5,13 @@ import dataSet.DataSet;
 import dataSet.Id;
 import feature.FeatureSelection;
 import feature.SubSpace;
-import feature.TestSetTest;
 import hereditary.Hereditary;
 import util.CloneObject;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import static feature.FeatureSelection.MEDIAN_MODEL;
 
@@ -19,63 +20,93 @@ import static feature.FeatureSelection.MEDIAN_MODEL;
  * 用于测试整个体系的静态类
  */
 public class TestRun {
+
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         DataSet trainDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
                 ",",0,2,3,1,5);
 
         //特征选择
-        FeatureSelection featureSelection = new FeatureSelection(MEDIAN_MODEL);
-        double[][] improFeature = featureSelection.featureSelection(trainDataSet);
+        double[][] improFeature = FeatureSelection.featureSelection(trainDataSet,0.95,0.01,MEDIAN_MODEL,0.5);
         System.out.println("特征选择答案：");
         for (double[] doubles : improFeature) {
             System.out.println(doubles[0] + ":" + doubles[1]);
         }
 
-        //特征子空间
-        int[] sn = {1, 2};
-        int[][] subSpaces = SubSpace.createSubSpace(improFeature, sn,3,SubSpace.POWER_ADJUST, 0.5);
+        //特征子空间,111111111111111
+        int[] sn = {3,4,5};
+        LinkedList<LinkedList<Integer>> subSpaces = SubSpace.createSubSpaces(improFeature, sn,10,SubSpace.POWER_ADJUST, 0.5);
         System.out.println("生成子空间：");
-        for (int[] subSpace : subSpaces) {
-            System.out.println(Arrays.toString(subSpace));
+        for (LinkedList<Integer> subSpace : subSpaces) {
+            System.out.println(subSpace);
         }
 
-        //生成子空间testSets
+        ///////////////////////////////////////////////////////////////////////////////////
+
+        //生成特征testSet
         DataSet testDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testAll.csv"),
                 ",",0,2,3,1,5);
-        DataSet[] testDataSets=new DataSet[subSpaces.length];
-        for (int i = 0; i < testDataSets.length; i++) {
+
+        System.out.println("testDataSetAUC:"+AUC.countAUCWithout(testDataSet,-1));
+
+        LinkedList<Integer> features=new LinkedList<Integer>();
+        for (double[] doubles : improFeature) {
+            features.add((int)doubles[0]);
+        }
+        testDataSet.allSaveEvidence(features);
+
+        //生成子空间testSets
+        DataSet[] testDataSets=new DataSet[subSpaces.size()];
+        int i=0;
+        for (LinkedList<Integer> subSpace : subSpaces) {
             DataSet dataSet=CloneObject.clone(testDataSet);
-            dataSet.saveEvidence(subSpaces[i]);
+            dataSet.allSaveEvidence(subSpace);
             testDataSets[i]=dataSet;
+            i++;
         }
 
-        //子空间各进化算法
-        double[][] maxChros=new double[testDataSets.length][];
-        for (int i = 0; i < maxChros.length; i++) {
-            System.out.println("计算子空间："+Arrays.toString(subSpaces[i])+"进化算法");
-            Hereditary hereditary = new Hereditary(testDataSets[i]);
+        for (int j = 0; j < testDataSets.length; j++) {
+            //子空间testSets遗传算法
+            Hereditary hereditary = new Hereditary(testDataSets[j]);
             hereditary.evolution(-1, Hereditary.USE_Roulette);
             System.out.println("=========================");
             System.out.println("maxAUC:" + hereditary.getMaxAUC());
             System.out.println("maxChro:" + Arrays.toString(hereditary.getMaxChro()));
+
+//            System.out.println("trainDataSetAUC:"+AUC.countAUCWithout(trainDataSet,-1));
+//            trainDataSet.allSaveEvidence(features);
+//            System.out.println("特征trainDataSetAUC:"+AUC.countAUCWithout(trainDataSet,-1));
+//            System.out.println("特征testDataSetAUC:"+AUC.countAUCWithout(testDataSet,-1));
+//            System.out.println("AUC1:"+ AUC.countAUCWithout(testDataSets[0],-1));
+
+            //进化testSets
+            testDataSets[j].mulChro(hereditary.getMaxChro());
+            System.out.println("进化testSetAUC:"+AUC.countAUCWithout(testDataSets[j],-1));
         }
 
-
-
-
-        //testSet乘以染色体
-        DataSet testDataSet1= CloneObject.clone(testDataSet);
-        testDataSet1.removeMissingId();
-        testDataSet1.mulChro(hereditary.getMaxChro());
-
-        //对testSet进行测试
-        testDataSet1=TestSetTest.testSetTest(testDataSet1,subSpaces,TestSetTest.AVER_SYNTHESIS,0,0,0,0);
-        System.out.println("推理合成结果：");
-        for (Id id : testDataSet1.getIds()) {
-            System.out.println(Arrays.toString(id.getSubSpaceDS()));
+        Iterator<Id>[] iterators=new Iterator[testDataSets.length];
+        for (int j = 0; j < testDataSets.length; j++) {
+            iterators[j]=testDataSets[j].getIds().iterator();
+        }
+        Iterator<Id> iter=testDataSet.getIds().iterator();
+        while (iterators[0].hasNext()) {
+            double countA=0;
+            double countB=0;
+            for (Iterator<Id> iterator : iterators) {
+                Id id=iterator.next();
+                id.setSubSpaceDS(id.countDSWithout(-1));
+                countA+=id.getSubSpaceDS()[1];
+                countB+=id.getSubSpaceDS()[2];
+            }
+            double[] ds={0,countA/iterators.length,countB/iterators.length};
+            Id id=iter.next();
+            id.setSubSpaceDS(ds);
         }
 
-        System.out.println("AUC:"+AUC.countTestSetAUC(testDataSet1));
+        System.out.println(AUC.countAUCTestSet(testDataSet));
+
+
+
+//        System.out.println("AUC2:"+ AUC.countAUCWithout(testDataSets[0],-1));
     }
 
 
