@@ -14,8 +14,8 @@ import java.util.LinkedList;
  * label：嫌疑犯的标签
  */
 public class Id implements Serializable {
-	public static final int LABEL_A = 1;
-	public static final int LABEL_B = 0;
+	public static final int LABEL_1 = 1;
+	public static final int LABEL_0 = 0;
 	private String id;
 	private LinkedList<double[]> evidences;
 	private int label;

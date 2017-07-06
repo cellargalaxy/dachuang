@@ -25,20 +25,30 @@ public class TestRun {
         DataSet trainDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
                 ",",0,2,3,1,5);
 
+        System.out.println("最初训练集的AUC："+AUC.countAUCWithout(trainDataSet,-1));
+
         //特征选择
         double[][] improFeature = FeatureSelection.featureSelection(trainDataSet,0.95,0.01,MEDIAN_MODEL,0.5);
-        System.out.println("特征选择答案：");
+        System.out.println("特征选择：");
         for (double[] doubles : improFeature) {
             System.out.println(doubles[0] + ":" + doubles[1]);
         }
+
+        LinkedList<Integer> features=new LinkedList<Integer>();
+        for (double[] doubles : improFeature) {
+            features.add((int)doubles[0]);
+        }
+        trainDataSet.allSaveEvidence(features);
+        System.out.println("特征选择之后的训练集的AUC："+AUC.countAUCWithout(trainDataSet,-1));
 
         //特征子空间,111111111111111
         int[] sn = {3,4,5};
         LinkedList<LinkedList<Integer>> subSpaces = SubSpace.createSubSpaces(improFeature, sn,10,SubSpace.POWER_ADJUST, 0.5);
         System.out.println("生成子空间：");
         for (LinkedList<Integer> subSpace : subSpaces) {
-            System.out.println(subSpace);
+            System.out.print(subSpace+" , ");
         }
+        System.out.println();
 
         ///////////////////////////////////////////////////////////////////////////////////
 
@@ -46,13 +56,18 @@ public class TestRun {
         DataSet testDataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testAll.csv"),
                 ",",0,2,3,1,5);
 
-        System.out.println("testDataSetAUC:"+AUC.countAUCWithout(testDataSet,-1));
-
-        LinkedList<Integer> features=new LinkedList<Integer>();
-        for (double[] doubles : improFeature) {
-            features.add((int)doubles[0]);
-        }
+        System.out.println("最初测试集的AUC："+AUC.countAUCWithout(testDataSet,-1));
         testDataSet.allSaveEvidence(features);
+        System.out.println("特征选择之后的测试集的AUC："+AUC.countAUCWithout(testDataSet,-1));
+
+        DataSet testDataSet1=CloneObject.clone(testDataSet);
+        Hereditary hereditary1 = new Hereditary(testDataSet1);
+        hereditary1.evolution(-1, Hereditary.USE_Roulette);
+        System.out.println("没有子空间的测试集的遗传算法"+",maxAUC:" + hereditary1.getMaxAUC()+",maxChro:" + Arrays.toString(hereditary1.getMaxChro()));
+        double d=AUC.countAUCWithout(testDataSet1,-1);
+        //进化testSets
+        testDataSet1.mulChro(hereditary1.getMaxChro());
+        System.out.println("未进化testSetAUC:"+d+" ,已进化testSetAUC:"+AUC.countAUCWithout(testDataSet1,-1));
 
         //生成子空间testSets
         DataSet[] testDataSets=new DataSet[subSpaces.size()];
@@ -68,19 +83,12 @@ public class TestRun {
             //子空间testSets遗传算法
             Hereditary hereditary = new Hereditary(testDataSets[j]);
             hereditary.evolution(-1, Hereditary.USE_Roulette);
-            System.out.println("=========================");
-            System.out.println("maxAUC:" + hereditary.getMaxAUC());
-            System.out.println("maxChro:" + Arrays.toString(hereditary.getMaxChro()));
 
-//            System.out.println("trainDataSetAUC:"+AUC.countAUCWithout(trainDataSet,-1));
-//            trainDataSet.allSaveEvidence(features);
-//            System.out.println("特征trainDataSetAUC:"+AUC.countAUCWithout(trainDataSet,-1));
-//            System.out.println("特征testDataSetAUC:"+AUC.countAUCWithout(testDataSet,-1));
-//            System.out.println("AUC1:"+ AUC.countAUCWithout(testDataSets[0],-1));
-
+            System.out.println("子空间遗传算法："+subSpaces.get(j)+",maxAUC:" + hereditary.getMaxAUC()+",maxChro:" + Arrays.toString(hereditary.getMaxChro()));
+            double d1=AUC.countAUCWithout(testDataSets[j],-1);
             //进化testSets
             testDataSets[j].mulChro(hereditary.getMaxChro());
-            System.out.println("进化testSetAUC:"+AUC.countAUCWithout(testDataSets[j],-1));
+            System.out.println("未进化testSetAUC:"+d1+" ,已进化testSetAUC:"+AUC.countAUCWithout(testDataSets[j],-1));
         }
 
         Iterator<Id>[] iterators=new Iterator[testDataSets.length];
@@ -102,11 +110,10 @@ public class TestRun {
             id.setSubSpaceDS(ds);
         }
 
-        System.out.println(AUC.countAUCTestSet(testDataSet));
+        System.out.println("最后合成AUC："+AUC.countAUCTestSet(testDataSet));
 
 
 
-//        System.out.println("AUC2:"+ AUC.countAUCWithout(testDataSets[0],-1));
     }
 
 

@@ -42,15 +42,15 @@ public class Hereditary {
         step = 0.01;
 
         //迭代次数
-        iterNum = 100;
+        iterNum = 500;
         //已迭代次数
         yetIterCount = 0;
         //最多相同最大解次数
-        sameNum = 30;
+        sameNum = 50;
         //已相同最大解数
         yetSameCount = 0;
         //相同解范围
-        sameDeviation = 0.000001;
+        sameDeviation = 0.01;
         //最新AUC
         latestAUC = -1;
 
@@ -62,13 +62,15 @@ public class Hereditary {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         DataSet dataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/test 合成与AUC 去除totle.csv"), ",", 0, 1, 2, 4, 6);
-
-        Hereditary hereditary = new Hereditary(dataSet);
+        DataSet dataSet1=CloneObject.clone(dataSet);
+        Hereditary hereditary = new Hereditary(dataSet1);
         hereditary.evolution(-1, Hereditary.USE_Roulette);
         System.out.println("=========================");
-        System.out.println("maxAUC:" + hereditary.maxAUC);
-        System.out.println("maxChro:" + Arrays.toString(hereditary.maxChro));
-
+        System.out.println("maxAUC:" + hereditary.getMaxAUC());
+        System.out.println("maxChro:" + Arrays.toString(hereditary.getMaxChro()));
+        System.out.println(AUC.countAUCWithout(dataSet,-1));
+        dataSet.mulChro(hereditary.getMaxChro());
+        System.out.println(AUC.countAUCWithout(dataSet,-1));
     }
 
     /**
@@ -83,7 +85,7 @@ public class Hereditary {
         double[][] chros = createInitChros();
         int count = 0;
         do {
-            System.out.println(count + ":auc：" + maxAUC);
+//            System.out.println(count + ":auc：" + maxAUC);
             count++;
 
             chros = createNewChros(dataSet, exceptEvidenceNum, chros, methodNum);
@@ -124,12 +126,11 @@ public class Hereditary {
         double[][] newChros = new double[chrosNum][];
         int i = 0;
         for (Map.Entry<Double, double[]> entry : map.entrySet()) {
-
             if (auc == -1) {
                 auc = entry.getKey();
                 chro = entry.getValue();
 
-                if (Math.abs(auc - latestAUC) < sameDeviation) {
+                if (Math.abs(auc - maxAUC) < sameDeviation) {
                     yetSameCount++;
                 } else {
                     yetSameCount = 0;
@@ -140,8 +141,15 @@ public class Hereditary {
                 }
 
                 if (auc > maxAUC) {
+//                    System.out.println("auc:"+auc+" ,maxAUC:"+maxAUC);
+//                    System.out.println(Arrays.toString(chro));
+//                    System.out.println(Arrays.toString(maxChro));
                     maxAUC = auc;
-                    maxChro = chro;
+                    maxChro = CloneObject.clone(chro);
+//                    System.out.println("auc:"+auc+" ,maxAUC:"+maxAUC);
+//                    System.out.println(Arrays.toString(chro));
+//                    System.out.println(Arrays.toString(maxChro));
+//                    System.out.println();
                 }
 
                 latestAUC = auc;
@@ -166,7 +174,7 @@ public class Hereditary {
 //            System.out.println(Arrays.toString(newChros[k]));
 //        }
 
-        if (startPoint>1) {
+        if (dataSet.getEvidenceCount()>1) {
             if (methodNum == USE_Roulette) {
                 double aucCount = 0;
                 for (double v : aucs) {
@@ -279,6 +287,12 @@ public class Hereditary {
         return ds;
     }
 
+    /**
+     * 产生一个随机数集合
+     * @param len
+     * @param count
+     * @return
+     */
     private LinkedList<Integer> createRandomIntSet(int len, int count) {
         LinkedList<Integer> points = new LinkedList<Integer>();
         while (points.size() < count) {
@@ -315,27 +329,14 @@ public class Hereditary {
         for (double[] chro : chros) {
             DataSet newDataSet=CloneObject.clone(dataSet);
             newDataSet.mulChro(chro);
-//            newDataSet.setEvidenceCount(dataSet.getEvidenceCount());
-//            newDataSet.setEvidNameToId(dataSet.getEvidNameToId());
-//            System.out.println(AUC.countAUCWithout(newDataSet, exceptEvidenceNum)+" : "+Arrays.toString(chro));
+//            System.out.println(AUC.countAUCWithout(dataSet, exceptEvidenceNum)+" : "+AUC.countAUCWithout(newDataSet, exceptEvidenceNum)+" : "+Arrays.toString(chro));
+//            System.out.println(Arrays.toString(dataSet.getIds().get(2).getEvidences().getFirst())+" : "+Arrays.toString(newDataSet.getIds().get(2).getEvidences().getFirst()));
+//            System.out.println();
             map.put(AUC.countAUCWithout(newDataSet, exceptEvidenceNum), chro);
         }
         return map;
     }
 
-//    /**
-//     * 将基因与嫌疑人的证据相乘
-//     *
-//     * @param oldIds
-//     * @param chro
-//     * @return
-//     * @throws IOException
-//     * @throws ClassNotFoundException
-//     */
-//    private DataSet mulChro(DataSet oldDataSet, double[] chro) throws IOException, ClassNotFoundException {
-//       DataSet newDataSet=CloneObject.clone(oldDataSet);
-//       new
-//    }
 
     private double[][] createInitChros() {
         double[][] chros = new double[chrosNum][chroLen];

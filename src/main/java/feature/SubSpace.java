@@ -39,6 +39,7 @@ public class SubSpace {
     public static LinkedList<LinkedList<Integer>> createSubSpaces(double[][] improFeature, int[] sn, int fnMin, int adjustMethodNum, double d) throws IOException, ClassNotFoundException {
         int fnMax=(int)Math.pow(2, improFeature.length);
         int fn=fnMin+(int)(Math.random()*(fnMax-fnMin));
+        fn=15;
 
         improFeature = adjust(adjustMethodNum, improFeature, d);
 
