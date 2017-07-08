@@ -1,5 +1,6 @@
 package feature;
 
+import auc.AUC;
 import dataSet.DataSet;
 import hereditary.Roulette;
 import util.CloneObject;
@@ -7,7 +8,9 @@ import util.CloneObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static feature.FeatureSelection.MEDIAN_MODEL;
 
@@ -36,10 +39,49 @@ public class SubSpace {
 //        }
 //    }
 
+    public static void main(String[] args) {
+        int[] ints={1,2,3};
+        LinkedList<LinkedList<Integer>> subSpaces=createSubSpaces(ints);
+        for (LinkedList<Integer> subSpace : subSpaces) {
+            System.out.println(subSpace);
+        }
+    }
+
+    public static LinkedList<LinkedList<Integer>> createSubSpaces(int[] featureNums){
+        LinkedList<LinkedList<Integer>> featureSubSpaces=new LinkedList<LinkedList<Integer>>();
+        int len=(int)(Math.pow(2,featureNums.length));
+        for (int i = 1; i < len; i++) {
+            LinkedList<Integer> featureSubSpace=new LinkedList<Integer>();
+            char[] chars=Integer.toBinaryString(i).toCharArray();
+            for (int j = 0; j < chars.length&&j<featureNums.length; j++) {
+                if (chars[chars.length-j-1]=='1') {
+                    featureSubSpace.add(featureNums[featureNums.length-j-1]);
+                }
+            }
+            featureSubSpaces.add(featureSubSpace);
+        }
+        return featureSubSpaces;
+    }
+    public static Map<LinkedList<Integer>,DataSet> findGoodSubSpaceDataSets(DataSet dataSet, LinkedList<LinkedList<Integer>> subSpaces) throws IOException, ClassNotFoundException {
+        double fullAUC=AUC.countAUCWithout(dataSet,-1);
+        Map<LinkedList<Integer>,DataSet> map=new HashMap<>();
+        for (LinkedList<Integer> subSpace : subSpaces) {
+            DataSet dataSet1=CloneObject.clone(dataSet);
+            dataSet1.allSaveEvidence(subSpace);
+            double d= AUC.countAUCWithout(dataSet1,-1);
+            if (d>=fullAUC) {
+                map.put(subSpace,dataSet1);
+                System.out.println(d+"\t\t"+subSpace);
+            }
+        }
+        return map;
+    }
+
+
     public static LinkedList<LinkedList<Integer>> createSubSpaces(double[][] improFeature, int[] sn, int fnMin, int adjustMethodNum, double d) throws IOException, ClassNotFoundException {
         int fnMax=(int)Math.pow(2, improFeature.length);
         int fn=fnMin+(int)(Math.random()*(fnMax-fnMin));
-        fn=15;
+        fn=20;
 
         improFeature = adjust(adjustMethodNum, improFeature, d);
 

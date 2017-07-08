@@ -29,9 +29,18 @@ public class AUC {
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
 		for (Id id : dataSet.getIds()) {
 			double[] ds = id.getSubSpaceDS();
+			if (ds==null) {
+				ds=id.countDSWithout(-1);
+			}
 			if (is1(id)) ds1s.add(ds);
 			else ds0s.add(ds);
 		}
+//		System.out.println("????????/");
+//		for (double[] ds1 : ds0s) {
+//			if (ds1[1]>1) {
+//				System.out.println("??????????"+Arrays.toString(ds1));
+//			}
+//		}
 		return countAUC(ds1s,ds0s);
 	}
 
@@ -69,9 +78,19 @@ public class AUC {
 	}
 
 	private static double countAUC(LinkedList<double[]> ds1s,LinkedList<double[]> ds0s){
+//		for (double[] ds1 : ds1s) {
+//			if (ds1[1]>1) {
+//				System.out.println("!!!!!!!"+Arrays.toString(ds1));
+//			}
+//		}
 		double auc = 0;
+		boolean b=true;
 		for (double[] ds1 : ds1s) {
 			for (double[] ds0 : ds0s) {
+//				if (b) {
+//					System.out.println(ds1[1]+","+ds0[1]+"\t\t"+(ds1[1]>ds0[1]));
+//					b=false;
+//				}
 				if (ds1[1]>ds0[1]) {
 					auc++;
 				}else if (ds1[1]==ds0[1]){
@@ -79,25 +98,8 @@ public class AUC {
 				}
 			}
 		}
+//		System.out.println();
 		return auc/ds1s.size()/ds0s.size();
-//		int p=0;
-//		int n=0;
-//		for (double[] ds1 : ds1s) {
-//			for (double[] ds0 : ds0s) {
-//				if (ds1[1]>ds0[1]) {
-//					p++;
-//				}
-//			}
-//		}
-//		for (double[] ds0 : ds0s) {
-//			for (double[] ds1 : ds1s) {
-//				if (ds0[1]<ds1[1]) {
-//					n++;
-//				}
-//			}
-//		}
-//		System.out.println("p:"+p+",n:"+n+",ds1s:"+ds1s.size()+"ds0s:"+ds0s.size());
-//		return (double) (p*n)/(double) (ds0s.size()*ds1s.size());
 	}
 
 	private static boolean is1(Id id) {

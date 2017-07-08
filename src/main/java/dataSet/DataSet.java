@@ -17,6 +17,7 @@ public class DataSet implements Serializable{
 	private LinkedList<Id> ids;
 	private int evidenceCount;
 	private Map<String, Integer> evidNameToId;
+	private int[] evidenceNums;
 
 	public static void main(String[] args) throws IOException {
 		DataSet dataSet=new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/特征选择.csv"),
@@ -36,7 +37,16 @@ public class DataSet implements Serializable{
 		this.evidNameToId = evidNameToId;
 	}
 
-	public void allSaveEvidence(LinkedList<Integer> evidenceNums){
+	public void flushEvidenceCount(){
+		evidenceCount=-1;
+		for (Id id : ids) {
+			if (id.getEvidences().size()>evidenceCount) {
+				evidenceCount=id.getEvidences().size();
+			}
+		}
+	}
+
+	public void allSaveEvidence(LinkedList<Integer> evidences){
 		Iterator<Id> iteratorId=ids.iterator();
 		while (iteratorId.hasNext()) {
 			Id id=iteratorId.next();
@@ -44,7 +54,7 @@ public class DataSet implements Serializable{
 			Iterator<double[]> iteratorEvidence=id.getEvidences().iterator();
 			w2:while (iteratorEvidence.hasNext()) {
 				double[] evidence=iteratorEvidence.next();
-				for (Integer evidenceNum : evidenceNums) {
+				for (Integer evidenceNum : evidences) {
 					if (evidenceNum.equals((int)evidence[0])) {
 						count++;
 						continue w2;
@@ -52,11 +62,18 @@ public class DataSet implements Serializable{
 				}
 				iteratorEvidence.remove();
 			}
-			if (count!=evidenceNums.size()) {
+			if (count!=evidences.size()) {
 				iteratorId.remove();
 			}
 		}
-		evidenceCount=evidenceNums.size();
+		evidenceCount=evidences.size();
+		Iterator iterator=evidNameToId.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			if (!evidences.contains(entry.getValue())) {
+				iterator.remove();
+			}
+		}
 	}
 
 	/**
@@ -74,14 +91,25 @@ public class DataSet implements Serializable{
 		}
 	}
 
-//	public void removeMissingId(){
-//		Iterator<Id> iterator=ids.iterator();
-//		while (iterator.hasNext()) {
-//			if (iterator.next().getEvidences().size()<evidenceCount) {
-//				iterator.remove();
+	public void mulSubSpaceChro(double[] chro){
+		boolean b=true;
+		for (Id id : ids) {
+			double[] ds=id.getSubSpaceDS();
+//			if (b) {
+//				System.out.println(Arrays.toString(chro));
+//				System.out.println(Arrays.toString(id.getSubSpaceDS()));
 //			}
-//		}
-//	}
+			if (ds!=null) {
+				ds[1]*=chro[0];
+				ds[2]*=chro[1];
+			}
+//			if (b) {
+//				System.out.println(Arrays.toString(id.getSubSpaceDS()));
+//				System.out.println();
+//				b=false;
+//			}
+		}
+	}
 	
 	private LinkedList<Id> createIds(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {
 		LinkedList<Id> ids = new LinkedList<Id>();
@@ -149,5 +177,21 @@ public class DataSet implements Serializable{
 	
 	public void setEvidNameToId(Map<String, Integer> evidNameToId) {
 		this.evidNameToId = evidNameToId;
+	}
+
+	public int[] getEvidenceNums() {
+		if (evidenceNums==null) {
+			evidenceNums=new int[evidNameToId.size()];
+			int i=0;
+			for (Map.Entry<String, Integer> entry : evidNameToId.entrySet()) {
+				evidenceNums[i]=entry.getValue();
+				i++;
+			}
+		}
+		return evidenceNums;
+	}
+
+	public void setEvidenceNums(int[] evidenceNums) {
+		this.evidenceNums = evidenceNums;
 	}
 }
