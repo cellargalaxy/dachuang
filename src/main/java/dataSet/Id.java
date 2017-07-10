@@ -20,17 +20,19 @@ public class Id implements Serializable {
 	private LinkedList<double[]> evidences;
 	private int label;
 
-	///////////////////////////////////////////
-	private double[] subSpaceDS;
-	
+	///////////////////////////////
+	private double[] evidenceDS;
+
 	public Id(String id, LinkedList<double[]> evidences, int label) {
 		this.id = id;
 		this.evidences = evidences;
 		this.label = label;
 	}
-	
+
+
 	/**
 	 * 计算ms包含的证据的DS合成证据
+	 *
 	 * @param ms
 	 * @return
 	 */
@@ -45,14 +47,14 @@ public class Id implements Serializable {
 			double[] ds2;
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				if (!ms.contains((int)ds1[0])) {
+				if (!ms.contains((int) ds1[0])) {
 					continue;
 				}
 				break;
 			}
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				if (!ms.contains((int)ds2[0])) {
+				if (!ms.contains((int) ds2[0])) {
 					continue;
 				}
 				ds1 = countE_E2E(ds1, ds2);
@@ -60,9 +62,10 @@ public class Id implements Serializable {
 			return ds1;
 		}
 	}
-	
+
 	/**
 	 * 计算ms包含的证据的DS合成证据
+	 *
 	 * @param ms
 	 * @return
 	 */
@@ -75,10 +78,11 @@ public class Id implements Serializable {
 			Iterator<double[]> iterator = evidences.iterator();
 			double[] ds1 = null;
 			double[] ds2;
-			main:while (iterator.hasNext()) {
+			main:
+			while (iterator.hasNext()) {
 				ds1 = iterator.next();
 				for (int m : ms) {
-					if (m==(int)ds1[0]) {
+					if (m == (int) ds1[0]) {
 						break main;
 					}
 				}
@@ -86,7 +90,7 @@ public class Id implements Serializable {
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
 				for (int m : ms) {
-					if (m==(int)ds2[0]) {
+					if (m == (int) ds2[0]) {
 						ds1 = countE_E2E(ds1, ds2);
 						break;
 					}
@@ -98,6 +102,7 @@ public class Id implements Serializable {
 
 	/**
 	 * 计算除了ms包含的证据的DS合成证据
+	 *
 	 * @param ms
 	 * @return
 	 */
@@ -110,19 +115,21 @@ public class Id implements Serializable {
 			Iterator<double[]> iterator = evidences.iterator();
 			double[] ds1 = null;
 			double[] ds2;
-			main:while (iterator.hasNext()) {
+			main:
+			while (iterator.hasNext()) {
 				ds1 = iterator.next();
 				for (int m : ms) {
-					if (m==(int)ds1[0]) {
+					if (m == (int) ds1[0]) {
 						continue main;
 					}
 				}
 				break;
 			}
-			main:while (iterator.hasNext()) {
+			main:
+			while (iterator.hasNext()) {
 				ds2 = iterator.next();
 				for (int m : ms) {
-					if (m==(int)ds2[0]) {
+					if (m == (int) ds2[0]) {
 						continue main;
 					}
 				}
@@ -134,6 +141,7 @@ public class Id implements Serializable {
 
 	/**
 	 * 计算除了ms包含的证据的DS合成证据
+	 *
 	 * @param ms
 	 * @return
 	 */
@@ -148,14 +156,14 @@ public class Id implements Serializable {
 			double[] ds2;
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				if (ms.contains((int)ds1[0])) {
+				if (ms.contains((int) ds1[0])) {
 					continue;
 				}
 				break;
 			}
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				if (ms.contains((int)ds2[0])) {
+				if (ms.contains((int) ds2[0])) {
 					continue;
 				}
 				ds1 = countE_E2E(ds1, ds2);
@@ -163,7 +171,7 @@ public class Id implements Serializable {
 			return ds1;
 		}
 	}
-	
+
 	/**
 	 * 计算除了证据m的DS合成证据
 	 *
@@ -181,16 +189,16 @@ public class Id implements Serializable {
 			double[] ds2;
 			while (iterator.hasNext()) {
 				ds1 = iterator.next();
-				if ((int)ds1[0] != m) break;
+				if ((int) ds1[0] != m) break;
 			}
 			while (iterator.hasNext()) {
 				ds2 = iterator.next();
-				if ((int)ds2[0] != m) ds1 = countE_E2E(ds1, ds2);
+				if ((int) ds2[0] != m) ds1 = countE_E2E(ds1, ds2);
 			}
 			return ds1;
 		}
 	}
-	
+
 	/**
 	 * 某两条证据合成
 	 *
@@ -205,57 +213,48 @@ public class Id implements Serializable {
 		ds[2] = countB(d1, d2, K);
 		return ds;
 	}
-	
+
 	private double countA(double[] d1, double[] d2, double K) {
 		return (d1[1] * d2[1] + d1[1] * (1 - d2[1] - d2[2]) + d2[1] * (1 - d1[1] - d1[2])) / K;
 	}
-	
+
 	private double countB(double[] d1, double[] d2, double K) {
 		return (d1[2] * d2[2] + d1[2] * (1 - d2[1] - d2[2]) + d2[2] * (1 - d1[1] - d1[2])) / K;
 	}
-	
+
 	private double countK(double[] d1, double[] d2) {
 		return 1 - d1[1] * d2[2] - d1[2] * d2[1];
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public LinkedList<double[]> getEvidences() {
 		return evidences;
 	}
-	
+
 	public void setEvidences(LinkedList<double[]> evidences) {
 		this.evidences = evidences;
 	}
-	
+
 	public int getLabel() {
 		return label;
 	}
-	
+
 	public void setLabel(int label) {
 		this.label = label;
 	}
 
-	public double[] getSubSpaceDS() {
-		return subSpaceDS;
+	public double[] getEvidenceDS() {
+		return evidenceDS;
 	}
 
-	public void setSubSpaceDS(double[] subSpaceDS) {
-		this.subSpaceDS = subSpaceDS;
-	}
-
-	@Override
-	public String toString() {
-		return "Id{" +
-				"id='" + id + '\'' +
-				", evidences=" + evidences +
-				", label=" + label +
-				'}';
+	public void setEvidenceDS(double[] evidenceDS) {
+		this.evidenceDS = evidenceDS;
 	}
 }
