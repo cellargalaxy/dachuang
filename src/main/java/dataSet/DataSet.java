@@ -62,6 +62,28 @@ public class DataSet implements Serializable {
 		}
 	}
 
+	public void removeEvidence(int evidenceNum){
+		for (Id id : ids) {
+			Iterator<double[]> iterator=id.getEvidences().iterator();
+			while (iterator.hasNext()) {
+				double[] evidence=iterator.next();
+				if ((int)evidence[0]==evidenceNum) {
+					iterator.remove();
+					break;
+				}
+			}
+		}
+		evidenceNums.removeFirstOccurrence(evidenceNum);
+		Iterator iterator = evidNameToId.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			if (entry.getValue().equals(entry)) {
+				iterator.remove();
+				break;
+			}
+		}
+	}
+
 	/**
 	 * 数据集的各个对象乘以染色体
 	 *

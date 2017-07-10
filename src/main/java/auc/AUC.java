@@ -25,33 +25,44 @@ public class AUC {
 		return countAUC(ds1s, ds0s);
 	}
 
-	public static double countAUCWiths(DataSet dataSet, LinkedList<Integer> evidenceNums) {
-		LinkedList<double[]> ds1s = new LinkedList<double[]>();
-		LinkedList<double[]> ds0s = new LinkedList<double[]>();
-		for (Id id : dataSet.getIds()) {
-			double[] ds = id.countDSWiths(evidenceNums);
-			if (is1(id)) ds1s.add(ds);
-			else ds0s.add(ds);
-		}
-		return countAUC(ds1s, ds0s);
-	}
+//	public static double countAUCWiths(DataSet dataSet, LinkedList<Integer> evidenceNums) {
+//		LinkedList<double[]> ds1s = new LinkedList<double[]>();
+//		LinkedList<double[]> ds0s = new LinkedList<double[]>();
+//		for (Id id : dataSet.getIds()) {
+//			double[] ds = id.countDSWiths(evidenceNums);
+//			if (is1(id)) ds1s.add(ds);
+//			else ds0s.add(ds);
+//		}
+//		return countAUC(ds1s, ds0s);
+//	}
+//
+//	public static double countAUCWithouts(DataSet dataSet, LinkedList<Integer> exceptEvidenceNums) {
+//		LinkedList<double[]> ds1s = new LinkedList<double[]>();
+//		LinkedList<double[]> ds0s = new LinkedList<double[]>();
+//		for (Id id : dataSet.getIds()) {
+//			double[] ds = id.countDSWithouts(exceptEvidenceNums);
+//			if (is1(id)) ds1s.add(ds);
+//			else ds0s.add(ds);
+//		}
+//		return countAUC(ds1s, ds0s);
+//	}
+//
+//	public static double countAUCWithout(DataSet dataSet, int exceptEvidenceNum) {
+//		LinkedList<double[]> ds1s = new LinkedList<double[]>();
+//		LinkedList<double[]> ds0s = new LinkedList<double[]>();
+//		for (Id id : dataSet.getIds()) {
+//			double[] ds = id.countDSWithout(exceptEvidenceNum);
+//			if (is1(id)) ds1s.add(ds);
+//			else ds0s.add(ds);
+//		}
+//		return countAUC(ds1s, ds0s);
+//	}
 
-	public static double countAUCWithouts(DataSet dataSet, LinkedList<Integer> exceptEvidenceNums) {
+	public static double countAUCAll(DataSet dataSet) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
 		for (Id id : dataSet.getIds()) {
-			double[] ds = id.countDSWithouts(exceptEvidenceNums);
-			if (is1(id)) ds1s.add(ds);
-			else ds0s.add(ds);
-		}
-		return countAUC(ds1s, ds0s);
-	}
-
-	public static double countAUCWithout(DataSet dataSet, int exceptEvidenceNum) {
-		LinkedList<double[]> ds1s = new LinkedList<double[]>();
-		LinkedList<double[]> ds0s = new LinkedList<double[]>();
-		for (Id id : dataSet.getIds()) {
-			double[] ds = id.countDSWithout(exceptEvidenceNum);
+			double[] ds = id.countDSAll();
 			if (is1(id)) ds1s.add(ds);
 			else ds0s.add(ds);
 		}

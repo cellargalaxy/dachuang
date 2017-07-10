@@ -15,11 +15,9 @@ import java.util.*;
  */
 public class Hereditary {
 	private DataSet dataSet;
-	private int exceptEvidenceNum;
 
-	public Hereditary(DataSet dataSet, int exceptEvidenceNum) {
+	public Hereditary(DataSet dataSet) {
 		this.dataSet = dataSet;
-		this.exceptEvidenceNum = exceptEvidenceNum;
 
 		//染色体数
 		chrosNum = 30;
@@ -57,7 +55,7 @@ public class Hereditary {
 		latestAUC = -1;
 
 		//最大AUC
-		maxAUC = AUC.countAUCWithout(dataSet, exceptEvidenceNum);
+		maxAUC = AUC.countAUCAll(dataSet);
 		//最大AUC对应的基因
 		maxChro = new double[chroLen];
 		for (int i = 0; i < maxChro.length; i++) {
@@ -66,12 +64,12 @@ public class Hereditary {
 	}
 
 
-	public static double[] superEvolution(DataSet dataSet, int exceptEvidenceNum, int methodNum, int count) throws IOException, ClassNotFoundException {
+	public static double[] superEvolutionChro(DataSet dataSet, int evolutionMethodNum, int count) throws IOException, ClassNotFoundException {
 		DataSet dataSet1 = CloneObject.clone(dataSet);
 		double[] chro = null;
 		for (int i = 0; i < count; i++) {
-			Hereditary hereditary = new Hereditary(dataSet1, exceptEvidenceNum);
-			hereditary.evolution(methodNum);
+			Hereditary hereditary = new Hereditary(dataSet1);
+			hereditary.evolution(evolutionMethodNum);
 			dataSet1.mulChro(hereditary.getMaxChro());
 			if (chro == null) {
 				chro = hereditary.getMaxChro();
@@ -87,18 +85,56 @@ public class Hereditary {
 		return chro;
 	}
 
+	public static double superEvolutionAUC(DataSet dataSet, LinkedList<Integer> evidenceNums,int evolutionMethodNum, int count) throws IOException, ClassNotFoundException {
+		DataSet dataSet1 = CloneObject.clone(dataSet);
+		dataSet1.allSaveEvidence(evidenceNums);
+		Hereditary hereditary=null;
+		for (int i = 0; i < count; i++) {
+			hereditary = new Hereditary(dataSet1);
+			hereditary.evolution(evolutionMethodNum);
+			dataSet1.mulChro(hereditary.getMaxChro());
+//			System.out.println(hereditary.getMaxAUC());
+		}
+		return hereditary.getMaxAUC();
+	}
+
+	public static double superEvolutionAUC(DataSet dataSet, int evidenceNum,int evolutionMethodNum, int count) throws IOException, ClassNotFoundException {
+		DataSet dataSet1 = CloneObject.clone(dataSet);
+		dataSet1.removeEvidence(evidenceNum);
+		Hereditary hereditary=null;
+		for (int i = 0; i < count; i++) {
+			hereditary = new Hereditary(dataSet1);
+			hereditary.evolution(evolutionMethodNum);
+			dataSet1.mulChro(hereditary.getMaxChro());
+//			System.out.println(hereditary.getMaxAUC());
+		}
+		return hereditary.getMaxAUC();
+	}
+
+	public static double superEvolutionAUC(DataSet dataSet, int evolutionMethodNum, int count) throws IOException, ClassNotFoundException {
+		DataSet dataSet1 = CloneObject.clone(dataSet);
+		Hereditary hereditary=null;
+		for (int i = 0; i < count; i++) {
+			hereditary = new Hereditary(dataSet1);
+			hereditary.evolution(evolutionMethodNum);
+			dataSet1.mulChro(hereditary.getMaxChro());
+//			System.out.println(hereditary.getMaxAUC());
+		}
+		return hereditary.getMaxAUC();
+	}
+
 	/**
 	 * 进化
 	 *
-	 * @param methodNum
+	 * @param evolutionMethodNum
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public void evolution(int methodNum) throws IOException, ClassNotFoundException {
+	public void evolution(int evolutionMethodNum) throws IOException, ClassNotFoundException {
 		if (dataSet.getEvidenceNums().size() > 1) {
 			double[][] chros = createInitChros();
 			do {
-				chros = createNewChros(dataSet, exceptEvidenceNum, chros, methodNum);
+				chros = createNewChros(dataSet, chros, evolutionMethodNum);
 				if (chros == null) {
 					break;
 				}
@@ -111,21 +147,20 @@ public class Hereditary {
 	/**
 	 * 生育
 	 *
-	 * @param exceptEvidenceNum
 	 * @param oldChros
 	 * @param methodNum
 	 * @return
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private double[][] createNewChros(DataSet dataSet, int exceptEvidenceNum, double[][] oldChros, int methodNum) throws IOException, ClassNotFoundException {
+	private double[][] createNewChros(DataSet dataSet, double[][] oldChros, int methodNum) throws IOException, ClassNotFoundException {
 		yetIterCount++;
 		if (yetIterCount > iterNum) {
 //			System.out.println("到达最大迭代次数，跳出迭代");
 			return null;
 		}
 
-		Map<Double, double[]> map = mulChros(dataSet, exceptEvidenceNum, oldChros);
+		Map<Double, double[]> map = mulChros(dataSet, oldChros);
 		if (map.size() < 2) {
 			System.out.println("多样性进化失败，跳出迭代");
 			return null;
@@ -303,13 +338,12 @@ public class Hereditary {
 	 * 依次将各个基因与嫌疑人的证据相乘，算出新的AUC，降序储存到Map中
 	 *
 	 * @param dataSet
-	 * @param exceptEvidenceNum
 	 * @param chros
 	 * @return Map<AUC,基因>
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private Map<Double, double[]> mulChros(DataSet dataSet, int exceptEvidenceNum, double[][] chros) throws IOException, ClassNotFoundException {
+	private Map<Double, double[]> mulChros(DataSet dataSet,  double[][] chros) throws IOException, ClassNotFoundException {
 		Map<Double, double[]> map = new TreeMap<Double, double[]>(new Comparator<Double>() {
 			public int compare(Double a, Double b) {
 				if (a > b) {
@@ -324,7 +358,7 @@ public class Hereditary {
 		for (double[] chro : chros) {
 			DataSet newDataSet = CloneObject.clone(dataSet);
 			newDataSet.mulChro(chro);
-			map.put(AUC.countAUCWithout(newDataSet, exceptEvidenceNum), chro);
+			map.put(AUC.countAUCAll(newDataSet), chro);
 		}
 		return map;
 	}
