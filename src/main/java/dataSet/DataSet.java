@@ -29,6 +29,36 @@ public class DataSet implements Serializable {
 		this.evidNameToId = evidNameToId;
 	}
 
+	public void power(double power){
+		for (Id id : ids) {
+			for (double[] evidence : id.getEvidences()) {
+				evidence[1]=Math.pow(evidence[1],power);
+				evidence[2]=Math.pow(evidence[2],power);
+			}
+		}
+	}
+	public void my(){
+		for (Id id : ids) {
+			LinkedList<double[]> evidences=id.getEvidences();
+			double[] weights=new double[evidences.size()];
+			int i=0;
+			for (double[] evidence : evidences) {
+				weights[i]=Math.pow(evidence[1],2)+Math.pow(evidence[2],2);
+				i++;
+			}
+			double count=0;
+			for (double weight : weights) {
+				count+=weight;
+			}
+			i=0;
+			for (double[] evidence : evidences) {
+				evidence[1]=Math.pow(evidence[1],1+((1.0/evidences.size())-(weights[i]/count)));
+				evidence[2]=Math.pow(evidence[2],1+((1.0/evidences.size())-(weights[i]/count)));
+				i++;
+			}
+		}
+	}
+
 	/**
 	 * 只保留evidences里指定的证据
 	 *

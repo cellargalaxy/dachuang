@@ -80,7 +80,7 @@ public class Hereditary {
 					j++;
 				}
 			}
-//			System.out.println(hereditary.getMaxAUC());
+			System.out.println(hereditary.getMaxAUC());
 		}
 		return chro;
 	}

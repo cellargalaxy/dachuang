@@ -1,6 +1,7 @@
 package dataSet;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -199,22 +200,48 @@ public class Id implements Serializable {
 //		}
 //	}
 
+
 	public double[] countDSAll() {
 		if (evidences.size() == 0) {
 			return null;
 		} else if (evidences.size() == 1) {
 			return evidences.getFirst();
 		} else {
-			Iterator<double[]> iterator = evidences.iterator();
-			double[] ds1 = null;
-			double[] ds2;
-			ds1 = iterator.next();
-			while (iterator.hasNext()) {
-				ds2 = iterator.next();
-				ds1 = countE_E2E(ds1, ds2);
+			double[] weights=new double[evidences.size()];
+			int i=0;
+			for (double[] evidence : evidences) {
+				weights[i]=Math.pow(evidence[1],2)+Math.pow(evidence[2],2);
+				i++;
 			}
-			return ds1;
+			double count=0;
+			for (double weight : weights) {
+				count+=weight;
+			}
+			double[] ds={0,0,0};
+			i=0;
+			for (double[] evidence : evidences) {
+				ds[1]+=evidence[1]*weights[i]/count;
+				ds[2]+=evidence[2]*weights[i]/count;
+				i++;
+			}
+			return ds;
 		}
+
+//		if (evidences.size() == 0) {
+//			return null;
+//		} else if (evidences.size() == 1) {
+//			return evidences.getFirst();
+//		} else {
+//			Iterator<double[]> iterator = evidences.iterator();
+//			double[] ds1 = null;
+//			double[] ds2;
+//			ds1 = iterator.next();
+//			while (iterator.hasNext()) {
+//				ds2 = iterator.next();
+//				ds1 = countE_E2E(ds1, ds2);
+//			}
+//			return ds1;
+//		}
 	}
 
 	/**
