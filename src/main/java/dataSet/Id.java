@@ -1,7 +1,6 @@
 package dataSet;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -15,6 +14,10 @@ import java.util.LinkedList;
  * label：嫌疑犯的标签
  */
 public class Id implements Serializable {
+	public static final int DS_METHOD=1;
+	public static final int MY_DS_METHOD=2;
+	public static final int TEST_DS_METHOD=3;
+
 	public static final int LABEL_1 = 1;
 	public static final int LABEL_0 = 0;
 	private String id;
@@ -31,177 +34,20 @@ public class Id implements Serializable {
 	}
 
 
-//	/**
-//	 * 计算ms包含的证据的DS合成证据
-//	 *
-//	 * @param ms
-//	 * @return
-//	 */
-//	public double[] countDSWiths(LinkedList<Integer> ms) {
-//		if (evidences.size() == 0) {
-//			return null;
-//		} else if (evidences.size() == 1) {
-//			return evidences.getFirst();
-//		} else {
-//			Iterator<double[]> iterator = evidences.iterator();
-//			double[] ds1 = null;
-//			double[] ds2;
-//			while (iterator.hasNext()) {
-//				ds1 = iterator.next();
-//				if (!ms.contains((int) ds1[0])) {
-//					continue;
-//				}
-//				break;
-//			}
-//			while (iterator.hasNext()) {
-//				ds2 = iterator.next();
-//				if (!ms.contains((int) ds2[0])) {
-//					continue;
-//				}
-//				ds1 = countE_E2E(ds1, ds2);
-//			}
-//			return ds1;
-//		}
-//	}
-//
-//	/**
-//	 * 计算ms包含的证据的DS合成证据
-//	 *
-//	 * @param ms
-//	 * @return
-//	 */
-//	public double[] countDSWiths(int[] ms) {
-//		if (evidences.size() == 0) {
-//			return null;
-//		} else if (evidences.size() == 1) {
-//			return evidences.getFirst();
-//		} else {
-//			Iterator<double[]> iterator = evidences.iterator();
-//			double[] ds1 = null;
-//			double[] ds2;
-//			main:
-//			while (iterator.hasNext()) {
-//				ds1 = iterator.next();
-//				for (int m : ms) {
-//					if (m == (int) ds1[0]) {
-//						break main;
-//					}
-//				}
-//			}
-//			while (iterator.hasNext()) {
-//				ds2 = iterator.next();
-//				for (int m : ms) {
-//					if (m == (int) ds2[0]) {
-//						ds1 = countE_E2E(ds1, ds2);
-//						break;
-//					}
-//				}
-//			}
-//			return ds1;
-//		}
-//	}
-//
-//	/**
-//	 * 计算除了ms包含的证据的DS合成证据
-//	 *
-//	 * @param ms
-//	 * @return
-//	 */
-//	public double[] countDSWithouts(int[] ms) {
-//		if (evidences.size() == 0) {
-//			return null;
-//		} else if (evidences.size() == 1) {
-//			return evidences.getFirst();
-//		} else {
-//			Iterator<double[]> iterator = evidences.iterator();
-//			double[] ds1 = null;
-//			double[] ds2;
-//			main:
-//			while (iterator.hasNext()) {
-//				ds1 = iterator.next();
-//				for (int m : ms) {
-//					if (m == (int) ds1[0]) {
-//						continue main;
-//					}
-//				}
-//				break;
-//			}
-//			main:
-//			while (iterator.hasNext()) {
-//				ds2 = iterator.next();
-//				for (int m : ms) {
-//					if (m == (int) ds2[0]) {
-//						continue main;
-//					}
-//				}
-//				ds1 = countE_E2E(ds1, ds2);
-//			}
-//			return ds1;
-//		}
-//	}
-//
-//	/**
-//	 * 计算除了ms包含的证据的DS合成证据
-//	 *
-//	 * @param ms
-//	 * @return
-//	 */
-//	public double[] countDSWithouts(LinkedList<Integer> ms) {
-//		if (evidences.size() == 0) {
-//			return null;
-//		} else if (evidences.size() == 1) {
-//			return evidences.getFirst();
-//		} else {
-//			Iterator<double[]> iterator = evidences.iterator();
-//			double[] ds1 = null;
-//			double[] ds2;
-//			while (iterator.hasNext()) {
-//				ds1 = iterator.next();
-//				if (ms.contains((int) ds1[0])) {
-//					continue;
-//				}
-//				break;
-//			}
-//			while (iterator.hasNext()) {
-//				ds2 = iterator.next();
-//				if (ms.contains((int) ds2[0])) {
-//					continue;
-//				}
-//				ds1 = countE_E2E(ds1, ds2);
-//			}
-//			return ds1;
-//		}
-//	}
-//
-//	/**
-//	 * 计算除了证据m的DS合成证据
-//	 *
-//	 * @param m
-//	 * @return
-//	 */
-//	public double[] countDSWithout(int m) {
-//		if (evidences.size() == 0) {
-//			return null;
-//		} else if (evidences.size() == 1) {
-//			return evidences.getFirst();
-//		} else {
-//			Iterator<double[]> iterator = evidences.iterator();
-//			double[] ds1 = null;
-//			double[] ds2;
-//			while (iterator.hasNext()) {
-//				ds1 = iterator.next();
-//				if ((int) ds1[0] != m) break;
-//			}
-//			while (iterator.hasNext()) {
-//				ds2 = iterator.next();
-//				if ((int) ds2[0] != m) ds1 = countE_E2E(ds1, ds2);
-//			}
-//			return ds1;
-//		}
-//	}
+	public double[] countDS(int DSMethodNum){
+		if (DSMethodNum==DS_METHOD) {
+			return countDS();
+		}else if (DSMethodNum==MY_DS_METHOD){
+			return countMyDS();
+		}else if (DSMethodNum==TEST_DS_METHOD){
+			return evidenceDS;
+		}else {
+			throw new RuntimeException("ds合成方法编号异常:"+DSMethodNum);
+		}
+	}
 
 
-	public double[] countDSAll() {
+	private double[] countMyDS(){
 		if (evidences.size() == 0) {
 			return null;
 		} else if (evidences.size() == 1) {
@@ -210,7 +56,7 @@ public class Id implements Serializable {
 			double[] weights=new double[evidences.size()];
 			int i=0;
 			for (double[] evidence : evidences) {
-				weights[i]=Math.pow(evidence[1],2)+Math.pow(evidence[2],2);
+				weights[i]=Math.pow(Math.pow(evidence[1],2)+Math.pow(evidence[2],2),0.5);
 				i++;
 			}
 			double count=0;
@@ -226,22 +72,21 @@ public class Id implements Serializable {
 			}
 			return ds;
 		}
+	}
 
-//		if (evidences.size() == 0) {
-//			return null;
-//		} else if (evidences.size() == 1) {
-//			return evidences.getFirst();
-//		} else {
-//			Iterator<double[]> iterator = evidences.iterator();
-//			double[] ds1 = null;
-//			double[] ds2;
-//			ds1 = iterator.next();
-//			while (iterator.hasNext()) {
-//				ds2 = iterator.next();
-//				ds1 = countE_E2E(ds1, ds2);
-//			}
-//			return ds1;
-//		}
+	private double[] countDS() {
+		if (evidences.size() == 0) {
+			return null;
+		} else {
+			Iterator<double[]> iterator = evidences.iterator();
+			double[] ds1= iterator.next();
+			double[] ds2;
+			while (iterator.hasNext()) {
+				ds2 = iterator.next();
+				ds1 = countE_E2E(ds1, ds2);
+			}
+			return ds1;
+		}
 	}
 
 	/**

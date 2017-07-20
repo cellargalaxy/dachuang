@@ -1,18 +1,10 @@
 package feature;
 
-import auc.AUC;
-import dataSet.DataSet;
 import hereditary.Roulette;
 import util.CloneObject;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-
-import static feature.FeatureSelection.MEDIAN_MODEL;
 
 /**
  * Created by cellargalaxy on 2017/6/8.
@@ -22,7 +14,7 @@ public class SubSpace {
 	public static final int POWER_ADJUST = 1;
 	public static final int SUBTRACTION_ADJUST = 2;
 
-	public static LinkedList<LinkedList<Integer>> createSubSpaces(int[] featureNums) {
+	public static LinkedList<LinkedList<Integer>> createAllSubSpaces(int[] featureNums) {
 		LinkedList<LinkedList<Integer>> featureSubSpaces = new LinkedList<LinkedList<Integer>>();
 		int len = (int) (Math.pow(2, featureNums.length));
 		for (int i = 1; i < len; i++) {
@@ -39,28 +31,22 @@ public class SubSpace {
 	}
 
 
-	public static LinkedList<LinkedList<Integer>> createSubSpaces(double[][] improFeature, int[] sn, int fnMin, int adjustMethodNum, double d) throws IOException, ClassNotFoundException {
+	public static LinkedList<LinkedList<Integer>> createSubSpaces(LinkedList<Integer> features,double[] impros, int[] sn, int fnMin, int adjustMethodNum, double d) throws IOException, ClassNotFoundException {
 		int fnMax = 0;
 		for (int i : sn) {
-			fnMax += countC(i, improFeature.length);
+			fnMax += countC(i, features.size());
 		}
 		if (fnMin > fnMax) {
 			throw new RuntimeException("最小子空间数fnMin:" + fnMin + ",不得大于最大子空间数fnMax:" + fnMax);
 		}
 		int fn = fnMin + (int) (Math.random() * (fnMax - fnMin));
 
-		improFeature = adjust(adjustMethodNum, improFeature, d);
+		LinkedList<Double> listImpros = adjust(adjustMethodNum, impros, d);
 
-		LinkedList<Integer> features = new LinkedList<Integer>();
-		LinkedList<Double> impros = new LinkedList<Double>();
-		for (double[] doubles : improFeature) {
-			features.add((int) doubles[0]);
-			impros.add(doubles[1]);
-		}
 		LinkedList<LinkedList<Integer>> subSpaces = new LinkedList<LinkedList<Integer>>();
 		for (int i = 0; i < fn; i++) {
-			LinkedList<Integer> subSpace = createSubSpace(features, impros, sn[(int) (sn.length * Math.random())]);
-			if (!yetContainSubSpace(subSpaces, subSpace)) {
+			LinkedList<Integer> subSpace = createSubSpace(features, listImpros, sn[(int) (sn.length * Math.random())]);
+			if (!siContainSubSpace(subSpaces, subSpace)) {
 				subSpaces.add(subSpace);
 			} else {
 				i--;
@@ -94,7 +80,7 @@ public class SubSpace {
 		return subSpace;
 	}
 
-	private static boolean yetContainSubSpace(LinkedList<LinkedList<Integer>> subSpaces, LinkedList<Integer> features) {
+	private static boolean siContainSubSpace(LinkedList<LinkedList<Integer>> subSpaces, LinkedList<Integer> features) {
 		main:
 		for (LinkedList<Integer> subSpace : subSpaces) {
 			if (subSpace.size() == features.size()) {
@@ -113,15 +99,15 @@ public class SubSpace {
 	 * 调整Imp
 	 *
 	 * @param adjustMethodNum
-	 * @param improFeature
+	 * @param impros
 	 * @param d			   如果是选择平方调整，此参数无效
 	 * @return
 	 */
-	private static double[][] adjust(int adjustMethodNum, double[][] improFeature, double d) {
+	private static LinkedList<Double> adjust(int adjustMethodNum, double[] impros, double d) {
 		if (adjustMethodNum == POWER_ADJUST) {
-			return powerAdjust(improFeature);
+			return powerAdjust(impros);
 		} else if (adjustMethodNum == SUBTRACTION_ADJUST) {
-			return subtractionAdjust(improFeature, d);
+			return subtractionAdjust(impros, d);
 		} else {
 			throw new RuntimeException("Imp调整方法编号错误：" + adjustMethodNum);
 		}
@@ -130,34 +116,36 @@ public class SubSpace {
 	/**
 	 * 平方调整Imp
 	 *
-	 * @param improFeature
+	 * @param impros
 	 * @return
 	 */
-	private static double[][] powerAdjust(double[][] improFeature) {
-		for (int i = 0; i < improFeature.length; i++) {
-			improFeature[i][1] *= improFeature[i][1];
+	private static LinkedList<Double> powerAdjust(double[] impros) {
+		LinkedList<Double> listImpros=new LinkedList<Double>();
+		for (double impro : impros) {
+			listImpros.add(impro*impro);
 		}
-		return improFeature;
+		return listImpros;
 	}
 
 	/**
 	 * 减法调整Imp
 	 *
-	 * @param improFeature
+	 * @param impros
 	 * @param d
 	 * @return
 	 */
-	private static double[][] subtractionAdjust(double[][] improFeature, double d) {
+	private static LinkedList<Double> subtractionAdjust(double[] impros, double d) {
+		LinkedList<Double> listImpros=new LinkedList<Double>();
 		double minImp = Double.MIN_VALUE;
-		for (double[] doubles : improFeature) {
-			if (minImp < doubles[1]) {
-				minImp = doubles[1];
+		for (double impro : impros) {
+			if (minImp < impro) {
+				minImp = impro;
 			}
 		}
 		minImp = Math.abs(minImp);
-		for (int i = 0; i < improFeature.length; i++) {
-			improFeature[i][1] = Math.abs(improFeature[i][1]) - (minImp - d);
+		for (double impro : impros) {
+			listImpros.add(Math.abs(impro) - (minImp - d));
 		}
-		return improFeature;
+		return listImpros;
 	}
 }

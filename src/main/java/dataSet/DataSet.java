@@ -20,47 +20,14 @@ public class DataSet implements Serializable {
 
 
 	public DataSet(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {
+		ids = new LinkedList<Id>();
+		evidenceNums = new LinkedList<Integer>();
+		evidNameToId = new HashMap<String, Integer>();
 		createIds(dataSetFile, separator, idClo, ACol, BCol, evidCol, labelCol);
 	}
 
-	public DataSet(LinkedList<Id> ids, LinkedList<Integer> evidenceNums, Map<String, Integer> evidNameToId) {
-		this.ids = ids;
-		this.evidenceNums = evidenceNums;
-		this.evidNameToId = evidNameToId;
-	}
-
-	public void power(double power){
-		for (Id id : ids) {
-			for (double[] evidence : id.getEvidences()) {
-				evidence[1]=Math.pow(evidence[1],power);
-				evidence[2]=Math.pow(evidence[2],power);
-			}
-		}
-	}
-	public void my(){
-		for (Id id : ids) {
-			LinkedList<double[]> evidences=id.getEvidences();
-			double[] weights=new double[evidences.size()];
-			int i=0;
-			for (double[] evidence : evidences) {
-				weights[i]=Math.pow(evidence[1],2)+Math.pow(evidence[2],2);
-				i++;
-			}
-			double count=0;
-			for (double weight : weights) {
-				count+=weight;
-			}
-			i=0;
-			for (double[] evidence : evidences) {
-				evidence[1]=Math.pow(evidence[1],1+((1.0/evidences.size())-(weights[i]/count)));
-				evidence[2]=Math.pow(evidence[2],1+((1.0/evidences.size())-(weights[i]/count)));
-				i++;
-			}
-		}
-	}
-
 	/**
-	 * 只保留evidences里指定的证据
+	 * 只保留evidences里指定的证据和全部包含evidences里指定的证据的对象
 	 *
 	 * @param evidences
 	 */
@@ -107,7 +74,7 @@ public class DataSet implements Serializable {
 		Iterator iterator = evidNameToId.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			if (entry.getValue().equals(entry)) {
+			if (entry.getValue().equals(evidenceNum)) {
 				iterator.remove();
 				break;
 			}
@@ -132,9 +99,6 @@ public class DataSet implements Serializable {
 
 
 	private void createIds(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {
-		ids = new LinkedList<Id>();
-		evidenceNums = new LinkedList<Integer>();
-		evidNameToId = new HashMap<String, Integer>();
 		BufferedReader reader = new BufferedReader(new FileReader(dataSetFile));
 
 		String id = null;

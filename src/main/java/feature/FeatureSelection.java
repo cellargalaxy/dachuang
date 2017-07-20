@@ -3,14 +3,12 @@ package feature;
 import auc.AUC;
 import dataSet.DataSet;
 import hereditary.Hereditary;
+import hereditary.HereditaryParameter;
 import util.CloneObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by cellargalaxy on 2017/5/13.
@@ -37,13 +35,15 @@ public class FeatureSelection {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public static double[][] featureSelection(DataSet dataSet, double stop1, double stop2, int featureSeparationMethodNum, double separationValue,
-											  int evolutionMethodNum,int evolutionCount) throws IOException, ClassNotFoundException {
-		double aucFull = Hereditary.superEvolutionAUC(dataSet,evolutionMethodNum,evolutionCount);
+	public static double[][] featureSelection(HereditaryParameter hereditaryParameter, int DSMethodNum,
+													   DataSet dataSet, double stop1, double stop2, int featureSeparationMethodNum, double separationValue,
+													   int evolutionMethodNum, int evolutionCount) throws IOException, ClassNotFoundException {
+		double aucFull = Hereditary.superEvolutionAUC(hereditaryParameter,DSMethodNum,dataSet,evolutionMethodNum,evolutionCount);
+
 		TreeMap<Double, Integer> aucImprotences = new TreeMap<Double, Integer>();
 		for (Integer integer : dataSet.getEvidenceNums()) {
 			//这样减就负的越多越好，好的在前面
-			double auc = Hereditary.superEvolutionAUC(dataSet,integer,evolutionMethodNum,evolutionCount) - aucFull;
+			double auc = Hereditary.superEvolutionAUC(hereditaryParameter,DSMethodNum,dataSet,integer,evolutionMethodNum,evolutionCount) - aucFull;
 			aucImprotences.put(auc, integer);
 		}
 
@@ -51,28 +51,23 @@ public class FeatureSelection {
 		LinkedList<Integer> unInproEvid = new LinkedList<Integer>();
 		separation(aucImprotences, imroEvid, unInproEvid, featureSeparationMethodNum, separationValue);
 
-		double auc = Hereditary.superEvolutionAUC(dataSet,imroEvid,evolutionMethodNum,evolutionCount);
-		while ((aucFull - auc) * stop1 > stop2) {
+		double auc = Hereditary.superEvolutionAUC(hereditaryParameter,DSMethodNum,dataSet,imroEvid,evolutionMethodNum,evolutionCount);
+		while (Math.abs(aucFull - auc) * stop1 > stop2 && unInproEvid.size()>0) {
 			double aucJ = -1;
 			int evidenceNum = -1;
 			for (Integer integer : unInproEvid) {
 				LinkedList<Integer> newImroEvid=CloneObject.clone(imroEvid);
 				newImroEvid.add(integer);
-				double d = Hereditary.superEvolutionAUC(dataSet,newImroEvid,evolutionMethodNum,evolutionCount);
+				double d = Hereditary.superEvolutionAUC(hereditaryParameter,DSMethodNum,dataSet,newImroEvid,evolutionMethodNum,evolutionCount);
 				if (d>aucJ) {
 					aucJ=d;
 					evidenceNum=integer;
 				}
 			}
 
-			if (aucJ>0) {
-				imroEvid.add(evidenceNum);
-				unInproEvid.removeFirstOccurrence(evidenceNum);
-				auc = aucJ;
-			}else {
-				System.out.println("特征选择加特征AUC还减小了，跳出循环");
-				break;
-			}
+			imroEvid.add(evidenceNum);
+			unInproEvid.removeFirstOccurrence(evidenceNum);
+			auc = aucJ;
 		}
 
 		double[][] ds = new double[imroEvid.size()][2];

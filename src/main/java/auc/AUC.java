@@ -2,6 +2,7 @@ package auc;
 
 import dataSet.DataSet;
 import dataSet.Id;
+import hereditary.HereditaryParameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,57 +15,17 @@ import java.util.LinkedList;
  */
 public class AUC {
 
-	public static double countTestAUC(DataSet dataSet) {
+	public static double countAUC(DataSet dataSet,int DSMethodNum) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
 		for (Id id : dataSet.getIds()) {
-			double[] ds = id.getEvidenceDS();
-			if (is1(id)) ds1s.add(ds);
-			else ds0s.add(ds);
-		}
-		return countAUC(ds1s, ds0s);
-	}
-
-//	public static double countAUCWiths(DataSet dataSet, LinkedList<Integer> evidenceNums) {
-//		LinkedList<double[]> ds1s = new LinkedList<double[]>();
-//		LinkedList<double[]> ds0s = new LinkedList<double[]>();
-//		for (Id id : dataSet.getIds()) {
-//			double[] ds = id.countDSWiths(evidenceNums);
-//			if (is1(id)) ds1s.add(ds);
-//			else ds0s.add(ds);
-//		}
-//		return countAUC(ds1s, ds0s);
-//	}
-//
-//	public static double countAUCWithouts(DataSet dataSet, LinkedList<Integer> exceptEvidenceNums) {
-//		LinkedList<double[]> ds1s = new LinkedList<double[]>();
-//		LinkedList<double[]> ds0s = new LinkedList<double[]>();
-//		for (Id id : dataSet.getIds()) {
-//			double[] ds = id.countDSWithouts(exceptEvidenceNums);
-//			if (is1(id)) ds1s.add(ds);
-//			else ds0s.add(ds);
-//		}
-//		return countAUC(ds1s, ds0s);
-//	}
-//
-//	public static double countAUCWithout(DataSet dataSet, int exceptEvidenceNum) {
-//		LinkedList<double[]> ds1s = new LinkedList<double[]>();
-//		LinkedList<double[]> ds0s = new LinkedList<double[]>();
-//		for (Id id : dataSet.getIds()) {
-//			double[] ds = id.countDSWithout(exceptEvidenceNum);
-//			if (is1(id)) ds1s.add(ds);
-//			else ds0s.add(ds);
-//		}
-//		return countAUC(ds1s, ds0s);
-//	}
-
-	public static double countAUCAll(DataSet dataSet) {
-		LinkedList<double[]> ds1s = new LinkedList<double[]>();
-		LinkedList<double[]> ds0s = new LinkedList<double[]>();
-		for (Id id : dataSet.getIds()) {
-			double[] ds = id.countDSAll();
-			if (is1(id)) ds1s.add(ds);
-			else ds0s.add(ds);
+			double[] ds = id.countDS(DSMethodNum);
+			if (si1(id)) {
+				ds1s.add(ds);
+			}
+			else {
+				ds0s.add(ds);
+			}
 		}
 		return countAUC(ds1s, ds0s);
 	}
@@ -83,7 +44,7 @@ public class AUC {
 		return auc / ds1s.size() / ds0s.size();
 	}
 
-	private static boolean is1(Id id) {
+	private static boolean si1(Id id) {
 		if (id.getLabel() == Id.LABEL_1) {
 			return true;
 		} else if (id.getLabel() == Id.LABEL_0) {
