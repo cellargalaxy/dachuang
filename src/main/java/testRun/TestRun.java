@@ -50,12 +50,12 @@ public class TestRun {
 
 		DataSet trainDataSet1=CloneObject.clone(trainDataSet);
 		trainDataSet1.allSaveEvidence(features);
-		double featureAUC=Hereditary.superEvolutionAUC(new HereditaryParameter(),DSMethod,trainDataSet1,HereditaryParameter.USE_ORDER,5);
+		double featureAUC=AUC.countAUC(trainDataSet1,DSMethod);
 		System.out.println("特征选择训练集AUC:"+featureAUC);
 		System.out.println("----------------------------------");
 
 		int[] sn={1,2,3,4,5};
-		LinkedList<LinkedList<Integer>> subSpaces=SubSpace.createSubSpaces(features,impros,sn,10,SubSpace.POWER_ADJUST,0);
+		LinkedList<LinkedList<Integer>> subSpaces=SubSpace.createSubSpaces(features,impros,sn,20,SubSpace.POWER_ADJUST,0);
 		System.out.println("子空间:");
 		for (LinkedList<Integer> subSpace : subSpaces) {
 			System.out.println(subSpace);
