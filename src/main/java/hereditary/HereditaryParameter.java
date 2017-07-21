@@ -74,7 +74,7 @@ public class HereditaryParameter {
         sameDeviation = 0.001;
     }
 
-    public void init(int evidenceCount){
+    public void init(int evidenceCount) {
         //染色体长度
         chroLen = evidenceCount * 2;
         //基因交换数量
