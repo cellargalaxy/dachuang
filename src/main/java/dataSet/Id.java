@@ -14,8 +14,10 @@ import java.util.LinkedList;
  * label：嫌疑犯的标签
  */
 public class Id implements Serializable {
+
     public static final int DS_METHOD = 1;
     public static final int MY_DS_METHOD = 2;
+    public static final int MY_DS_METHOD2 = 4;
     public static final int TEST_DS_METHOD = 3;
 
     public static final int LABEL_1 = 1;
@@ -33,16 +35,31 @@ public class Id implements Serializable {
         this.label = label;
     }
 
+    public double countAverageDistance(){
+        double count=0;
+        if (label==LABEL_0) {
+            for (double[] evidence : evidences) {
+                count+=Math.pow(evidence[1]*evidence[1]+(evidence[2]-1)*(evidence[2]-1),0.5);
+            }
+        }else {
+            for (double[] evidence : evidences) {
+                count+=Math.pow((evidence[1]-1)*(evidence[1]-1)+evidence[2]*evidence[2],0.5);
+            }
+        }
+        return count/evidences.size();
+    }
 
-    public double[] countDS(int DSMethodNum) {
-        if (DSMethodNum == DS_METHOD) {
+    public double[] countDS(int dsMethodNum) {
+        if (dsMethodNum == DS_METHOD) {
             return countDS();
-        } else if (DSMethodNum == MY_DS_METHOD) {
+        } else if (dsMethodNum == MY_DS_METHOD) {
             return countMyDS();
-        } else if (DSMethodNum == TEST_DS_METHOD) {
+        } else if (dsMethodNum == TEST_DS_METHOD) {
             return evidenceDS;
+        } else if (dsMethodNum == MY_DS_METHOD2) {
+            return countMyDS2();
         } else {
-            throw new RuntimeException("ds合成方法编号异常:" + DSMethodNum);
+            throw new RuntimeException("ds合成方法编号异常:" + dsMethodNum);
         }
     }
 
@@ -74,6 +91,40 @@ public class Id implements Serializable {
         }
     }
 
+    private double[] countMyDS2() {
+        if (evidences.size() == 0) {
+            return null;
+        } else if (evidences.size() == 1) {
+            return evidences.getFirst();
+        } else {
+            int aCount=0;
+            int bCount=0;
+            double[] weights = new double[evidences.size()];
+            int i = 0;
+            for (double[] evidence : evidences) {
+                weights[i] = Math.pow(Math.pow(evidence[1], 2) + Math.pow(evidence[2], 2), 0.5)*Math.abs(evidence[1]-evidence[2]);
+                if (evidence[1]>evidence[2]) {
+                    aCount++;
+                }else if (evidence[1]<evidence[2]){
+                    bCount++;
+                }
+                i++;
+            }
+            double[] ds={0,0,0};
+            double count = (aCount+bCount);
+            for (double weight : weights) {
+                count += weight;
+            }
+            i=0;
+            for (double[] evidence : evidences) {
+                ds[1] += evidence[1] * weights[i] * aCount / count / count;
+                ds[2] += evidence[2] * weights[i] * bCount / count / count;
+                i++;
+            }
+            return ds;
+        }
+    }
+
     private double[] countDS() {
         if (evidences.size() == 0) {
             return null;
@@ -83,7 +134,7 @@ public class Id implements Serializable {
             double[] ds2;
             while (iterator.hasNext()) {
                 ds2 = iterator.next();
-                ds1 = countE_E2E(ds1, ds2);
+                ds1 = countEvidence(ds1, ds2);
             }
             return ds1;
         }
@@ -96,20 +147,20 @@ public class Id implements Serializable {
      * @param d2
      * @return
      */
-    private double[] countE_E2E(double[] d1, double[] d2) {
+    private double[] countEvidence(double[] d1, double[] d2) {
         double[] ds = new double[3];
-        double K = countK(d1, d2);
-        ds[1] = countA(d1, d2, K);
-        ds[2] = countB(d1, d2, K);
+        double k = countK(d1, d2);
+        ds[1] = countA(d1, d2, k);
+        ds[2] = countB(d1, d2, k);
         return ds;
     }
 
-    private double countA(double[] d1, double[] d2, double K) {
-        return (d1[1] * d2[1] + d1[1] * (1 - d2[1] - d2[2]) + d2[1] * (1 - d1[1] - d1[2])) / K;
+    private double countA(double[] d1, double[] d2, double k) {
+        return (d1[1] * d2[1] + d1[1] * (1 - d2[1] - d2[2]) + d2[1] * (1 - d1[1] - d1[2])) / k;
     }
 
-    private double countB(double[] d1, double[] d2, double K) {
-        return (d1[2] * d2[2] + d1[2] * (1 - d2[1] - d2[2]) + d2[2] * (1 - d1[1] - d1[2])) / K;
+    private double countB(double[] d1, double[] d2, double k) {
+        return (d1[2] * d2[2] + d1[2] * (1 - d2[1] - d2[2]) + d2[2] * (1 - d1[1] - d1[2])) / k;
     }
 
     private double countK(double[] d1, double[] d2) {

@@ -1,6 +1,8 @@
 package dataSet;
 
 
+import auc.AUC;
+
 import java.io.*;
 import java.util.*;
 
@@ -16,12 +18,38 @@ public class DataSet implements Serializable {
     private LinkedList<Integer> evidenceNums;
     private Map<String, Integer> evidNameToId;
 
+    public static void main(String[] args) throws IOException {
+        DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
+                ",", 0, 2, 3, 1, 5);
+        System.out.println(AUC.countAUC(trainDataSet,Id.MY_DS_METHOD2));
+    }
 
     public DataSet(File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol) throws IOException {
         ids = new LinkedList<Id>();
         evidenceNums = new LinkedList<Integer>();
         evidNameToId = new HashMap<String, Integer>();
         createIds(dataSetFile, separator, idClo, ACol, BCol, evidCol, labelCol);
+    }
+
+
+    public DataSet(LinkedList<Id> ids, LinkedList<Integer> evidenceNums, Map<String, Integer> evidNameToId) {
+        this.ids = ids;
+        this.evidenceNums = evidenceNums;
+        this.evidNameToId = evidNameToId;
+    }
+
+    public boolean siUseMyDS(){
+        double count=0;
+        for (Id id : ids) {
+            count+=id.countAverageDistance();
+        }
+        count/=ids.size();
+        System.out.println("count:"+count);
+        if (count>Math.pow(2,0.5)) {
+            return false;
+        }else {
+            return true;
+        }
     }
 
     /**

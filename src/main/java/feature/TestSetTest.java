@@ -43,13 +43,37 @@ public class TestSetTest {
                 double[] ds = {0, 0, 0};
                 id.setEvidenceDS(ds);
             } else {
-                double a = 0;
-                double b = 0;
-                for (double[] doubles : dss) {
-                    a += doubles[1];
-                    b += doubles[2];
+//                double a = 0;
+//                double b = 0;
+//                for (double[] doubles : dss) {
+//                    a += doubles[1];
+//                    b += doubles[2];
+//                }
+//                double[] ds = {0, a / dss.size(), b / dss.size()};
+                int aCount=0;
+                int bCount=0;
+                double[] weights = new double[dss.size()];
+                int i = 0;
+                for (double[] evidence : dss) {
+                    weights[i] = Math.pow(Math.pow(evidence[1], 2) + Math.pow(evidence[2], 2), 0.5)*Math.abs(evidence[1]-evidence[2]);
+                    if (evidence[1]>evidence[2]) {
+                        aCount++;
+                    }else if (evidence[1]<evidence[2]){
+                        bCount++;
+                    }
+                    i++;
                 }
-                double[] ds = {0, a / dss.size(), b / dss.size()};
+                double[] ds={0,0,0};
+                double count = (aCount+bCount);
+                for (double weight : weights) {
+                    count += weight;
+                }
+                i=0;
+                for (double[] evidence : dss) {
+                    ds[1] += evidence[1] * weights[i] * aCount / count / count;
+                    ds[2] += evidence[2] * weights[i] * bCount / count / count;
+                    i++;
+                }
                 id.setEvidenceDS(ds);
             }
         }
