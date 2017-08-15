@@ -21,8 +21,8 @@ import java.util.*;
 public class TestRun {//0.8255032462236143  0.8469250096962953
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {//0.8452342454394693
-        testRun(new ParameterImpl(),new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),",", 0, 2, 3, 1, 5,"/home/cellargalaxy","gbk",
-                new HereditaryParameter(),0.95,0.01,FeatureSelection.MEDIAN_MODEL,0, HereditaryParameter.USE_ORDER, 5,
+        testRun(new ParameterImpl(), new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"), ",", 0, 2, 3, 1, 5, "/home/cellargalaxy", "gbk",
+                new HereditaryParameter(), 0.95, 0.01, FeatureSelection.MEDIAN_MODEL, 0, HereditaryParameter.USE_ORDER, 5,
                 SubSpace.POWER_ADJUST, 0,
                 TestSetTest.AVER_SYNTHESIS, 0, 0, 0, 0);
 
@@ -41,7 +41,7 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
         double dsAUC = AUC.countAUC(trainDataSet, Id.DS_METHOD);
         double myDSAUC = AUC.countAUC(trainDataSet, Id.MY_DS_METHOD);
         double myDSAUC2 = AUC.countAUC(trainDataSet, Id.MY_DS_METHOD2);
-        int DSMethod=Id.MY_DS_METHOD2;
+        int DSMethod = Id.MY_DS_METHOD2;
         System.out.println(myDSAUC2);
 //        if (dsAUC > myDSAUC) {
 //            if (dsAUC>myDSAUC2) {
@@ -91,7 +91,7 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
         }
 
         LinkedList<DataSet> trainDataSets = new LinkedList<>();
-        LinkedList<Hereditary> hereditarys=new LinkedList<>();
+        LinkedList<Hereditary> hereditarys = new LinkedList<>();
         Iterator<LinkedList<Integer>> iterator = subSpaces.iterator();
         while (iterator.hasNext()) {
             LinkedList<Integer> subSpace = iterator.next();
@@ -106,8 +106,8 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
                 iterator.remove();
             }
         }
-        if (subSpaces.size()==0) {
-            LinkedList<Integer> subSpace=trainDataSet.getEvidenceNums();
+        if (subSpaces.size() == 0) {
+            LinkedList<Integer> subSpace = trainDataSet.getEvidenceNums();
             DataSet dataSet = CloneObject.clone(trainDataSet);
             Hereditary hereditary = Hereditary.superEvolution(new HereditaryParameter(), DSMethod, dataSet, HereditaryParameter.USE_ORDER, 5);
             trainDataSets.add(dataSet);
@@ -116,11 +116,11 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
         }
         TestSetTest.DSSubSpace(TestSetTest.AVER_SYNTHESIS, DSMethod, trainDataSets, trainDataSet, 0, 0, 0, 0);
 
-        double trainAUC=AUC.countAUC(trainDataSet, Id.TEST_DS_METHOD);
+        double trainAUC = AUC.countAUC(trainDataSet, Id.TEST_DS_METHOD);
         System.out.println("训练集TrainAUC:" + trainAUC);
 
-        OutputDataSet.outputDataSet(trainDataSet,"/home/cellargalaxy","gbk",",",OutputDataSet.TRAIN,
-                DSMethod,featureSelections,subSpaces,hereditarys,trainAUC);
+        OutputDataSet.outputDataSet(trainDataSet, "/home/cellargalaxy", "gbk", ",", OutputDataSet.TRAIN,
+                DSMethod, featureSelections, subSpaces, hereditarys, trainAUC);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -129,11 +129,11 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
 
         LinkedList<DataSet> testDataSets = new LinkedList<DataSet>();
         Iterator<LinkedList<Integer>> iteratorSubSpace = subSpaces.iterator();
-        Iterator<Hereditary> hereditaryIterator=hereditarys.iterator();
+        Iterator<Hereditary> hereditaryIterator = hereditarys.iterator();
         while (iteratorSubSpace.hasNext()) {
             DataSet dataSet = CloneObject.clone(testDataSet);
             LinkedList<Integer> subSpace = iteratorSubSpace.next();
-            Hereditary hereditary=hereditaryIterator.next();
+            Hereditary hereditary = hereditaryIterator.next();
             dataSet.allSaveEvidence(subSpace);
             dataSet.mulChro(hereditary.getMaxChro());
             testDataSets.add(dataSet);
@@ -143,11 +143,11 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
 
         TestSetTest.DSSubSpace(TestSetTest.AVER_SYNTHESIS, DSMethod, testDataSets, testDataSet, 0, 0, 0, 0);
 
-        double testAUC=AUC.countAUC(testDataSet, Id.TEST_DS_METHOD);
+        double testAUC = AUC.countAUC(testDataSet, Id.TEST_DS_METHOD);
         System.out.println("测试集TestAUC:" + testAUC);
 
-        OutputDataSet.outputDataSet(testDataSet,"/home/cellargalaxy","gbk",",",OutputDataSet.TEST,
-                DSMethod,featureSelections,subSpaces,hereditarys,testAUC);
+        OutputDataSet.outputDataSet(testDataSet, "/home/cellargalaxy", "gbk", ",", OutputDataSet.TEST,
+                DSMethod, featureSelections, subSpaces, hereditarys, testAUC);
     }
 
     //-------------------------------------------------------------------------------------------------------------------------------------
@@ -156,32 +156,32 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
     //-------------------------------------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------------------------------
 
-    private static void testRun(Parameter parameter,File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol,String savePath,String coding,
+    private static void testRun(Parameter parameter, File dataSetFile, String separator, int idClo, int ACol, int BCol, int evidCol, int labelCol, String savePath, String coding,
                                 HereditaryParameter hereditaryParameter, double stop1, double stop2, int featureSeparationMethodNum,
                                 double separationValue, int evolutionMethodNum, int evolutionCount,
                                 int adjustMethodNum, double d,
                                 int resultSynthesisMethodNum, double thrf, double thrnf, double d1, double d2) throws IOException, ClassNotFoundException {
-        SubDataSet subDataSet=new SubDataSet(dataSetFile,separator,idClo,ACol,BCol,evidCol,labelCol);
-        parameter.receiveCreateSubDataSet(subDataSet.getCom0Count(),subDataSet.getCom1Count(),subDataSet.getMiss0Count(),subDataSet.getMiss1Count());
-        DataSet[] subDataSets=subDataSet.createSubDataSet(parameter.getTest(),parameter.getMiss(),parameter.getLabel1());
+        SubDataSet subDataSet = new SubDataSet(dataSetFile, separator, idClo, ACol, BCol, evidCol, labelCol);
+        parameter.receiveCreateSubDataSet(subDataSet.getCom0Count(), subDataSet.getCom1Count(), subDataSet.getMiss0Count(), subDataSet.getMiss1Count());
+        DataSet[] subDataSets = subDataSet.createSubDataSet(parameter.getTest(), parameter.getMiss(), parameter.getLabel1());
         double dsAUC = AUC.countAUC(subDataSets[0], Id.DS_METHOD);
         double myDSAUC = AUC.countAUC(subDataSets[0], Id.MY_DS_METHOD);
         double myDSAUC2 = AUC.countAUC(subDataSets[0], Id.MY_DS_METHOD2);
-        System.out.println("dsAUC:"+dsAUC+" myDSAUC:"+myDSAUC+" myDSAUC2:"+myDSAUC2);
+        System.out.println("dsAUC:" + dsAUC + " myDSAUC:" + myDSAUC + " myDSAUC2:" + myDSAUC2);
         int DSMethod;
         if (dsAUC > myDSAUC) {
-            if (dsAUC>myDSAUC2) {
+            if (dsAUC > myDSAUC2) {
                 DSMethod = Id.DS_METHOD;
                 System.out.println("训练集原始AUC:" + dsAUC);
-            }else {
+            } else {
                 DSMethod = Id.MY_DS_METHOD2;
                 System.out.println("训练集原始AUC:" + myDSAUC2);
             }
         } else {
-            if (myDSAUC>myDSAUC2) {
+            if (myDSAUC > myDSAUC2) {
                 DSMethod = Id.MY_DS_METHOD;
                 System.out.println("训练集原始AUC:" + myDSAUC);
-            }else {
+            } else {
                 DSMethod = Id.MY_DS_METHOD2;
                 System.out.println("训练集原始AUC:" + myDSAUC2);
             }
@@ -216,7 +216,7 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
         }
 
         LinkedList<DataSet> trainDataSets = new LinkedList<>();
-        LinkedList<Hereditary> hereditarys=new LinkedList<>();
+        LinkedList<Hereditary> hereditarys = new LinkedList<>();
         Iterator<LinkedList<Integer>> iterator = subSpaces.iterator();
         while (iterator.hasNext()) {
             LinkedList<Integer> subSpace = iterator.next();
@@ -231,7 +231,7 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
                 iterator.remove();
             }
         }
-        if (subSpaces.size()==0) {
+        if (subSpaces.size() == 0) {
             LinkedList<Integer> subSpace = subDataSets[0].getEvidenceNums();
             DataSet dataSet = CloneObject.clone(subDataSets[0]);
             Hereditary hereditary = Hereditary.superEvolution(hereditaryParameter, DSMethod, dataSet, evolutionMethodNum, evolutionCount);
@@ -242,21 +242,21 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
         }
         TestSetTest.DSSubSpace(resultSynthesisMethodNum, DSMethod, trainDataSets, subDataSets[0], thrf, thrnf, d1, d2);
 
-        double trainAUC=AUC.countAUC(subDataSets[0], Id.TEST_DS_METHOD);
+        double trainAUC = AUC.countAUC(subDataSets[0], Id.TEST_DS_METHOD);
         System.out.println("训练集TrainAUC:" + trainAUC);
 
-        OutputDataSet.outputDataSet(subDataSets[0],savePath,coding,separator,OutputDataSet.TRAIN,
-                DSMethod,featureSelections,subSpaces,hereditarys,trainAUC);
+        OutputDataSet.outputDataSet(subDataSets[0], savePath, coding, separator, OutputDataSet.TRAIN,
+                DSMethod, featureSelections, subSpaces, hereditarys, trainAUC);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
         LinkedList<DataSet> testDataSets = new LinkedList<DataSet>();
         Iterator<LinkedList<Integer>> iteratorSubSpace = subSpaces.iterator();
-        Iterator<Hereditary> hereditaryIterator=hereditarys.iterator();
+        Iterator<Hereditary> hereditaryIterator = hereditarys.iterator();
         while (iteratorSubSpace.hasNext()) {
             DataSet dataSet = CloneObject.clone(subDataSets[1]);
             LinkedList<Integer> subSpace = iteratorSubSpace.next();
-            Hereditary hereditary=hereditaryIterator.next();
+            Hereditary hereditary = hereditaryIterator.next();
             dataSet.allSaveEvidence(subSpace);
             dataSet.mulChro(hereditary.getMaxChro());
             testDataSets.add(dataSet);
@@ -266,11 +266,11 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
 
         TestSetTest.DSSubSpace(resultSynthesisMethodNum, DSMethod, testDataSets, subDataSets[1], thrf, thrnf, d1, d2);
 
-        double testAUC=AUC.countAUC(subDataSets[1], Id.TEST_DS_METHOD);
+        double testAUC = AUC.countAUC(subDataSets[1], Id.TEST_DS_METHOD);
         System.out.println("测试集TestAUC:" + testAUC);
 
-        OutputDataSet.outputDataSet(subDataSets[1],savePath,coding,separator,OutputDataSet.TEST,
-                DSMethod,featureSelections,subSpaces,hereditarys,testAUC);
+        OutputDataSet.outputDataSet(subDataSets[1], savePath, coding, separator, OutputDataSet.TEST,
+                DSMethod, featureSelections, subSpaces, hereditarys, testAUC);
     }
 
 //	public static void main(String[] args) throws IOException {
