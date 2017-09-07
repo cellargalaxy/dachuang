@@ -1,14 +1,14 @@
-package testRun;
+package version1.testRun;
 
-import auc.AUC;
-import dataSet.DataSet;
-import dataSet.Id;
-import dataSet.OutputDataSet;
-import dataSet.SubDataSet;
-import feature.FeatureSelection;
-import feature.SubSpace;
-import feature.TestSetTest;
-import hereditary.*;
+import version1.auc.AUC;
+import version1.dataSet.DataSet;
+import version1.dataSet.Id;
+import version1.dataSet.OutputDataSet;
+import version1.dataSet.SubDataSet;
+import version1.feature.FeatureSelection;
+import version1.feature.SubSpace;
+import version1.feature.TestSetTest;
+import version1.hereditary.*;
 import util.CloneObject;
 
 import java.io.*;
@@ -21,13 +21,13 @@ import java.util.*;
 public class TestRun {//0.8255032462236143  0.8469250096962953
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {//0.8452342454394693
-        testRun(new ParameterImpl(), new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"), ",", 0, 2, 3, 1, 5, "/home/cellargalaxy", "gbk",
+        testRun(new ParameterImpl(), new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/trainAll.csv"), ",", 0, 2, 3, 1, 5, "/home/cellargalaxy", "gbk",
                 new HereditaryParameter(), 0.95, 0.01, FeatureSelection.MEDIAN_MODEL, 0, HereditaryParameter.USE_ORDER, 5,
                 SubSpace.POWER_ADJUST, 0,
                 TestSetTest.AVER_SYNTHESIS, 0, 0, 0, 0);
 
 //        Parameter parameter=new ParameterImpl();
-//        SubDataSet subDataSet=new SubDataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),",", 0, 2, 3, 1, 5);
+//        SubDataSet subDataSet=new SubDataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/trainAll.csv"),",", 0, 2, 3, 1, 5);
 //        parameter.receiveCreateSubDataSet(subDataSet.getCom0Count(),subDataSet.getCom1Count(),subDataSet.getMiss0Count(),subDataSet.getMiss1Count());
 //        DataSet[] subDataSets=subDataSet.createSubDataSet(parameter.getTest(),parameter.getMiss(),parameter.getLabel1());
 //        System.out.println(subDataSet.getIds().size());
@@ -36,7 +36,7 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
     }
 
     private static void testRun() throws IOException, ClassNotFoundException {
-        DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
+        DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/trainAll.csv"),
                 ",", 0, 2, 3, 1, 5);
         double dsAUC = AUC.countAUC(trainDataSet, Id.DS_METHOD);
         double myDSAUC = AUC.countAUC(trainDataSet, Id.MY_DS_METHOD);
@@ -90,8 +90,8 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
             System.out.println(subSpace);
         }
 
-        LinkedList<DataSet> trainDataSets = new LinkedList<>();
-        LinkedList<Hereditary> hereditarys = new LinkedList<>();
+        LinkedList<DataSet> trainDataSets = new LinkedList<DataSet>();
+        LinkedList<Hereditary> hereditarys = new LinkedList<Hereditary>();
         Iterator<LinkedList<Integer>> iterator = subSpaces.iterator();
         while (iterator.hasNext()) {
             LinkedList<Integer> subSpace = iterator.next();
@@ -124,7 +124,7 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
 
-        DataSet testDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testAll.csv"),
+        DataSet testDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/testAll.csv"),
                 ",", 0, 2, 3, 1, 5);
 
         LinkedList<DataSet> testDataSets = new LinkedList<DataSet>();
@@ -215,8 +215,8 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
             System.out.println(subSpace);
         }
 
-        LinkedList<DataSet> trainDataSets = new LinkedList<>();
-        LinkedList<Hereditary> hereditarys = new LinkedList<>();
+        LinkedList<DataSet> trainDataSets = new LinkedList<DataSet>();
+        LinkedList<Hereditary> hereditarys = new LinkedList<Hereditary>();
         Iterator<LinkedList<Integer>> iterator = subSpaces.iterator();
         while (iterator.hasNext()) {
             LinkedList<Integer> subSpace = iterator.next();
@@ -274,9 +274,9 @@ public class TestRun {//0.8255032462236143  0.8469250096962953
     }
 
 //	public static void main(String[] args) throws IOException {
-//		File trainSet=new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testSet.csv");
-//		File trainLabel=new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testLabel.csv");
-//		File trainAll=new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/testAll.csv");
+//		File trainSet=new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/testSet.csv");
+//		File trainLabel=new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/testLabel.csv");
+//		File trainAll=new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/testAll.csv");
 //
 //		BufferedReader trainSetRead=new BufferedReader(new FileReader(trainSet));
 //		BufferedReader trainLabelRead=new BufferedReader(new FileReader(trainLabel));

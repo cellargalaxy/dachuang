@@ -1,6 +1,6 @@
-package dataSet;
+package version1.dataSet;
 
-import hereditary.Hereditary;
+import version1.hereditary.Hereditary;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -14,7 +14,7 @@ import java.util.LinkedList;
 public class OutputDataSet {
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     public static final String TRAIN="train";
-    public static final String TEST="test";
+    public static final String TEST= "svmTest";
 
 
     public static void outputDataSet(DataSet dataSet,String savePath,String coding,String separator,String name,

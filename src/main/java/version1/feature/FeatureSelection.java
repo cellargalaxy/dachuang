@@ -1,8 +1,8 @@
-package feature;
+package version1.feature;
 
-import dataSet.DataSet;
-import hereditary.Hereditary;
-import hereditary.HereditaryParameter;
+import version1.dataSet.DataSet;
+import version1.hereditary.Hereditary;
+import version1.hereditary.HereditaryParameter;
 import util.CloneObject;
 
 import java.io.IOException;

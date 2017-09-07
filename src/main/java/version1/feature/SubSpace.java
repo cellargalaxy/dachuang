@@ -1,6 +1,6 @@
-package feature;
+package version1.feature;
 
-import hereditary.Roulette;
+import version1.hereditary.Roulette;
 import util.CloneObject;
 
 import java.io.IOException;

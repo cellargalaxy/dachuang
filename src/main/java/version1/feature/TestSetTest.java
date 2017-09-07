@@ -1,7 +1,7 @@
-package feature;
+package version1.feature;
 
-import dataSet.DataSet;
-import dataSet.Id;
+import version1.dataSet.DataSet;
+import version1.dataSet.Id;
 
 import java.util.HashMap;
 import java.util.LinkedList;

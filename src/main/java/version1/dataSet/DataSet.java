@@ -1,7 +1,7 @@
-package dataSet;
+package version1.dataSet;
 
 
-import auc.AUC;
+import version1.auc.AUC;
 
 import java.io.*;
 import java.util.*;
@@ -19,7 +19,7 @@ public class DataSet implements Serializable {
     private Map<String, Integer> evidNameToId;
 
     public static void main(String[] args) throws IOException {
-        DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/dataSet/trainAll.csv"),
+        DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/trainAll.csv"),
                 ",", 0, 2, 3, 1, 5);
         System.out.println(AUC.countAUC(trainDataSet,Id.MY_DS_METHOD2));
     }

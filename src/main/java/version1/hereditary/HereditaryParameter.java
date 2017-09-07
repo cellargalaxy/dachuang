@@ -1,4 +1,4 @@
-package hereditary;
+package version1.hereditary;
 
 /**
  * Created by cellargalaxy on 17-7-18.

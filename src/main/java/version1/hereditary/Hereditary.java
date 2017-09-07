@@ -1,7 +1,7 @@
-package hereditary;
+package version1.hereditary;
 
-import auc.AUC;
-import dataSet.DataSet;
+import version1.auc.AUC;
+import version1.dataSet.DataSet;
 import util.CloneObject;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class Hereditary {
             for (int j = 0; j < chro.length; j++) {
                 chro[j] *= max;
             }
-//			System.out.println(hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAUC());
         }
         hereditary.setMaxChro(chro);
         hereditary.setDataSet(dataSet1);
@@ -88,7 +88,7 @@ public class Hereditary {
             hereditary = new Hereditary(hereditaryParameter, DSMethodNum, dataSet1);
             hereditary.evolution(evolutionMethodNum);
             dataSet1.mulChro(hereditary.getMaxChro());
-//			System.out.println(hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAUC());
         }
         return hereditary.getMaxAUC();
     }
@@ -101,7 +101,7 @@ public class Hereditary {
             hereditary = new Hereditary(hereditaryParameter, DSMethodNum, dataSet1);
             hereditary.evolution(evolutionMethodNum);
             dataSet1.mulChro(hereditary.getMaxChro());
-//			System.out.println(hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAUC());
         }
         return hereditary.getMaxAUC();
     }
@@ -114,7 +114,7 @@ public class Hereditary {
             hereditary = new Hereditary(hereditaryParameter, DSMethodNum, dataSet1);
             hereditary.evolution(evolutionMethodNum);
             dataSet1.mulChro(hereditary.getMaxChro());
-//			System.out.println(hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAUC());
         }
         return hereditary.getMaxAUC();
     }
@@ -128,7 +128,7 @@ public class Hereditary {
      * @throws ClassNotFoundException
      */
     public void evolution(int evolutionMethodNum) throws IOException, ClassNotFoundException {
-//		if (dataSet.getEvidenceNums().size() > 1) {
+//		if (version1.dataSet.getEvidenceNums().size() > 1) {
         double[][] chros = createInitChros();
         do {
             chros = createNewChros(dataSet, chros, evolutionMethodNum);

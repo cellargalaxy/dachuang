@@ -1,7 +1,7 @@
-package auc;
+package version1.auc;
 
-import dataSet.DataSet;
-import dataSet.Id;
+import version1.dataSet.DataSet;
+import version1.dataSet.Id;
 
 import java.util.LinkedList;
 
