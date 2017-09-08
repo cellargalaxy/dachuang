@@ -6,8 +6,7 @@ package version1.hereditary;
 public class HereditaryParameter {
     public static final int USE_Roulette = 1;
     public static final int USE_ORDER = 2;
-
-
+    
     //染色体数
     private int chrosNum;
     //保留染色体比例
@@ -69,9 +68,9 @@ public class HereditaryParameter {
         //迭代次数
         iterNum = 100;
         //最多相同最大解次数
-        sameNum = 50;
+        sameNum = 30;
         //相同解范围
-        sameDeviation = 0.001;
+        sameDeviation = 0.01;
     }
 
     public void init(int evidenceCount) {

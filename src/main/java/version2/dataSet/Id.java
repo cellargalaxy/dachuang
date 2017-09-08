@@ -1,13 +1,15 @@
 package version2.dataSet;
 
+
 import version2.auc.DsCount;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
  * Created by cellargalaxy on 17-9-7.
  */
-public abstract class Id implements DsCount {
+public class Id implements Serializable{
 	public static final int LABEL_1 = 1;
 	public static final int LABEL_0 = 0;
 	private final String id;

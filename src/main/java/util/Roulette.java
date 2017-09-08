@@ -1,4 +1,4 @@
-package version1.hereditary;
+package util;
 
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package version1.hereditary;
 
+import util.Roulette;
 import version1.auc.AUC;
 import version1.dataSet.DataSet;
 import util.CloneObject;
@@ -74,7 +75,7 @@ public class Hereditary {
             for (int j = 0; j < chro.length; j++) {
                 chro[j] *= max;
             }
-//			System.out.println(version1.hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAuc());
         }
         hereditary.setMaxChro(chro);
         hereditary.setDataSet(dataSet1);
@@ -88,7 +89,7 @@ public class Hereditary {
             hereditary = new Hereditary(hereditaryParameter, DSMethodNum, dataSet1);
             hereditary.evolution(evolutionMethodNum);
             dataSet1.mulChro(hereditary.getMaxChro());
-//			System.out.println(version1.hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAuc());
         }
         return hereditary.getMaxAUC();
     }
@@ -101,7 +102,7 @@ public class Hereditary {
             hereditary = new Hereditary(hereditaryParameter, DSMethodNum, dataSet1);
             hereditary.evolution(evolutionMethodNum);
             dataSet1.mulChro(hereditary.getMaxChro());
-//			System.out.println(version1.hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAuc());
         }
         return hereditary.getMaxAUC();
     }
@@ -114,7 +115,7 @@ public class Hereditary {
             hereditary = new Hereditary(hereditaryParameter, DSMethodNum, dataSet1);
             hereditary.evolution(evolutionMethodNum);
             dataSet1.mulChro(hereditary.getMaxChro());
-//			System.out.println(version1.hereditary.getMaxAUC());
+//			System.out.println(version1.hereditary.getMaxAuc());
         }
         return hereditary.getMaxAUC();
     }

@@ -11,6 +11,18 @@ public class DataSetParameter {
 	private int ACol=3;
 	private int BCol=4;
 	
+	public DataSetParameter() {
+	}
+	
+	public DataSetParameter(String coding, int idClo, int labelCol, int evidCol, int ACol, int BCol) {
+		this.coding = coding;
+		this.idClo = idClo;
+		this.labelCol = labelCol;
+		this.evidCol = evidCol;
+		this.ACol = ACol;
+		this.BCol = BCol;
+	}
+	
 	public String getCoding() {
 		return coding;
 	}
