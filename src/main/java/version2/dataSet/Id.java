@@ -1,8 +1,6 @@
 package version2.dataSet;
 
 
-import version2.auc.DsCount;
-
 import java.io.Serializable;
 import java.util.LinkedList;
 

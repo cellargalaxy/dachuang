@@ -4,14 +4,20 @@ package version2.dataSet;
  * Created by cellargalaxy on 17-9-7.
  */
 public class DataSetParameter {
-	private String coding="utf-8";
-	private int idClo=0;
-	private int labelCol=1;
-	private int evidCol=2;
-	private int ACol=3;
-	private int BCol=4;
+	private String coding;
+	private int idClo;
+	private int labelCol;
+	private int evidCol;
+	private int ACol;
+	private int BCol;
 	
 	public DataSetParameter() {
+		coding="utf-8";
+		idClo=0;
+		labelCol=1;
+		evidCol=2;
+		ACol=3;
+		BCol=4;
 	}
 	
 	public DataSetParameter(String coding, int idClo, int labelCol, int evidCol, int ACol, int BCol) {

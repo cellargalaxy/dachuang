@@ -5,20 +5,22 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by cellargalaxy on 17-9-8.
+ * Created by cellargalaxy on 17-9-9.
  */
-public class MedianFeatureSeparation implements FeatureSeparation{
+public class CustomizeFeatureSeparation implements FeatureSeparation{
+	private double separationValue;
+	
+	public CustomizeFeatureSeparation(double separationValue) {
+		this.separationValue = separationValue;
+	}
 	
 	public final void separationFeature(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unImproEvid) {
-		int count=aucImprotences.size()/2;
-		int i=0;
 		for (Map.Entry<Double, Integer> entry : aucImprotences.entrySet()) {
-			if (i<=count) {
+			if (entry.getKey() <= separationValue) {
 				imroEvid.add(entry.getValue());
-			}else {
+			} else {
 				unImproEvid.add(entry.getValue());
 			}
-			i++;
 		}
 	}
 }

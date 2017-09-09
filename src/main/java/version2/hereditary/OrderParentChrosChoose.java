@@ -5,7 +5,7 @@ package version2.hereditary;
  */
 public class OrderParentChrosChoose implements ParentChrosChoose {
 	
-	public double[][] chooseParentChros(double[] aucs, double[][] newChros) {
+	public final double[][] chooseParentChros(double[] aucs, double[][] newChros) {
 		double[][] parentChros;
 		if ((newChros.length - aucs.length) % 2 == 0) {
 			parentChros = new double[newChros.length - aucs.length][];

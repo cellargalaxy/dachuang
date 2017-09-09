@@ -6,7 +6,7 @@ import util.Roulette;
  * Created by cellargalaxy on 17-9-8.
  */
 public class RouletteParentChrosChoose implements ParentChrosChoose {
-	public double[][] chooseParentChros(double[] aucs, double[][] newChros) {
+	public final double[][] chooseParentChros(double[] aucs, double[][] newChros) {
 		double[][] parentChros;
 		if ((newChros.length - aucs.length) % 2 == 0) {
 			parentChros = new double[newChros.length - aucs.length][];
