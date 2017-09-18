@@ -25,7 +25,133 @@ import java.util.*;
 public class Run {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		run();
+		RunParameter runParameter=new TestRunParameter();
+		File dataSetFile=new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/subspacedata.csv");
+		DataSetParameter dataSetParameter=new DataSetParameter("utf-8",0,4,1,2,3);
+	
+	
+//		//全局参数
+//		RunParameter runParameter=new TestRunParameter();
+//		DataSetParameter dataSetParameter=new DataSetParameter("utf-8",0,5,1,2,3);
+//		DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/trainAll.csv"),dataSetParameter);
+//		DataSet testDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/testAll.csv"),dataSetParameter);
+//		DsCount[] dsCounts={new TeaDsCount()};
+//		File trainOutputFile=new File("/home/cellargalaxy/trainSubSpaceDataSet.csv");
+//		File testOutputFile=new File("/home/cellargalaxy/testSubSpaceDataSet.csv");
+//		//遗传算法
+//		HereditaryParameter hereditaryParameter=new HereditaryParameter();
+//		hereditaryParameter.setIterNum(500);
+//		hereditaryParameter.setSameNum(100);
+//		ParentChrosChoose parentChrosChoose=new RouletteParentChrosChoose();
+//		//特征选择
+//		FeatureSeparation featureSeparation=new MedianFeatureSeparation();
+//		double stop=0.01;
+//		//子空间
+//		ImprotenceAdjust improtenceAdjust=new PowerImprotenceAdjust();
+//		//子空间合成
+//		DsCount subSpaceDsCount=new AverageDsCount();
+//
+//		run(runParameter,trainDataSet,testDataSet,dsCounts,trainOutputFile,testOutputFile,
+//				hereditaryParameter,parentChrosChoose,
+//				featureSeparation,stop,
+//				improtenceAdjust,
+//				subSpaceDsCount);
+	}
+	
+	public static final void run(RunParameter runParameter,DataSet trainDataSet,DataSet testDataSet,DsCount[] dsCounts,File trainOutputFile,File testOutputFile,//全局参数
+	                             HereditaryParameter hereditaryParameter,ParentChrosChoose parentChrosChoose,//遗传算法
+	                             FeatureSeparation featureSeparation,double stop,//特征选择
+	                             ImprotenceAdjust improtenceAdjust,//子空间
+	                             DsCount subSpaceDsCount//子空间合成
+	) throws IOException, ClassNotFoundException {
+		DsCount dsCount=null;
+		AucCount aucCount=null;
+		double dsAuc=-1;
+		Hereditary hereditary=new Hereditary(trainDataSet);
+		for (DsCount dsCount1 : dsCounts) {
+			AucCount aucCount1=new Auc(dsCount1);
+			hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount1);
+			
+			System.out.println("ds auc:"+hereditary.getMaxAuc());/////////////////////////////////////
+			
+			if (hereditary.getMaxAuc()>dsAuc) {
+				dsAuc=hereditary.getMaxAuc();
+				dsCount=dsCount1;
+				aucCount=aucCount1;
+			}
+		}
+		System.out.println("--------------------------------------------------------");
+		System.out.println();
+		
+		Map<Double, Integer> featureMap= FeatureSelection.featureSelection(aucCount,hereditaryParameter,parentChrosChoose,featureSeparation,stop,hereditary);
+		
+		int len=featureMap.get(Double.MAX_VALUE);
+		List<Integer> features=new LinkedList<Integer>();
+		double[] impros=new double[len];
+		int i=0;
+		System.out.println("重要特征:");
+		for (Map.Entry<Double, Integer> entry : featureMap.entrySet()) {
+			features.add(entry.getValue());
+			impros[i]=entry.getKey();
+			
+			System.out.println(entry.getValue()+" "+entry.getKey());
+			i++;
+			if (i>=len) {
+				break;
+			}
+		}
+		double featureAuc=aucCount.countAuc(trainDataSet,features);
+		System.out.println("训练集特征选择 auc:"+featureAuc);
+		System.out.println("--------------------------------------------------------");
+		System.out.println();
+		
+		runParameter.receiveCreateSubSpaces(impros);
+		int[] sn = runParameter.getSn();
+		int fnMin=runParameter.getFnMin();
+		List<List<Integer>> subSpaces = SubSpace.createSubSpaces(features,impros,sn,fnMin,improtenceAdjust);
+		System.out.println("子空间:");
+		for (List<Integer> subSpace : subSpaces) {
+			System.out.println(subSpace);
+		}
+		System.out.println("--------------------------------------------------------");
+		System.out.println();
+		
+		Map<DataSet,double[]> trainSubSpaceMap=new HashMap<DataSet, double[]>();
+		Iterator<List<Integer>> iterator = subSpaces.iterator();
+		while (iterator.hasNext()) {
+			List<Integer> subSpace = iterator.next();
+			DataSet dataSet=hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount,subSpace);
+			if (hereditary.getMaxAuc() >= featureAuc) {
+				trainSubSpaceMap.put(dataSet,hereditary.getMaxChro());
+				System.out.println("训练子空间训练集进化AUC:" + hereditary.getMaxAuc());
+			}
+		}
+		if (trainSubSpaceMap.size() == 0) {
+			trainSubSpaceMap.put(hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount,features),hereditary.getMaxChro());
+			System.out.println("全子空间训练集进化AUC:" + featureAuc);
+		}
+		
+		DataSet trainSubSpaceDataSet=SubSpace2DataSet.subSpace2DataSet(trainSubSpaceMap,dsCount);
+		Auc subSpaceAucCount=new Auc(subSpaceDsCount);
+		double trainSubSpaceAuc=subSpaceAucCount.countAuc(trainSubSpaceDataSet);
+		System.out.println("trainSubSpaceDataSet auc:"+trainSubSpaceAuc);
+		
+		DataSet.outputDataSet(trainSubSpaceDataSet,trainOutputFile,trainSubSpaceAuc,dsCount,trainDataSet.getEvidNameToId(),featureMap,sn,trainSubSpaceMap);
+		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		Map<DataSet,double[]> testSubSpaceMap=new HashMap<DataSet, double[]>();
+		for (Map.Entry<DataSet, double[]> entry : trainSubSpaceMap.entrySet()) {
+			List<Integer> subSpace=entry.getKey().getEvidenceNums();
+			DataSet dataSet=CloneObject.clone(testDataSet);
+			dataSet.removeNotEqual(subSpace);
+			testSubSpaceMap.put(dataSet,entry.getValue());
+			System.out.println("测试子空间训练集进化AUC:" + aucCount.countAuc(dataSet));
+		}
+		DataSet testSubSpaceDataSet=SubSpace2DataSet.subSpace2DataSet(testSubSpaceMap,dsCount);
+		double testSubSpaceAuc=subSpaceAucCount.countAuc(testSubSpaceDataSet);
+		System.out.println("testSubSpaceDataSet auc:"+testSubSpaceAuc);
+		DataSet.outputDataSet(testSubSpaceDataSet,testOutputFile,testSubSpaceAuc,dsCount,testDataSet.getEvidNameToId(),featureMap,sn,testSubSpaceMap);
 	}
 	
 	public static final void run() throws IOException, ClassNotFoundException {
@@ -44,7 +170,9 @@ public class Run {
 		for (DsCount dsCount1 : dsCounts) {
 			AucCount aucCount1=new Auc(dsCount1);
 			hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount1);
+			
 			System.out.println("ds auc:"+hereditary.getMaxAuc());/////////////////////////////////////
+			
 			if (hereditary.getMaxAuc()>dsAuc) {
 				dsAuc=hereditary.getMaxAuc();
 				dsCount=dsCount1;
@@ -55,14 +183,14 @@ public class Run {
 		System.out.println();
 		
 		FeatureSeparation featureSeparation=new MedianFeatureSeparation();
-		Map<Double, Integer> map= FeatureSelection.featureSelection(aucCount,hereditaryParameter,parentChrosChoose,featureSeparation,0.01,hereditary);
+		Map<Double, Integer> featureMap= FeatureSelection.featureSelection(aucCount,hereditaryParameter,parentChrosChoose,featureSeparation,0.01,hereditary);
 		
-		int len=map.get(Double.MAX_VALUE);
+		int len=featureMap.get(Double.MAX_VALUE);
 		List<Integer> features=new LinkedList<Integer>();
 		double[] impros=new double[len];
 		int i=0;
 		System.out.println("重要特征:");
-		for (Map.Entry<Double, Integer> entry : map.entrySet()) {
+		for (Map.Entry<Double, Integer> entry : featureMap.entrySet()) {
 			features.add(entry.getValue());
 			impros[i]=entry.getKey();
 			
@@ -72,10 +200,8 @@ public class Run {
 				break;
 			}
 		}
-		DataSet featureDataSet=hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount,features);
-		double featureAuc=hereditary.getMaxAuc();
-		double[] featureChro=hereditary.getMaxChro();
-		System.out.println("特征选择 auc:"+featureAuc);
+		double trainFeatureAuc=aucCount.countAuc(trainDataSet,features);
+		System.out.println("训练集特征选择 auc:"+trainFeatureAuc);
 		System.out.println("--------------------------------------------------------");
 		System.out.println();
 		
@@ -89,24 +215,43 @@ public class Run {
 		System.out.println("--------------------------------------------------------");
 		System.out.println();
 		
-		Map<DataSet,double[]> subSpaceMap=new HashMap<DataSet, double[]>();
+		Map<DataSet,double[]> trainSubSpaceMap=new HashMap<DataSet, double[]>();
 		Iterator<List<Integer>> iterator = subSpaces.iterator();
 		while (iterator.hasNext()) {
 			List<Integer> subSpace = iterator.next();
 			DataSet dataSet=hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount,subSpace);
-			if (hereditary.getMaxAuc() >= featureAuc) {
-				subSpaceMap.put(dataSet,hereditary.getMaxChro());
-				System.out.println("子空间训练集进化AUC:" + hereditary.getMaxAuc());
+			if (hereditary.getMaxAuc() >= trainFeatureAuc) {
+				trainSubSpaceMap.put(dataSet,hereditary.getMaxChro());
+				System.out.println("训练子空间训练集进化AUC:" + hereditary.getMaxAuc());
 			}
-			
 		}
-		if (subSpaceMap.size() == 0) {
-			subSpaceMap.put(featureDataSet,featureChro);
-			System.out.println("全子空间训练集进化AUC:" + featureAuc);
+		if (trainSubSpaceMap.size() == 0) {
+			trainSubSpaceMap.put(hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount,features),hereditary.getMaxChro());
+			System.out.println("全子空间训练集进化AUC:" + trainFeatureAuc);
 		}
 		
-		DataSet subSpaceDataSet=SubSpace2DataSet.subSpace2DataSet(subSpaceMap,dsCount);
-		System.out.println("subSpaceDataSet auc:"+new Auc(new AverageDsCount()).countAuc(subSpaceDataSet));
+		DataSet trainSubSpaceDataSet=SubSpace2DataSet.subSpace2DataSet(trainSubSpaceMap,dsCount);
+		Auc subSpaceAucCount=new Auc(new AverageDsCount());
+		double trainSubSpaceAuc=subSpaceAucCount.countAuc(trainSubSpaceDataSet);
+		System.out.println("trainSubSpaceDataSet auc:"+trainSubSpaceAuc);
+		
+		DataSet.outputDataSet(trainSubSpaceDataSet,new File("/home/cellargalaxy/trainSubSpaceDataSet.csv"),trainSubSpaceAuc,dsCount,trainDataSet.getEvidNameToId(),featureMap,sn,trainSubSpaceMap);
+		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		DataSet testDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/testAll.csv"),dataSetParameter);
+		Map<DataSet,double[]> testSubSpaceMap=new HashMap<DataSet, double[]>();
+		for (Map.Entry<DataSet, double[]> entry : trainSubSpaceMap.entrySet()) {
+			List<Integer> subSpace=entry.getKey().getEvidenceNums();
+			DataSet dataSet=CloneObject.clone(testDataSet);
+			dataSet.removeNotEqual(subSpace);
+			testSubSpaceMap.put(dataSet,entry.getValue());
+			System.out.println("测试子空间训练集进化AUC:" + aucCount.countAuc(dataSet));
+		}
+		DataSet testSubSpaceDataSet=SubSpace2DataSet.subSpace2DataSet(testSubSpaceMap,dsCount);
+		double testSubSpaceAuc=subSpaceAucCount.countAuc(testSubSpaceDataSet);
+		System.out.println("testSubSpaceDataSet auc:"+testSubSpaceAuc);
+		DataSet.outputDataSet(testSubSpaceDataSet,new File("/home/cellargalaxy/testSubSpaceDataSet.csv"),testSubSpaceAuc,dsCount,testDataSet.getEvidNameToId(),featureMap,sn,testSubSpaceMap);
 	}
 	
 }

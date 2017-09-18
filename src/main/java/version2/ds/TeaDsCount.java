@@ -9,6 +9,10 @@ import java.util.Iterator;
  */
 public class TeaDsCount implements DsCount {
 	
+	public String getName() {
+		return "DS证据合成";
+	}
+	
 	public double[] countDs(Id id) {
 		if (id.getEvidences().size() == 0) {
 			return null;

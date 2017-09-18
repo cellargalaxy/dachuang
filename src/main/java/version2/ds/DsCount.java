@@ -8,6 +8,8 @@ import version2.dataSet.Id;
  * Created by cellargalaxy on 17-9-7.
  */
 public interface DsCount {
+	String getName();
+	
 	double[] countDs(Id id);
 	
 	double[] countDs(Id id, Integer withoutEvidNum);

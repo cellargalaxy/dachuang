@@ -6,6 +6,10 @@ import version2.dataSet.Id;
  * Created by cellargalaxy on 17-9-9.
  */
 public class AverageDsCount implements DsCount{
+	public String getName() {
+		return "平均证据合成";
+	}
+	
 	public double[] countDs(Id id) {
 		double[] ds={0,0,0};
 		for (double[] doubles : id.getEvidences()) {

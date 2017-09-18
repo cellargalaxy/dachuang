@@ -39,21 +39,15 @@ public class FeatureSelection {
 		LinkedList<Integer> unInproEvid = new LinkedList<Integer>();
 		featureSeparation.separationFeature(aucImprotences, imroEvid, unInproEvid);
 		
-		DataSet dataSet1 = CloneObject.clone(hereditary.getDataSet());
-		dataSet1.removeNotEqual(imroEvid);
-		Hereditary hereditary1 = new Hereditary(dataSet1);
-		hereditary1.evolution(hereditaryParameter,parentChrosChoose, aucCount);
-		double auc = hereditary1.getMaxAuc();
+		hereditary.evolution(hereditaryParameter,parentChrosChoose, aucCount,imroEvid);
+		double auc = hereditary.getMaxAuc();
 		while (Math.abs(aucFull - auc) > stop) {
 			double aucJ = -1;
 			int evidenceNum = -1;
 			for (Integer integer : unInproEvid) {
 				LinkedList<Integer> newImroEvid = CloneObject.clone(imroEvid);
 				newImroEvid.add(integer);
-				dataSet1 = CloneObject.clone(hereditary.getDataSet());
-				dataSet1.removeNotEqual(imroEvid);
-				hereditary1 = new Hereditary(dataSet1);
-				hereditary1.evolution(hereditaryParameter,parentChrosChoose, aucCount);
+				hereditary.evolution(hereditaryParameter,parentChrosChoose, aucCount,newImroEvid);
 				if (hereditary.getMaxAuc() > aucJ) {
 					aucJ = hereditary.getMaxAuc();
 					evidenceNum = integer;
