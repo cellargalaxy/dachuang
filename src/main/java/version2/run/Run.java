@@ -3,6 +3,7 @@ package version2.run;
 import util.CloneObject;
 import version2.dataSet.DataSet;
 import version2.dataSet.DataSetParameter;
+import version2.dataSet.SubDataSet;
 import version2.ds.*;
 import version2.feature.FeatureSelection;
 import version2.feature.FeatureSeparation;
@@ -25,37 +26,50 @@ import java.util.*;
 public class Run {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		//全局参数
 		RunParameter runParameter=new TestRunParameter();
 		File dataSetFile=new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/subspacedata.csv");
-		DataSetParameter dataSetParameter=new DataSetParameter("utf-8",0,4,1,2,3);
+		DataSetParameter dataSetParameter=new DataSetParameter("utf-8",0,5,4,1,2);
+		DsCount[] dsCounts={new TeaDsCount(),new MyDsCount(),new My2DsCount()};
+		File trainOutputFile=new File("/home/cellargalaxy/trainSubSpaceDataSet.csv");
+		File testOutputFile=new File("/home/cellargalaxy/testSubSpaceDataSet.csv");
+		//遗传算法
+		HereditaryParameter hereditaryParameter=new HereditaryParameter();
+		hereditaryParameter.setIterNum(500);
+		hereditaryParameter.setSameNum(100);
+		ParentChrosChoose parentChrosChoose=new RouletteParentChrosChoose();
+		//特征选择
+		FeatureSeparation featureSeparation=new MedianFeatureSeparation();
+		double stop=0.01;
+		//子空间
+		ImprotenceAdjust improtenceAdjust=new PowerImprotenceAdjust();
+		//子空间合成
+		DsCount subSpaceDsCount=new AverageDsCount();
+
+		run(runParameter,dataSetFile,dataSetParameter,dsCounts,trainOutputFile,testOutputFile,
+				hereditaryParameter,parentChrosChoose,
+				featureSeparation,stop,
+				improtenceAdjust,
+				subSpaceDsCount);
+	}
 	
-	
-//		//全局参数
-//		RunParameter runParameter=new TestRunParameter();
-//		DataSetParameter dataSetParameter=new DataSetParameter("utf-8",0,5,1,2,3);
-//		DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/trainAll.csv"),dataSetParameter);
-//		DataSet testDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/testAll.csv"),dataSetParameter);
-//		DsCount[] dsCounts={new TeaDsCount()};
-//		File trainOutputFile=new File("/home/cellargalaxy/trainSubSpaceDataSet.csv");
-//		File testOutputFile=new File("/home/cellargalaxy/testSubSpaceDataSet.csv");
-//		//遗传算法
-//		HereditaryParameter hereditaryParameter=new HereditaryParameter();
-//		hereditaryParameter.setIterNum(500);
-//		hereditaryParameter.setSameNum(100);
-//		ParentChrosChoose parentChrosChoose=new RouletteParentChrosChoose();
-//		//特征选择
-//		FeatureSeparation featureSeparation=new MedianFeatureSeparation();
-//		double stop=0.01;
-//		//子空间
-//		ImprotenceAdjust improtenceAdjust=new PowerImprotenceAdjust();
-//		//子空间合成
-//		DsCount subSpaceDsCount=new AverageDsCount();
-//
-//		run(runParameter,trainDataSet,testDataSet,dsCounts,trainOutputFile,testOutputFile,
-//				hereditaryParameter,parentChrosChoose,
-//				featureSeparation,stop,
-//				improtenceAdjust,
-//				subSpaceDsCount);
+	public static final void run(RunParameter runParameter,File dataSetFile,DataSetParameter dataSetParameter,DsCount[] dsCounts,File trainOutputFile,File testOutputFile,//全局参数
+	                             HereditaryParameter hereditaryParameter,ParentChrosChoose parentChrosChoose,//遗传算法
+	                             FeatureSeparation featureSeparation,double stop,//特征选择
+	                             ImprotenceAdjust improtenceAdjust,//子空间
+	                             DsCount subSpaceDsCount//子空间合成
+	) throws IOException, ClassNotFoundException {
+		SubDataSet subDataSet=new SubDataSet(dataSetFile,dataSetParameter);
+		runParameter.receiveCreateSubDataSet(subDataSet.getCom0Count(),subDataSet.getCom1Count(),subDataSet.getMiss0Count(),subDataSet.getMiss1Count());
+		DataSet[] dataSets=subDataSet.createSubDataSet(runParameter.getTest(),runParameter.getMiss(),runParameter.getLabel1());
+		DataSet trainDataSet = dataSets[0];
+		DataSet testDataSet = dataSets[1];
+		
+		run(runParameter,trainDataSet,testDataSet,dsCounts,trainOutputFile,testOutputFile,
+				hereditaryParameter,parentChrosChoose,
+				featureSeparation,stop,
+				improtenceAdjust,
+				subSpaceDsCount);
 	}
 	
 	public static final void run(RunParameter runParameter,DataSet trainDataSet,DataSet testDataSet,DsCount[] dsCounts,File trainOutputFile,File testOutputFile,//全局参数
@@ -72,7 +86,7 @@ public class Run {
 			AucCount aucCount1=new Auc(dsCount1);
 			hereditary.evolution(hereditaryParameter,parentChrosChoose,aucCount1);
 			
-			System.out.println("ds auc:"+hereditary.getMaxAuc());/////////////////////////////////////
+			System.out.println(dsCount1.getName()+" ds auc:"+hereditary.getMaxAuc());/////////////////////////////////////
 			
 			if (hereditary.getMaxAuc()>dsAuc) {
 				dsAuc=hereditary.getMaxAuc();

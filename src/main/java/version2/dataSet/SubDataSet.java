@@ -173,4 +173,36 @@ public class SubDataSet {
 		}
 		return i;
 	}
+	
+	public int getCom0Count() {
+		return com0Count;
+	}
+	
+	public void setCom0Count(int com0Count) {
+		this.com0Count = com0Count;
+	}
+	
+	public int getCom1Count() {
+		return com1Count;
+	}
+	
+	public void setCom1Count(int com1Count) {
+		this.com1Count = com1Count;
+	}
+	
+	public int getMiss0Count() {
+		return miss0Count;
+	}
+	
+	public void setMiss0Count(int miss0Count) {
+		this.miss0Count = miss0Count;
+	}
+	
+	public int getMiss1Count() {
+		return miss1Count;
+	}
+	
+	public void setMiss1Count(int miss1Count) {
+		this.miss1Count = miss1Count;
+	}
 }

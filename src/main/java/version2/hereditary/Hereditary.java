@@ -29,7 +29,7 @@ public class Hereditary {
 	
 	
 	public final void evolution(HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, AucCount aucCount) throws IOException, ClassNotFoundException {
-		initEvolution(hereditaryParameter);
+		initEvolution(dataSet,hereditaryParameter);
 		//最大AUC
 		maxAuc = aucCount.countIndexAuc(dataSet, maxChro);
 		double[][] chros = createInitChros();
@@ -40,7 +40,7 @@ public class Hereditary {
 	}
 	
 	public final void evolution(HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, AucCount aucCount, Integer withoutEvidNum) throws IOException, ClassNotFoundException {
-		initEvolution(hereditaryParameter);
+		initEvolution(dataSet,hereditaryParameter);
 		//最大AUC
 		maxAuc = aucCount.countIndexAuc(dataSet, withoutEvidNum, maxChro);
 		double[][] chros = createInitChros();
@@ -51,11 +51,11 @@ public class Hereditary {
 	}
 	
 	public final DataSet evolution(HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, AucCount aucCount, List<Integer> withEvidNums) throws IOException, ClassNotFoundException {
-		initEvolution(hereditaryParameter);
 		DataSet cloneDataSet=CloneObject.clone(dataSet);
 		cloneDataSet.removeNotEqual(withEvidNums);
+		initEvolution(cloneDataSet,hereditaryParameter);
 		//最大AUC
-		maxAuc = aucCount.countOrderAuc(dataSet, withEvidNums, maxChro);
+		maxAuc = aucCount.countOrderAuc(cloneDataSet, withEvidNums, maxChro);
 		double[][] chros = createInitChros();
 		do {
 			chros = createOrderNewChros(cloneDataSet, chros, aucCount, parentChrosChoose);
@@ -64,7 +64,7 @@ public class Hereditary {
 		return cloneDataSet;
 	}
 	
-	private void initEvolution(HereditaryParameter hereditaryParameter) {
+	private void initEvolution(DataSet dataSet,HereditaryParameter hereditaryParameter) {
 		this.hereditaryParameter = hereditaryParameter;
 		hereditaryParameter.init(dataSet.getEvidenceNums().size());
 		//已迭代次数
