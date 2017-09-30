@@ -1,8 +1,8 @@
 package svmTest;
 
 import libsvm.*;
-import version1.dataSet.DataSet;
-import version1.dataSet.Id;
+import version3.dataSet.DataSet;
+import version3.dataSet.Id;
 
 import java.io.*;
 

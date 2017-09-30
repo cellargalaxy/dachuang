@@ -1,8 +1,8 @@
 package svmTest;
 
 import libsvm.*;
-import version1.dataSet.DataSet;
-import version1.dataSet.Id;
+import version3.dataSet.DataSet;
+import version3.dataSet.Id;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class MySvmTrain {
 	 * 运行
 	 * @throws IOException
 	 */
-	public void run(DataSet dataSet,File model_file) throws IOException{
+	public void run(DataSet dataSet, File model_file) throws IOException{
 		//读取参数
 		parse_command_line(new String[]{" "});
 		//读取数据集

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 /**
  * Created by cellargalaxy on 17-9-19.
  */
-public class My2EvidenceSynthesis implements EvidenceSynthesis {
+public final class My2EvidenceSynthesis implements EvidenceSynthesis {
 	public String getName() {
 		return "距离2DS合成";
 	}
@@ -59,7 +59,7 @@ public class My2EvidenceSynthesis implements EvidenceSynthesis {
 			double[] weights = new double[evidences.size()];
 			int i = 0;
 			for (double[] evidence : evidences) {
-				if (!withoutEvidNum.equals((int)(evidence[0]))) {
+				if (!withoutEvidNum.equals((int) (evidence[0]))) {
 					weights[i] = Math.pow(Math.pow(evidence[1], 2) + Math.pow(evidence[2], 2), 0.5) * Math.abs(evidence[1] - evidence[2]);
 					if (evidence[1] > evidence[2]) {
 						aCount++;
@@ -118,7 +118,7 @@ public class My2EvidenceSynthesis implements EvidenceSynthesis {
 			i = 0;
 			for (double[] evidence : evidences) {
 				ds[1] += evidence[1] * chro[2 * (int) (evidence[0]) - 2] * (weights[i] / w) * (aCount / ab);
-				ds[2] += evidence[2]  * chro[2 * (int) (evidence[0]) - 1]* (weights[i] / w) * (bCount / ab);
+				ds[2] += evidence[2] * chro[2 * (int) (evidence[0]) - 1] * (weights[i] / w) * (bCount / ab);
 				i++;
 			}
 			return ds;
@@ -172,7 +172,7 @@ public class My2EvidenceSynthesis implements EvidenceSynthesis {
 			double[] weights = new double[evidences.size()];
 			int i = 0;
 			for (double[] evidence : evidences) {
-				if (!withoutEvidNum.equals((int)(evidence[0]))) {
+				if (!withoutEvidNum.equals((int) (evidence[0]))) {
 					weights[i] = Math.pow(Math.pow(evidence[1] * chro[2 * (int) (evidence[0]) - 2], 2) + Math.pow(evidence[2] * chro[2 * (int) (evidence[0]) - 1], 2), 0.5) * Math.abs(evidence[1] * chro[2 * (int) (evidence[0]) - 2] - evidence[2] * chro[2 * (int) (evidence[0]) - 1]);
 					if (evidence[1] > evidence[2]) {
 						aCount++;
@@ -194,7 +194,7 @@ public class My2EvidenceSynthesis implements EvidenceSynthesis {
 			i = 0;
 			for (double[] evidence : evidences) {
 				ds[1] += evidence[1] * chro[2 * (int) (evidence[0]) - 2] * (weights[i] / w) * (aCount / ab);
-				ds[2] += evidence[2]  * chro[2 * (int) (evidence[0]) - 1]* (weights[i] / w) * (bCount / ab);
+				ds[2] += evidence[2] * chro[2 * (int) (evidence[0]) - 1] * (weights[i] / w) * (bCount / ab);
 				i++;
 			}
 			return ds;

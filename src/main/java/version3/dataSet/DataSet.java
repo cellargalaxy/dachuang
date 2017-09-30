@@ -15,8 +15,8 @@ import java.util.*;
 /**
  * Created by cellargalaxy on 17-9-7.
  */
-public class DataSet implements Serializable{
-	public static final String CSV_Record_SEPARATOR="\n";
+public class DataSet implements Serializable {
+	public static final String CSV_Record_SEPARATOR = "\n";
 	
 	private final LinkedList<Id> ids;
 	private final LinkedList<Integer> evidenceNums;
@@ -32,24 +32,24 @@ public class DataSet implements Serializable{
 		Iterator<Id> iteratorId = ids.iterator();
 		while (iteratorId.hasNext()) {
 			Id id = iteratorId.next();
-			if (id.getEvidences().size()<evidences.size()) {
+			if (id.getEvidences().size() < evidences.size()) {
 				iteratorId.remove();
 				continue;
 			}
-			Iterator<double[]> iteratorEvi=id.getEvidences().iterator();
+			Iterator<double[]> iteratorEvi = id.getEvidences().iterator();
 			while (iteratorEvi.hasNext()) {
-				if (!evidences.contains((int)(iteratorEvi.next()[0]))) {
+				if (!evidences.contains((int) (iteratorEvi.next()[0]))) {
 					iteratorEvi.remove();
 				}
-				if (id.getEvidences().size()<evidences.size()) {
+				if (id.getEvidences().size() < evidences.size()) {
 					iteratorId.remove();
 					break;
 				}
 			}
 		}
-		Iterator<Integer> iteratorEvidenceNums=evidenceNums.iterator();
+		Iterator<Integer> iteratorEvidenceNums = evidenceNums.iterator();
 		while (iteratorEvidenceNums.hasNext()) {
-			int evi=iteratorEvidenceNums.next();
+			int evi = iteratorEvidenceNums.next();
 			if (!evidences.contains(evi)) {
 				iteratorEvidenceNums.remove();
 			}
@@ -79,72 +79,72 @@ public class DataSet implements Serializable{
 	                                       double subSpaceAuc, EvidenceSynthesis evidenceSynthesis, Evaluation evaluation,
 	                                       Map<String, Integer> evidNameToId,
 	                                       Map<Double, Integer> featureMap,
-	                                       Map<DataSet,double[]> subSpaceMap) throws IOException {
+	                                       Map<DataSet, double[]> subSpaceMap) throws IOException {
 		outputDataSet.getParentFile().mkdirs();
-		CSVFormat csvFormat =  CSVFormat.DEFAULT.withRecordSeparator(CSV_Record_SEPARATOR);
+		CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator(CSV_Record_SEPARATOR);
 		CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputDataSet), csvFormat);
-		csvPrinter.printRecord("id","label","A","B","AB");
+		csvPrinter.printRecord("id", "label", "A", "B", "AB");
 		for (Id id : subDataSet.getIds()) {
-			double[] doubles= evidenceSynthesis.synthesisEvidence(id);
-			csvPrinter.printRecord(id.getId(),id.getLabel(),doubles[1],doubles[2],1-doubles[1]-doubles[2]);
+			double[] doubles = evidenceSynthesis.synthesisEvidence(id);
+			csvPrinter.printRecord(id.getId(), id.getLabel(), doubles[1], doubles[2], 1 - doubles[1] - doubles[2]);
 		}
 		
 		csvPrinter.printRecord();
-		csvPrinter.printRecord("fnMin","sn","测试集比例","缺失集比例","标签1比例");
-		csvPrinter.printRecord(runParameter.getFnMin(),Arrays.toString(runParameter.getSn()),runParameter.getTest(),runParameter.getMiss(),runParameter.getLabel1());
+		csvPrinter.printRecord("fnMin", "sn", "测试集比例", "缺失集比例", "标签1比例");
+		csvPrinter.printRecord(runParameter.getFnMin(), Arrays.toString(runParameter.getSn()), runParameter.getTest(), runParameter.getMiss(), runParameter.getLabel1());
 		
-		Map<String,Integer> evidenceCountMap=new HashMap<String, Integer>();
+		Map<String, Integer> evidenceCountMap = new HashMap<String, Integer>();
 		for (Id id : dataSet.getIds()) {
-			List<Integer> evidNums=new LinkedList<Integer>();
+			List<Integer> evidNums = new LinkedList<Integer>();
 			for (double[] doubles : id.getEvidences()) {
-				evidNums.add((int)doubles[0]);
+				evidNums.add((int) doubles[0]);
 			}
 			Collections.sort(evidNums);
 			String string;
-			if (id.getLabel()== Id.LABEL_0) {
-				string=evidNums.size()+"个特征0标签"+evidNums.toString();
-			}else {
-				string=evidNums.size()+"个特征1标签"+evidNums.toString();
+			if (id.getLabel() == Id.LABEL_0) {
+				string = evidNums.size() + "个特征0标签" + evidNums.toString();
+			} else {
+				string = evidNums.size() + "个特征1标签" + evidNums.toString();
 			}
-			Integer count=evidenceCountMap.get(string);
-			if (count==null) {
-				count=new Integer(0);
+			Integer count = evidenceCountMap.get(string);
+			if (count == null) {
+				count = new Integer(0);
 			}
-			evidenceCountMap.put(string,count+1);
+			evidenceCountMap.put(string, count + 1);
 		}
 		csvPrinter.printRecord();
 		for (Map.Entry<String, Integer> entry : evidenceCountMap.entrySet()) {
-			csvPrinter.printRecord(entry.getKey(),(double)entry.getValue()/dataSet.getIds().size());
+			csvPrinter.printRecord(entry.getKey(), (double) entry.getValue() / dataSet.getIds().size());
 		}
 		
 		csvPrinter.printRecord();
-		csvPrinter.printRecord("AUC",subSpaceAuc);
+		csvPrinter.printRecord("AUC", subSpaceAuc);
 		
 		csvPrinter.printRecord();
-		csvPrinter.printRecord("证据编号","证据名");
+		csvPrinter.printRecord("证据编号", "证据名");
 		for (Map.Entry<String, Integer> entry : evidNameToId.entrySet()) {
-			csvPrinter.printRecord(entry.getValue(),entry.getKey());
+			csvPrinter.printRecord(entry.getValue(), entry.getKey());
 		}
 		
 		csvPrinter.printRecord();
 		csvPrinter.printRecord("证据合成", evidenceSynthesis.getName());
 		
 		csvPrinter.printRecord();
-		int len=featureMap.get(Double.MAX_VALUE);
-		int i=0;
+		int len = featureMap.get(Double.MAX_VALUE);
+		int i = 0;
 		csvPrinter.printRecord("重要特征");
 		for (Map.Entry<Double, Integer> entry : featureMap.entrySet()) {
-			csvPrinter.printRecord(entry.getValue(),entry.getKey());
+			csvPrinter.printRecord(entry.getValue(), entry.getKey());
 			i++;
-			if (i==len) {
+			if (i == len) {
 				csvPrinter.printRecord("不重要特征");
 			}
 		}
 		
 		csvPrinter.printRecord();
-		csvPrinter.printRecord("子空间","子空间AUC","染色体");
+		csvPrinter.printRecord("子空间", "子空间AUC", "染色体");
 		for (Map.Entry<DataSet, double[]> entry : subSpaceMap.entrySet()) {
-			csvPrinter.printRecord(entry.getKey().getEvidenceNums(), evaluation.countOrderEvaluation(entry.getKey(),entry.getValue()),Arrays.toString(entry.getValue()));
+			csvPrinter.printRecord(entry.getKey().getEvidenceNums(), evaluation.countOrderEvaluation(entry.getKey(), entry.getValue()), Arrays.toString(entry.getValue()));
 		}
 		
 		csvPrinter.close();

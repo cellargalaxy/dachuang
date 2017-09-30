@@ -5,4 +5,16 @@ package version3.dataSet;
  */
 public interface DataSetSeparation {
 	DataSet[] separationDataSet(double test, double miss, double label1);
+	
+	int getCom0Count();
+	
+	
+	int getCom1Count();
+	
+	
+	int getMiss0Count();
+	
+	
+	int getMiss1Count();
+	
 }

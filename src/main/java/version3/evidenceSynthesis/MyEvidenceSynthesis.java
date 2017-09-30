@@ -7,7 +7,7 @@ import java.util.LinkedList;
 /**
  * Created by cellargalaxy on 17-9-19.
  */
-public class MyEvidenceSynthesis implements EvidenceSynthesis {
+public final class MyEvidenceSynthesis implements EvidenceSynthesis {
 	public String getName() {
 		return "距离DS合成";
 	}

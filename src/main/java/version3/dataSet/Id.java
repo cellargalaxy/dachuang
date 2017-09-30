@@ -7,7 +7,7 @@ import java.util.LinkedList;
 /**
  * Created by cellargalaxy on 17-9-7.
  */
-public class Id implements Serializable{
+public class Id implements Serializable {
 	public static final int LABEL_1 = 1;
 	public static final int LABEL_0 = 0;
 	private final String id;

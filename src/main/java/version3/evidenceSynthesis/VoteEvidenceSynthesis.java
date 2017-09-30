@@ -7,12 +7,11 @@ import java.util.LinkedList;
 /**
  * Created by cellargalaxy on 17-9-19.
  */
-public class VoteEvidenceSynthesis implements EvidenceSynthesis {
+public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 	private final double thrf;
 	private final double thrnf;
 	private final double d1;
 	private final double d2;
-	
 	
 	public VoteEvidenceSynthesis(double thrf, double thrnf, double d1, double d2) {
 		this.thrf = thrf;
@@ -38,9 +37,9 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		double[] ds = {0, 0, 0};
 		if (a > b) {
-			ds[1]=(a - b) / (a + b) * d1;
+			ds[1] = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2]=(b - a) / (a + b) * d2;
+			ds[2] = (b - a) / (a + b) * d2;
 		}
 		return ds;
 	}
@@ -50,7 +49,7 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		double a = 0;
 		double b = 0;
 		for (double[] evidence : evidences) {
-			if (withoutEvidNum.equals((int)(evidence[0]))) {
+			if (withoutEvidNum.equals((int) (evidence[0]))) {
 				continue;
 			}
 			if (evidence[1] > thrf) {
@@ -61,9 +60,9 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		double[] ds = {0, 0, 0};
 		if (a > b) {
-			ds[1]=(a - b) / (a + b) * d1;
+			ds[1] = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2]=(b - a) / (a + b) * d2;
+			ds[2] = (b - a) / (a + b) * d2;
 		}
 		return ds;
 	}
@@ -81,9 +80,9 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		double[] ds = {0, 0, 0};
 		if (a > b) {
-			ds[1]=(a - b) / (a + b) * d1;
+			ds[1] = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2]=(b - a) / (a + b) * d2;
+			ds[2] = (b - a) / (a + b) * d2;
 		}
 		return ds;
 	}
@@ -92,7 +91,7 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		LinkedList<double[]> evidences = id.getEvidences();
 		double a = 0;
 		double b = 0;
-		int i=0;
+		int i = 0;
 		for (double[] evidence : evidences) {
 			if (evidence[1] * chro[2 * i] > thrf) {
 				a++;
@@ -103,9 +102,9 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		double[] ds = {0, 0, 0};
 		if (a > b) {
-			ds[1]=(a - b) / (a + b) * d1;
+			ds[1] = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2]=(b - a) / (a + b) * d2;
+			ds[2] = (b - a) / (a + b) * d2;
 		}
 		return ds;
 	}
@@ -115,7 +114,7 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		double a = 0;
 		double b = 0;
 		for (double[] evidence : evidences) {
-			if (withoutEvidNum.equals((int)(evidence[0]))) {
+			if (withoutEvidNum.equals((int) (evidence[0]))) {
 				continue;
 			}
 			if (evidence[1] * chro[2 * (int) (evidence[0]) - 2] > thrf) {
@@ -126,9 +125,9 @@ public class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		double[] ds = {0, 0, 0};
 		if (a > b) {
-			ds[1]=(a - b) / (a + b) * d1;
+			ds[1] = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2]=(b - a) / (a + b) * d2;
+			ds[2] = (b - a) / (a + b) * d2;
 		}
 		return ds;
 	}

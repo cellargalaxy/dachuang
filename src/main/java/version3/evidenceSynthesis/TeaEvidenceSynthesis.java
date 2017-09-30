@@ -7,7 +7,7 @@ import java.util.Iterator;
 /**
  * Created by cellargalaxy on 17-9-9.
  */
-public class TeaEvidenceSynthesis implements EvidenceSynthesis {
+public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 	
 	public String getName() {
 		return "DS证据合成";
@@ -40,17 +40,17 @@ public class TeaEvidenceSynthesis implements EvidenceSynthesis {
 				if (!withoutEvidNum.equals((int) (ds1[0]))) {
 					break;
 				}
-			}while (iterator.hasNext());
+			} while (iterator.hasNext());
 			if (!iterator.hasNext()) {
 				return null;
 			}
-			do{
+			do {
 				ds2 = iterator.next();
 				if (withoutEvidNum.equals((int) (ds2[0]))) {
 					continue;
 				}
 				ds1 = countEvidence(ds1, ds2);
-			}while (iterator.hasNext());
+			} while (iterator.hasNext());
 			return ds1;
 		}
 	}
@@ -100,19 +100,19 @@ public class TeaEvidenceSynthesis implements EvidenceSynthesis {
 				if (!withoutEvidNum.equals((int) (ds[0]))) {
 					break;
 				}
-			}while (iterator.hasNext());
+			} while (iterator.hasNext());
 			if (!iterator.hasNext()) {
 				return null;
 			}
 			double[] ds1 = {ds[0], ds[1] * chro[2 * (int) (ds[0]) - 2], ds[2] * chro[2 * (int) (ds[0]) - 1]};
-			do{
+			do {
 				ds = iterator.next();
 				if (withoutEvidNum.equals((int) (ds[0]))) {
 					continue;
 				}
 				double[] ds2 = {ds[0], ds[1] * chro[2 * (int) (ds[0]) - 2], ds[2] * chro[2 * (int) (ds[0]) - 1]};
 				ds1 = countEvidence(ds1, ds2);
-			}while (iterator.hasNext());
+			} while (iterator.hasNext());
 			return ds1;
 		}
 	}

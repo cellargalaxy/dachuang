@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by cellargalaxy on 17-9-28.
  */
-public class DataSetSeparationImpl extends DataSet implements DataSetSeparation {
+public final class DataSetSeparationImpl extends DataSet implements DataSetSeparation {
 	private int com0Count;
 	private int com1Count;
 	private int miss0Count;
@@ -19,13 +19,13 @@ public class DataSetSeparationImpl extends DataSet implements DataSetSeparation 
 	
 	public DataSetSeparationImpl(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
 		super(new LinkedList<Id>(), new LinkedList<Integer>(), new LinkedHashMap<String, Integer>());
-		createIds(dataSetFile,dataSetParameter);
+		createIds(dataSetFile, dataSetParameter);
 		initCount();
 	}
 	
 	private void initCount() {
-		LinkedList<Id> ids=getIds();
-		LinkedList<Integer> evidenceNums=getEvidenceNums();
+		LinkedList<Id> ids = getIds();
+		LinkedList<Integer> evidenceNums = getEvidenceNums();
 		for (Id id : ids) {
 			if (id.getEvidences().size() == evidenceNums.size()) {
 				if (id.getLabel() == Id.LABEL_0) {
@@ -48,8 +48,8 @@ public class DataSetSeparationImpl extends DataSet implements DataSetSeparation 
 	}
 	
 	private final void createIds(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
-		LinkedList<Id> ids=getIds();
-		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(new BufferedReader(new InputStreamReader(new FileInputStream(dataSetFile),dataSetParameter.getCoding())));
+		LinkedList<Id> ids = getIds();
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(new BufferedReader(new InputStreamReader(new FileInputStream(dataSetFile), dataSetParameter.getCoding())));
 		String id = null;
 		int label = -1;
 		LinkedList<double[]> evidences = null;
@@ -75,8 +75,8 @@ public class DataSetSeparationImpl extends DataSet implements DataSetSeparation 
 	}
 	
 	private final int createEvidNum(String evidName) {
-		LinkedList<Integer> evidenceNums=getEvidenceNums();
-		Map<String, Integer> evidNameToId=getEvidNameToId();
+		LinkedList<Integer> evidenceNums = getEvidenceNums();
+		Map<String, Integer> evidNameToId = getEvidNameToId();
 		Integer i = evidNameToId.get(evidName);
 		if (i == null) {
 			i = evidNameToId.size() + 1;
@@ -87,14 +87,14 @@ public class DataSetSeparationImpl extends DataSet implements DataSetSeparation 
 	}
 	
 	public DataSet[] separationDataSet(double test, double miss, double label1) {
-		LinkedList<Id> ids=getIds();
-		LinkedList<Integer> evidenceNums=getEvidenceNums();
-		Map<String, Integer> evidNameToId=getEvidNameToId();
+		LinkedList<Id> ids = getIds();
+		LinkedList<Integer> evidenceNums = getEvidenceNums();
+		Map<String, Integer> evidNameToId = getEvidNameToId();
 		
-		int addCom0Count=com0Count;
-		int addCom1Count=com1Count;
-		int addMiss0Count=miss0Count;
-		int addMiss1Count=miss1Count;
+		int addCom0Count = com0Count;
+		int addCom1Count = com1Count;
+		int addMiss0Count = miss0Count;
+		int addMiss1Count = miss1Count;
 		if ((double) (com0Count + miss0Count) / ids.size() > (1 - label1)) {
 			addMiss0Count = (int) ((1 - label1) * ids.size() - com0Count);
 			if (addMiss0Count < 0) {
@@ -108,72 +108,92 @@ public class DataSetSeparationImpl extends DataSet implements DataSetSeparation 
 				addMiss1Count = 0;
 			}
 		}
-		if (((double)(addMiss0Count+addMiss1Count)/ids.size())>miss) {
-			addMiss0Count=(int)((addMiss0Count/(addMiss0Count+addMiss1Count))*miss*ids.size());
-			addMiss1Count=(int)((addMiss1Count/(addMiss0Count+addMiss1Count))*miss*ids.size());
+		if (((double) (addMiss0Count + addMiss1Count) / ids.size()) > miss) {
+			addMiss0Count = (int) ((addMiss0Count / (addMiss0Count + addMiss1Count)) * miss * ids.size());
+			addMiss1Count = (int) ((addMiss1Count / (addMiss0Count + addMiss1Count)) * miss * ids.size());
 		}
 		
-		int addTestCom0Count=(int)(test*addCom0Count);
-		int addTestCom1Count=(int)(test*addCom1Count);
-		int addTestMiss0Count=(int)(test*addMiss0Count);
-		int addTestMiss1Count=(int)(test*addMiss1Count);
+		int addTestCom0Count = (int) (test * addCom0Count);
+		int addTestCom1Count = (int) (test * addCom1Count);
+		int addTestMiss0Count = (int) (test * addMiss0Count);
+		int addTestMiss1Count = (int) (test * addMiss1Count);
 		
-		int addTrainCom0Count=addCom0Count-addTestCom0Count;
-		int addTrainCom1Count=addCom1Count-addTestCom1Count;
-		int addTrainMiss0Count=addMiss0Count-addTestMiss0Count;
-		int addTrainMiss1Count=addMiss1Count-addTestMiss1Count;
+		int addTrainCom0Count = addCom0Count - addTestCom0Count;
+		int addTrainCom1Count = addCom1Count - addTestCom1Count;
+		int addTrainMiss0Count = addMiss0Count - addTestMiss0Count;
+		int addTrainMiss1Count = addMiss1Count - addTestMiss1Count;
 		
-		int yetTestCom0Count=0;
-		int yetTestCom1Count=0;
-		int yetTestMiss0Count=0;
-		int yetTestMiss1Count=0;
+		int yetTestCom0Count = 0;
+		int yetTestCom1Count = 0;
+		int yetTestMiss0Count = 0;
+		int yetTestMiss1Count = 0;
 		
-		int yetTrainCom0Count=0;
-		int yetTrainCom1Count=0;
-		int yetTrainMiss0Count=0;
-		int yetTrainMiss1Count=0;
+		int yetTrainCom0Count = 0;
+		int yetTrainCom1Count = 0;
+		int yetTrainMiss0Count = 0;
+		int yetTrainMiss1Count = 0;
 		
-		LinkedList<Id> trainIds=new LinkedList<Id>();
-		LinkedList<Id> testIds=new LinkedList<Id>();
+		LinkedList<Id> trainIds = new LinkedList<Id>();
+		LinkedList<Id> testIds = new LinkedList<Id>();
 		for (Id id : ids) {
 			if (id.getEvidences().size() == evidenceNums.size()) {
 				if (id.getLabel() == Id.LABEL_0) {  //com0
-					if (yetTrainCom0Count<=addTrainCom0Count) {
+					if (yetTrainCom0Count <= addTrainCom0Count) {
 						trainIds.add(id);
 						yetTrainCom0Count++;
-					}else if (yetTestCom0Count<=addTestCom0Count){
+					} else if (yetTestCom0Count <= addTestCom0Count) {
 						testIds.add(id);
 						yetTestCom0Count++;
 					}
 				} else {    //com1
-					if (yetTrainCom1Count<=addTrainCom1Count) {
+					if (yetTrainCom1Count <= addTrainCom1Count) {
 						trainIds.add(id);
 						yetTrainCom1Count++;
-					}else if (yetTestCom1Count<=addTestCom1Count){
+					} else if (yetTestCom1Count <= addTestCom1Count) {
 						testIds.add(id);
 						yetTestCom1Count++;
 					}
 				}
 			} else {
 				if (id.getLabel() == Id.LABEL_0) {  //miss0
-					if (yetTrainMiss0Count<=addTrainMiss0Count) {
+					if (yetTrainMiss0Count <= addTrainMiss0Count) {
 						trainIds.add(id);
 						yetTrainMiss0Count++;
-					}else if (yetTestMiss0Count<=addTestMiss0Count){
+					} else if (yetTestMiss0Count <= addTestMiss0Count) {
 						testIds.add(id);
 						yetTestMiss0Count++;
 					}
 				} else {    //miss1
-					if (yetTrainMiss1Count<=addTrainMiss1Count) {
+					if (yetTrainMiss1Count <= addTrainMiss1Count) {
 						trainIds.add(id);
 						yetTrainMiss1Count++;
-					}else if (yetTestMiss1Count<=addTestMiss1Count){
+					} else if (yetTestMiss1Count <= addTestMiss1Count) {
 						testIds.add(id);
 						yetTestMiss1Count++;
 					}
 				}
 			}
 		}
-		return new DataSet[]{new DataSet(trainIds,evidenceNums,evidNameToId),new DataSet(testIds,evidenceNums,evidNameToId)};
+		return new DataSet[]{new DataSet(trainIds, evidenceNums, evidNameToId), new DataSet(testIds, evidenceNums, evidNameToId)};
 	}
+	
+	public int getCom0Count() {
+		return com0Count;
+	}
+	
+	
+	public int getCom1Count() {
+		return com1Count;
+	}
+	
+	
+	public int getMiss0Count() {
+		return miss0Count;
+	}
+	
+	
+	public int getMiss1Count() {
+		return miss1Count;
+	}
+	
 }

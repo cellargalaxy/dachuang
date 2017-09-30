@@ -7,7 +7,7 @@ import java.util.TreeMap;
 /**
  * Created by cellargalaxy on 17-9-9.
  */
-public class CustomizeFeatureSeparation implements FeatureSeparation {
+public final class CustomizeFeatureSeparation implements FeatureSeparation {
 	private double separationValue;
 	
 	public CustomizeFeatureSeparation(double separationValue) {

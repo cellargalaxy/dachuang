@@ -7,7 +7,7 @@ import java.util.TreeMap;
 /**
  * Created by cellargalaxy on 17-9-9.
  */
-public class AverageFeatureSeparation implements FeatureSeparation {
+public final class AverageFeatureSeparation implements FeatureSeparation {
 	public final void separationFeature(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unImproEvid) {
 		double count = 0;
 		for (Map.Entry<Double, Integer> entry : aucImprotences.entrySet()) {

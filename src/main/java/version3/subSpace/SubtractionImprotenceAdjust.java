@@ -5,8 +5,8 @@ import java.util.LinkedList;
 /**
  * Created by cellargalaxy on 17-9-9.
  */
-public class SubtractionImprotenceAdjust implements ImprotenceAdjust {
-	private double adjustD;
+public final class SubtractionImprotenceAdjust implements ImprotenceAdjust {
+	private final double adjustD;
 	
 	public SubtractionImprotenceAdjust(double adjustD) {
 		this.adjustD = adjustD;

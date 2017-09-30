@@ -3,7 +3,7 @@ package version3.hereditary;
 /**
  * Created by cellargalaxy on 17-9-8.
  */
-public class OrderParentChrosChoose implements ParentChrosChoose {
+public final class OrderParentChrosChoose implements ParentChrosChoose {
 	
 	public final double[][] chooseParentChros(double[] aucs, double[][] newChros) {
 		double[][] parentChros;

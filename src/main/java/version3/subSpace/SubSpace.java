@@ -36,7 +36,7 @@ public class SubSpace {
 		return subSpaces;
 	}
 	
-	private static final int countC(int n, int m) {
+	private static int countC(int n, int m) {
 		int mm = 1;
 		for (int i = 0; i < n; i++) {
 			mm *= (m - i);
@@ -48,7 +48,7 @@ public class SubSpace {
 		return mm / nn;
 	}
 	
-	private static final List<Integer> createSubSpace(List<Integer> oldFeatures, List<Double> oldImpros, int len) throws IOException, ClassNotFoundException {
+	private static List<Integer> createSubSpace(List<Integer> oldFeatures, List<Double> oldImpros, int len) throws IOException, ClassNotFoundException {
 		List<Integer> newFeatures = CloneObject.clone(oldFeatures);
 		List<Double> newImpros = CloneObject.clone(oldImpros);
 		List<Integer> subSpace = new LinkedList<Integer>();
@@ -61,7 +61,7 @@ public class SubSpace {
 		return subSpace;
 	}
 	
-	private static final boolean siContainSubSpace(List<List<Integer>> subSpaces, List<Integer> features) {
+	private static boolean siContainSubSpace(List<List<Integer>> subSpaces, List<Integer> features) {
 		main:
 		for (List<Integer> subSpace : subSpaces) {
 			if (subSpace.size() == features.size()) {

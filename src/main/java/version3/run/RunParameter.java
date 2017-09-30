@@ -11,7 +11,7 @@ public abstract class RunParameter {
 	private int[] sn;
 	private int fnMin;
 	
-	public abstract void receiveCreateSubDataSet(int com0Count,int com1Count,int miss0Count,int miss1Count);
+	public abstract void receiveCreateSubDataSet(int com0Count, int com1Count, int miss0Count, int miss1Count);
 	
 	public abstract void receiveCreateSubSpaces(double[] impros);
 	

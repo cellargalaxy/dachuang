@@ -19,11 +19,11 @@ public class FeatureSelection {
 	public static final Map<Double, Integer> featureSelection(Evaluation evaluation, HereditaryParameter hereditaryParameter,
 	                                                          ParentChrosChoose parentChrosChoose, FeatureSeparation featureSeparation,
 	                                                          double stop, Hereditary hereditary) throws IOException, ClassNotFoundException {
-		double aucFull=hereditary.getMaxAuc();
+		double aucFull = hereditary.getMaxAuc();
 		TreeMap<Double, Integer> aucImprotences = new TreeMap<Double, Integer>();
 		for (Integer integer : hereditary.getDataSet().getEvidenceNums()) {
 			//这样减就负的越多越好，好的在前面
-			hereditary.evolution(hereditaryParameter,parentChrosChoose, evaluation,integer);
+			hereditary.evolution(hereditaryParameter, parentChrosChoose, evaluation, integer);
 			double auc = hereditary.getMaxAuc() - aucFull;
 			aucImprotences.put(auc, integer);
 		}
@@ -32,7 +32,7 @@ public class FeatureSelection {
 		LinkedList<Integer> unInproEvid = new LinkedList<Integer>();
 		featureSeparation.separationFeature(aucImprotences, imroEvid, unInproEvid);
 		
-		hereditary.evolution(hereditaryParameter,parentChrosChoose, evaluation,imroEvid);
+		hereditary.evolution(hereditaryParameter, parentChrosChoose, evaluation, imroEvid);
 		double auc = hereditary.getMaxAuc();
 		while (Math.abs(aucFull - auc) > stop) {
 			double aucJ = -1;
@@ -40,7 +40,7 @@ public class FeatureSelection {
 			for (Integer integer : unInproEvid) {
 				LinkedList<Integer> newImroEvid = CloneObject.clone(imroEvid);
 				newImroEvid.add(integer);
-				hereditary.evolution(hereditaryParameter,parentChrosChoose, evaluation,newImroEvid);
+				hereditary.evolution(hereditaryParameter, parentChrosChoose, evaluation, newImroEvid);
 				if (hereditary.getMaxAuc() > aucJ) {
 					aucJ = hereditary.getMaxAuc();
 					evidenceNum = integer;

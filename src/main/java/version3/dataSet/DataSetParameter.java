@@ -12,12 +12,12 @@ public class DataSetParameter {
 	private int BCol;
 	
 	public DataSetParameter() {
-		coding="utf-8";
-		idClo=0;
-		labelCol=1;
-		evidCol=2;
-		ACol=3;
-		BCol=4;
+		coding = "utf-8";
+		idClo = 0;
+		labelCol = 1;
+		evidCol = 2;
+		ACol = 3;
+		BCol = 4;
 	}
 	
 	public DataSetParameter(String coding, int idClo, int labelCol, int evidCol, int ACol, int BCol) {
