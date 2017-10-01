@@ -1,18 +1,27 @@
 package version3.subSpace;
 
-import util.CloneObject;
 import util.Roulette;
+import version3.run.RunParameter;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by cellargalaxy on 17-9-8.
  */
-public class SubSpace {
+public final class SnSubSpaceCreateImpl implements SubSpaceCreate {
+	private final RunParameter runParameter;
+	private final ImprotenceAdjust improtenceAdjust;
 	
-	public static final List<List<Integer>> createSubSpaces(List<Integer> features, double[] impros, int[] sn, int fnMin, ImprotenceAdjust improtenceAdjust) throws IOException, ClassNotFoundException {
+	public SnSubSpaceCreateImpl(RunParameter runParameter, ImprotenceAdjust improtenceAdjust) {
+		this.runParameter = runParameter;
+		this.improtenceAdjust = improtenceAdjust;
+	}
+	
+	public List<List<Integer>> createSubSpaces(List<Integer> features, double[] impros) {
+		runParameter.receiveCreateSubSpaces(impros);
+		int[] sn = runParameter.getSn();
+		int fnMin = runParameter.getFnMin();
 		int fnMax = 0;
 		for (int i : sn) {
 			fnMax += countC(i, features.size());
@@ -48,9 +57,15 @@ public class SubSpace {
 		return mm / nn;
 	}
 	
-	private static List<Integer> createSubSpace(List<Integer> oldFeatures, List<Double> oldImpros, int len) throws IOException, ClassNotFoundException {
-		List<Integer> newFeatures = CloneObject.clone(oldFeatures);
-		List<Double> newImpros = CloneObject.clone(oldImpros);
+	private static List<Integer> createSubSpace(List<Integer> oldFeatures, List<Double> oldImpros, int len) {
+		List<Integer> newFeatures = new LinkedList<Integer>();
+		for (Integer oldFeature : oldFeatures) {
+			newFeatures.add(oldFeature);
+		}
+		List<Double> newImpros = new LinkedList<Double>();
+		for (Double oldImpro : oldImpros) {
+			newImpros.add(oldImpro);
+		}
 		List<Integer> subSpace = new LinkedList<Integer>();
 		for (int i = 0; i < len; i++) {
 			int point = Roulette.roulette(newImpros);
@@ -75,4 +90,6 @@ public class SubSpace {
 		}
 		return false;
 	}
+	
+	
 }

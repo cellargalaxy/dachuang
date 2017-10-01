@@ -14,7 +14,7 @@
 //import version2.hereditary.RouletteParentChrosChoose;
 //import version2.subSpace.ImprotenceAdjust;
 //import version2.subSpace.PowerImprotenceAdjust;
-//import version2.subSpace.SubSpace;
+//import version2.subSpace.SnSubSpaceCreateImpl;
 //
 //import java.io.File;
 //import java.io.IOException;
@@ -122,7 +122,7 @@
 //		runParameter.receiveCreateSubSpaces(impros);
 //		int[] sn = runParameter.getSn();
 //		int fnMin=runParameter.getFnMin();
-//		List<List<Integer>> subSpaces = SubSpace.createSubSpaces(features,impros,sn,fnMin,improtenceAdjust);
+//		List<List<Integer>> subSpaces = SnSubSpaceCreateImpl.createSubSpaces(features,impros,sn,fnMin,improtenceAdjust);
 //		System.out.println("子空间:");
 //		for (List<Integer> subSpace : subSpaces) {
 //			System.out.println(subSpace);

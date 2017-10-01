@@ -16,9 +16,7 @@ import version3.hereditary.Hereditary;
 import version3.hereditary.HereditaryParameter;
 import version3.hereditary.ParentChrosChoose;
 import version3.hereditary.RouletteParentChrosChoose;
-import version3.subSpace.ImprotenceAdjust;
-import version3.subSpace.PowerImprotenceAdjust;
-import version3.subSpace.SubSpace;
+import version3.subSpace.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,13 +45,14 @@ public class Run {
 		double stop = 0.01;
 		//子空间
 		ImprotenceAdjust improtenceAdjust = new PowerImprotenceAdjust();
+		SubSpaceCreate subSpaceCreate = new RandomSubSpaceCreate(runParameter);
 		//子空间合成
 		EvidenceSynthesis subSpaceEvidenceSynthesis = new AverageEvidenceSynthesis();
 		
 		run(runParameter, dataSetFile, dataSetParameter, evidenceSyntheses, trainOutputFile, testOutputFile,
 				hereditaryParameter, parentChrosChoose,
 				featureSeparation, stop,
-				improtenceAdjust,
+				subSpaceCreate,
 				subSpaceEvidenceSynthesis);
 		
 		EvaluationThreadPoolExecutor.shutdown();
@@ -62,7 +61,7 @@ public class Run {
 	public static final void run(RunParameter runParameter, File dataSetFile, DataSetParameter dataSetParameter, EvidenceSynthesis[] evidenceSyntheses, File trainOutputFile, File testOutputFile,//全局参数
 	                             HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,//遗传算法
 	                             FeatureSeparation featureSeparation, double stop,//特征选择
-	                             ImprotenceAdjust improtenceAdjust,//子空间
+	                             SubSpaceCreate subSpaceCreate,//子空间
 	                             EvidenceSynthesis subSpaceEvidenceSynthesis//子空间合成
 	) throws IOException, ClassNotFoundException {
 		DataSetSeparation dataSetSeparation = new DataSetSeparationImpl(dataSetFile, dataSetParameter);
@@ -74,14 +73,14 @@ public class Run {
 		run(runParameter, trainDataSet, testDataSet, evidenceSyntheses, trainOutputFile, testOutputFile,
 				hereditaryParameter, parentChrosChoose,
 				featureSeparation, stop,
-				improtenceAdjust,
+				subSpaceCreate,
 				subSpaceEvidenceSynthesis);
 	}
 	
 	public static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet, EvidenceSynthesis[] evidenceSyntheses, File trainOutputFile, File testOutputFile,//全局参数
 	                             HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,//遗传算法
 	                             FeatureSeparation featureSeparation, double stop,//特征选择
-	                             ImprotenceAdjust improtenceAdjust,//子空间
+	                             SubSpaceCreate subSpaceCreate,//子空间
 	                             EvidenceSynthesis subSpaceEvidenceSynthesis//子空间合成
 	) throws IOException, ClassNotFoundException {
 		EvidenceSynthesis evidenceSynthesis = null;
@@ -125,10 +124,7 @@ public class Run {
 		System.out.println("--------------------------------------------------------");
 		System.out.println();
 		
-		runParameter.receiveCreateSubSpaces(impros);
-		int[] sn = runParameter.getSn();
-		int fnMin = runParameter.getFnMin();
-		List<List<Integer>> subSpaces = SubSpace.createSubSpaces(features, impros, sn, fnMin, improtenceAdjust);
+		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(features, impros);
 		System.out.println("子空间:");
 		for (List<Integer> subSpace : subSpaces) {
 			System.out.println(subSpace);
