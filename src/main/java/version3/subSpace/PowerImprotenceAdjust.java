@@ -7,6 +7,10 @@ import java.util.LinkedList;
  */
 public final class PowerImprotenceAdjust implements ImprotenceAdjust {
 	
+	public String getName() {
+		return "平方调整算法";
+	}
+	
 	public final LinkedList<Double> adjustImprotence(double[] impros) {
 		LinkedList<Double> listImpros = new LinkedList<Double>();
 		for (double impro : impros) {

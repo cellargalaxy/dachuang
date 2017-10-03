@@ -1,6 +1,7 @@
 package version3.run;
 
 import util.CloneObject;
+import version3.Win;
 import version3.dataSet.DataSet;
 import version3.dataSet.DataSetParameter;
 import version3.dataSet.DataSetSeparation;
@@ -12,10 +13,7 @@ import version3.evidenceSynthesis.*;
 import version3.feature.FeatureSelection;
 import version3.feature.FeatureSeparation;
 import version3.feature.MedianFeatureSeparation;
-import version3.hereditary.Hereditary;
-import version3.hereditary.HereditaryParameter;
-import version3.hereditary.ParentChrosChoose;
-import version3.hereditary.RouletteParentChrosChoose;
+import version3.hereditary.*;
 import version3.subSpace.*;
 
 import java.io.File;
@@ -26,6 +24,7 @@ import java.util.*;
  * Created by cellargalaxy on 17-9-9.
  */
 public class Run {
+	
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		//全局参数
@@ -39,7 +38,7 @@ public class Run {
 		HereditaryParameter hereditaryParameter = new HereditaryParameter();
 		hereditaryParameter.setIterNum(500);
 		hereditaryParameter.setSameNum(100);
-		ParentChrosChoose parentChrosChoose = new RouletteParentChrosChoose();
+		ParentChrosChoose parentChrosChoose = new OrderParentChrosChoose();
 		//特征选择
 		FeatureSeparation featureSeparation = new MedianFeatureSeparation();
 		double stop = 0.01;
@@ -155,7 +154,9 @@ public class Run {
 		DataSet.outputDataSet(trainDataSet, trainSubSpaceDataSet, trainOutputFile, runParameter,
 				trainSubSpaceAuc, evidenceSynthesis, evaluation,
 				trainDataSet.getEvidNameToId(),
-				featureMap, trainSubSpaceMap);
+				parentChrosChoose,
+				featureSeparation, stop, featureMap,
+				subSpaceCreate, trainSubSpaceMap);
 		
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -173,7 +174,9 @@ public class Run {
 		DataSet.outputDataSet(testDataSet, testSubSpaceDataSet, testOutputFile, runParameter,
 				testSubSpaceAuc, evidenceSynthesis, evaluation,
 				testDataSet.getEvidNameToId(),
-				featureMap, testSubSpaceMap);
+				parentChrosChoose,
+				featureSeparation, stop, featureMap,
+				subSpaceCreate, testSubSpaceMap);
 	}
 	
 	

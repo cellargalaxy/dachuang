@@ -9,6 +9,10 @@ import java.util.TreeMap;
  */
 public final class MedianFeatureSeparation implements FeatureSeparation {
 	
+	public String getName() {
+		return "中位数特征选择";
+	}
+	
 	public final void separationFeature(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unImproEvid) {
 		int count = aucImprotences.size() / 2;
 		int i = 0;

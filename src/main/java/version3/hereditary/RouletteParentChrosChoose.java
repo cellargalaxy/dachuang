@@ -6,6 +6,10 @@ import util.Roulette;
  * Created by cellargalaxy on 17-9-8.
  */
 public final class RouletteParentChrosChoose implements ParentChrosChoose {
+	public String getName() {
+		return "轮盘父母染色体选择算法";
+	}
+	
 	public final double[][] chooseParentChros(double[] aucs, double[][] newChros) {
 		double[][] parentChros;
 		if ((newChros.length - aucs.length) % 2 == 0) {

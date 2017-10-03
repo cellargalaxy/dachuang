@@ -8,12 +8,16 @@ import java.util.List;
 /**
  * Created by cellargalaxy on 17-10-1.
  */
-public class RandomSubSpaceCreate implements SubSpaceCreate {
+public final class RandomSubSpaceCreate implements SubSpaceCreate {
 	private final RunParameter runParameter;
 	private int fnMax;
 	
 	public RandomSubSpaceCreate(RunParameter runParameter) {
 		this.runParameter = runParameter;
+	}
+	
+	public String getName() {
+		return "随机子空间创建";
 	}
 	
 	public List<List<Integer>> createSubSpaces(List<Integer> features, double[] impros) {

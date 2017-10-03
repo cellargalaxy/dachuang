@@ -19,7 +19,7 @@ public class HereditaryParameter {
 	private int geneExNum;
 	//基因突变比例
 	private double geneMutNumPro;
-	//基因突变概率
+	//基因突变数量
 	private int geneMutNum;
 	//基因突变概率
 	private double geneMutPro;
@@ -43,6 +43,8 @@ public class HereditaryParameter {
 		this.iterNum = iterNum;
 		this.sameNum = sameNum;
 		this.sameDeviation = sameDeviation;
+		
+		saveChroNum = (int) (chrosNum * saveChroPro);
 	}
 	
 	public HereditaryParameter() {

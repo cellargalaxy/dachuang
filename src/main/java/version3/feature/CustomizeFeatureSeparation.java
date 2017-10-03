@@ -14,6 +14,10 @@ public final class CustomizeFeatureSeparation implements FeatureSeparation {
 		this.separationValue = separationValue;
 	}
 	
+	public String getName() {
+		return "用户自定义特征选择";
+	}
+	
 	public final void separationFeature(TreeMap<Double, Integer> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unImproEvid) {
 		for (Map.Entry<Double, Integer> entry : aucImprotences.entrySet()) {
 			if (entry.getKey() <= separationValue) {

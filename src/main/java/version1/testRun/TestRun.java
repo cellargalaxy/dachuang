@@ -6,7 +6,7 @@
 //import version1.dataSet.OutputDataSet;
 //import version1.dataSet.SubDataSet;
 //import version1.feature.FeatureSelection;
-//import version1.feature.SnSubSpaceCreateImpl;
+//import version1.feature.SnSubSpaceCreate;
 //import version1.feature.TestSetTest;
 //import version1.hereditary.*;
 //import util.CloneObject;
@@ -23,7 +23,7 @@
 //    public static void main(String[] args) throws IOException, ClassNotFoundException {//0.8452342454394693
 //        testRun(new ParameterImpl(), new File("/media/cellargalaxy/根/内/办公/xi/dachuang/version1.dataSet/trainAll.csv"), ",", 0, 2, 3, 1, 5, "/home/cellargalaxy", "gbk",
 //                new HereditaryParameter(), 0.95, 0.01, FeatureSelection.MEDIAN_MODEL, 0, HereditaryParameter.USE_ORDER, 5,
-//                SnSubSpaceCreateImpl.POWER_ADJUST, 0,
+//                SnSubSpaceCreate.POWER_ADJUST, 0,
 //                TestSetTest.AVER_SYNTHESIS, 0, 0, 0, 0);
 //
 ////        Parameter parameter=new ParameterImpl();
@@ -84,7 +84,7 @@
 //        System.out.println("----------------------------------");
 //
 //        int[] sn = {1, 2, 3, 4};
-//        LinkedList<LinkedList<Integer>> subSpaces = SnSubSpaceCreateImpl.createSubSpaces(features, impros, sn, 15, SnSubSpaceCreateImpl.POWER_ADJUST, 0);
+//        LinkedList<LinkedList<Integer>> subSpaces = SnSubSpaceCreate.createSubSpaces(features, impros, sn, 15, SnSubSpaceCreate.POWER_ADJUST, 0);
 //        System.out.println("子空间:");
 //        for (LinkedList<Integer> subSpace : subSpaces) {
 //            System.out.println(subSpace);
@@ -209,7 +209,7 @@
 //        System.out.println("----------------------------------");
 //
 //        parameter.receiveCreateSubSpaces(featureSelections);
-//        LinkedList<LinkedList<Integer>> subSpaces = SnSubSpaceCreateImpl.createSubSpaces(features, impros, parameter.getSn(), parameter.getFnMin(), adjustMethodNum, d);
+//        LinkedList<LinkedList<Integer>> subSpaces = SnSubSpaceCreate.createSubSpaces(features, impros, parameter.getSn(), parameter.getFnMin(), adjustMethodNum, d);
 //        System.out.println("子空间:");
 //        for (LinkedList<Integer> subSpace : subSpaces) {
 //            System.out.println(subSpace);

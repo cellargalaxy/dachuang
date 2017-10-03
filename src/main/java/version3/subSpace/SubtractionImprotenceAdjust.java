@@ -12,6 +12,10 @@ public final class SubtractionImprotenceAdjust implements ImprotenceAdjust {
 		this.adjustD = adjustD;
 	}
 	
+	public String getName() {
+		return "减法调整算法";
+	}
+	
 	public final LinkedList<Double> adjustImprotence(double[] impros) {
 		LinkedList<Double> listImpros = new LinkedList<Double>();
 		double minImp = Double.MIN_VALUE;

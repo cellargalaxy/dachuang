@@ -3,19 +3,24 @@ package version3.subSpace;
 import util.Roulette;
 import version3.run.RunParameter;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Created by cellargalaxy on 17-9-8.
  */
-public final class SnSubSpaceCreateImpl implements SubSpaceCreate {
+public final class SnSubSpaceCreate implements SubSpaceCreate {
 	private final RunParameter runParameter;
 	private final ImprotenceAdjust improtenceAdjust;
 	
-	public SnSubSpaceCreateImpl(RunParameter runParameter, ImprotenceAdjust improtenceAdjust) {
+	public SnSubSpaceCreate(RunParameter runParameter, ImprotenceAdjust improtenceAdjust) {
 		this.runParameter = runParameter;
 		this.improtenceAdjust = improtenceAdjust;
+	}
+	
+	public String getName() {
+		return "用户自定义子空间创建";
 	}
 	
 	public List<List<Integer>> createSubSpaces(List<Integer> features, double[] impros) {
@@ -23,6 +28,7 @@ public final class SnSubSpaceCreateImpl implements SubSpaceCreate {
 		int[] sn = runParameter.getSn();
 		int fnMin = runParameter.getFnMin();
 		int fnMax = 0;
+		System.out.println(impros.length+" "+ Arrays.toString(sn));
 		for (int i : sn) {
 			fnMax += countC(i, features.size());
 		}

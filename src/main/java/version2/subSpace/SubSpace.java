@@ -10,7 +10,7 @@
 ///**
 // * Created by cellargalaxy on 17-9-8.
 // */
-//public class SnSubSpaceCreateImpl {
+//public class SnSubSpaceCreate {
 //
 //
 //	public static final List<List<Integer>> createSubSpaces(List<Integer> features, double[] impros, int[] sn, int fnMin, ImprotenceAdjust improtenceAdjust) throws IOException, ClassNotFoundException {

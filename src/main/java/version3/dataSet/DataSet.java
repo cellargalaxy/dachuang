@@ -4,7 +4,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import version3.evaluation.Evaluation;
 import version3.evidenceSynthesis.EvidenceSynthesis;
+import version3.feature.FeatureSeparation;
+import version3.hereditary.ParentChrosChoose;
 import version3.run.RunParameter;
+import version3.subSpace.SubSpaceCreate;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -78,8 +81,9 @@ public class DataSet implements Serializable {
 	public static final void outputDataSet(DataSet dataSet, DataSet subDataSet, File outputDataSet, RunParameter runParameter,
 	                                       double subSpaceAuc, EvidenceSynthesis evidenceSynthesis, Evaluation evaluation,
 	                                       Map<String, Integer> evidNameToId,
-	                                       Map<Double, Integer> featureMap,
-	                                       Map<DataSet, double[]> subSpaceMap) throws IOException {
+	                                       ParentChrosChoose parentChrosChoose,
+	                                       FeatureSeparation featureSeparation, double stop, Map<Double, Integer> featureMap,
+	                                       SubSpaceCreate subSpaceCreate, Map<DataSet, double[]> subSpaceMap) throws IOException {
 		outputDataSet.getParentFile().mkdirs();
 		CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator(CSV_Record_SEPARATOR);
 		CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputDataSet), csvFormat);
@@ -130,6 +134,15 @@ public class DataSet implements Serializable {
 		csvPrinter.printRecord("证据合成", evidenceSynthesis.getName());
 		
 		csvPrinter.printRecord();
+		csvPrinter.printRecord("父母染色体选择算法", parentChrosChoose.getName());
+		
+		csvPrinter.printRecord();
+		csvPrinter.printRecord("特征选择", featureSeparation.getName());
+		
+		csvPrinter.printRecord();
+		csvPrinter.printRecord("特征选择stop", stop);
+		
+		csvPrinter.printRecord();
 		int len = featureMap.get(Double.MAX_VALUE);
 		int i = 0;
 		csvPrinter.printRecord("重要特征");
@@ -140,6 +153,9 @@ public class DataSet implements Serializable {
 				csvPrinter.printRecord("不重要特征");
 			}
 		}
+		
+		csvPrinter.printRecord();
+		csvPrinter.printRecord("子空间创建", subSpaceCreate.getName());
 		
 		csvPrinter.printRecord();
 		csvPrinter.printRecord("子空间", "子空间AUC", "染色体");
