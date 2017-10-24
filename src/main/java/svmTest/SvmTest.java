@@ -1,10 +1,11 @@
 package svmTest;
 
 
-import version3.dataSet.DataSet;
+import libsvm.svm_problem;
+import version4.dataSet.DataSet;
+import version4.dataSet.DataSetParameter;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by cellargalaxy on 17-9-7.
@@ -12,13 +13,10 @@ import java.io.IOException;
  */
 public class SvmTest {
 	public static void main(String[] args) throws IOException {
-//		DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/trainAll.csv"),
-//				",", 0, 2, 3, 1, 5);
-//		MySvmTrain mySvmTrain=new MySvmTrain();
-//		File modelFile=new File("model.txt");
-//		mySvmTrain.run(trainDataSet,modelFile);
-//
-//		File outputFile=new File("answer.txt");
-//		MySvmPredict.run(trainDataSet,modelFile,outputFile);
+		DataSetParameter dataSetParameter = new DataSetParameter("utf-8", 0, 5, 1, 2, 3);
+		DataSet trainDataSet = new DataSet(new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/trainAll.csv"), dataSetParameter);
+		Writer writer = new StringWriter();
+		svm_problem problem = MySvmTrain.run(trainDataSet, writer);
+		System.out.println(MySvmPredict.run(problem, writer));
 	}
 }

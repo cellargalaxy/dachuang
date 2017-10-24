@@ -2,6 +2,7 @@ package version4.dataSet;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import version4.evaluation.Evaluation;
 import version4.evidenceSynthesis.EvidenceSynthesis;
 import version4.feature.FeatureSeparation;
@@ -9,10 +10,7 @@ import version4.hereditary.ParentChrosChoose;
 import version4.run.RunParameter;
 import version4.subSpace.SubSpaceCreate;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -30,7 +28,48 @@ public class DataSet implements Serializable {
 		this.evidenceNums = evidenceNums;
 		this.evidNameToId = evidNameToId;
 	}
+	public DataSet(File dataSetFile,DataSetParameter dataSetParameter) throws IOException {
+		ids = new LinkedList<Id>();
+		evidenceNums = new LinkedList<Integer>();
+		evidNameToId = new HashMap<String, Integer>();
+		createIds(dataSetFile,dataSetParameter);
+	}
 	
+	private final void createIds(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
+		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(new BufferedReader(new InputStreamReader(new FileInputStream(dataSetFile),dataSetParameter.getCoding())));
+		String id = null;
+		int label = -1;
+		LinkedList<double[]> evidences = null;
+		for (CSVRecord record : records) {
+			if (id == null) {
+				id = record.get(dataSetParameter.getIdClo());
+				label = new Integer(record.get(dataSetParameter.getLabelCol()));
+				evidences = new LinkedList<double[]>();
+			} else if (!id.equals(record.get(dataSetParameter.getIdClo()))) {
+				ids.add(new Id(id, evidences, label));
+				
+				id = record.get(dataSetParameter.getIdClo());
+				label = new Integer(record.get(dataSetParameter.getLabelCol()));
+				evidences = new LinkedList<double[]>();
+			}
+			
+			double[] evidence = {createEvidNum(record.get(dataSetParameter.getEvidCol())), new Double(record.get(dataSetParameter.getACol())), new Double(record.get(dataSetParameter.getBCol()))};
+			evidences.add(evidence);
+		}
+		if (id != null) {
+			ids.add(new Id(id, evidences, label));
+		}
+	}
+	
+	private final int createEvidNum(String evidName) {
+		Integer i = evidNameToId.get(evidName);
+		if (i == null) {
+			i = evidNameToId.size() + 1;
+			evidNameToId.put(evidName, i);
+			evidenceNums.add(i);
+		}
+		return i;
+	}
 	public final void removeNotEqual(List<Integer> evidences) {
 		Iterator<Id> iteratorId = ids.iterator();
 		while (iteratorId.hasNext()) {

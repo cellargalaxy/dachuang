@@ -101,7 +101,6 @@ public final class Auc implements Evaluation {
 		return countOrderEvaluation(newDataSet, chro);
 	}
 	
-	
 	private final double doCountAuc(LinkedList<double[]> ds0s, LinkedList<double[]> ds1s) {
 		double auc = 0;
 		for (double[] ds1 : ds1s) {

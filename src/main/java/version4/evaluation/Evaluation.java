@@ -9,7 +9,7 @@ import java.util.List;
  * Created by cellargalaxy on 17-9-7.
  */
 public interface Evaluation {
-	double countEvaluation(DataSet dataSet);
+	double countEvaluation(DataSet cloneDataSet);
 	
 	double countEvaluationWithoutEvidNum(DataSet dataSet, Integer withoutEvidNum);
 	
