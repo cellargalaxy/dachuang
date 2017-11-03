@@ -23,7 +23,7 @@
 ///**
 // * Created by cellargalaxy on 17-9-9.
 // */
-//public class Run {
+//public class RunFeatureSelectionAndSubSpace {
 //
 //
 //	public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -31,7 +31,7 @@
 //		RunParameter runParameter = new TestRunParameter();
 //		File dataSetFile = new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/subspacedata.csv");
 //		DataSetParameter dataSetParameter = new DataSetParameter("utf-8", 0, 5, 4, 1, 2);
-//		EvidenceSynthesis[] evidenceSyntheses = {new TeaEvidenceSynthesis(), new MyEvidenceSynthesis(), new My2EvidenceSynthesis()};
+//		EvidenceSynthesis[] evidenceSyntheses = {new TeaEvidenceSynthesis(), new DistanceEvidenceSynthesis(), new Distance2EvidenceSynthesis()};
 //		File trainOutputFile = new File("/home/cellargalaxy/trainSubSpaceDataSet.csv");
 //		File testOutputFile = new File("/home/cellargalaxy/testSubSpaceDataSet.csv");
 //		//遗传算法

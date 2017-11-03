@@ -14,7 +14,7 @@
 //import version2.hereditary.RouletteParentChrosChoose;
 //import version2.subSpace.ImprotenceAdjust;
 //import version2.subSpace.PowerImprotenceAdjust;
-//import version2.subSpace.SnSubSpaceCreate;
+//import version2.subSpace.SnFeatureSelectionSubSpaceCreate;
 //
 //import java.io.File;
 //import java.io.IOException;
@@ -23,14 +23,14 @@
 ///**
 // * Created by cellargalaxy on 17-9-9.
 // */
-//public class Run {
+//public class RunFeatureSelectionAndSubSpace {
 //
 //	public static void main(String[] args) throws IOException, ClassNotFoundException {
 //		//全局参数
 //		RunParameter runParameter=new TestRunParameter();
 //		File dataSetFile=new File("/media/cellargalaxy/根/内/大学/xi/dachuang/dataSet/subspacedata.csv");
 //		DataSetParameter dataSetParameter=new DataSetParameter("utf-8",0,5,4,1,2);
-//		EvidenceSynthesis[] dsCounts={new TeaEvidenceSynthesis(),new MyEvidenceSynthesis(),new My2EvidenceSynthesis()};
+//		EvidenceSynthesis[] dsCounts={new TeaEvidenceSynthesis(),new DistanceEvidenceSynthesis(),new Distance2EvidenceSynthesis()};
 //		File trainOutputFile=new File("/home/cellargalaxy/trainSubSpaceDataSet.csv");
 //		File testOutputFile=new File("/home/cellargalaxy/testSubSpaceDataSet.csv");
 //		//遗传算法
@@ -122,7 +122,7 @@
 //		runParameter.receiveCreateSubSpaces(impros);
 //		int[] sn = runParameter.getSn();
 //		int fnMin=runParameter.getFnMin();
-//		List<List<Integer>> subSpaces = SnSubSpaceCreate.createSubSpaces(features,impros,sn,fnMin,improtenceAdjust);
+//		List<List<Integer>> subSpaces = SnFeatureSelectionSubSpaceCreate.createSubSpaces(features,impros,sn,fnMin,improtenceAdjust);
 //		System.out.println("子空间:");
 //		for (List<Integer> subSpace : subSpaces) {
 //			System.out.println(subSpace);

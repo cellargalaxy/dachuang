@@ -10,11 +10,11 @@
 ///**
 // * Created by cellargalaxy on 17-9-8.
 // */
-//public final class SnSubSpaceCreate implements SubSpaceCreate {
+//public final class SnFeatureSelectionSubSpaceCreate implements SubSpaceCreate {
 //	private final RunParameter runParameter;
 //	private final ImprotenceAdjust improtenceAdjust;
 //
-//	public SnSubSpaceCreate(RunParameter runParameter, ImprotenceAdjust improtenceAdjust) {
+//	public SnFeatureSelectionSubSpaceCreate(RunParameter runParameter, ImprotenceAdjust improtenceAdjust) {
 //		this.runParameter = runParameter;
 //		this.improtenceAdjust = improtenceAdjust;
 //	}

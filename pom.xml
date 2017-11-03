@@ -37,7 +37,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>version4.win.Win</mainClass>
+                                    <mainClass>version5.win.Win</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

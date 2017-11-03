@@ -7,7 +7,7 @@
 ///**
 // * Created by cellargalaxy on 17-9-19.
 // */
-//public final class MyEvidenceSynthesis implements EvidenceSynthesis {
+//public final class DistanceEvidenceSynthesis implements EvidenceSynthesis {
 //	public String getName() {
 //		return "距离DS合成";
 //	}

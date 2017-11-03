@@ -10,7 +10,7 @@
 // * Created by cellargalaxy on 2017/6/8.
 // * 特征子空间静态类
 // */
-//public class SnSubSpaceCreate {
+//public class SnFeatureSelectionSubSpaceCreate {
 //    public static final int POWER_ADJUST = 1;
 //    public static final int SUBTRACTION_ADJUST = 2;
 //

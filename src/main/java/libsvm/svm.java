@@ -1211,8 +1211,8 @@ public class svm {
 	
 	private static svm_print_interface svm_print_stdout = new svm_print_interface() {
 		public void print(String s) {
-			System.out.print(s);
-			System.out.flush();
+//			System.out.print(s);
+//			System.out.flush();
 		}
 	};
 	

@@ -1,20 +1,20 @@
 //package version3;
 //
-//import version4.dataSet.DataSetParameter;
-//import version4.evidenceSynthesis.*;
-//import version4.feature.AverageFeatureSeparation;
-//import version4.feature.CustomizeFeatureSeparation;
-//import version4.feature.FeatureSeparation;
-//import version4.feature.MedianFeatureSeparation;
-//import version4.hereditary.HereditaryParameter;
-//import version4.hereditary.OrderParentChrosChoose;
-//import version4.hereditary.ParentChrosChoose;
-//import version4.hereditary.RouletteParentChrosChoose;
-//import version4.run.Run;
-//import version4.run.RunParameter;
-//import version4.run.TestRunParameter;
-//import version4.subSpace.*;
-//import version4.win.CreateSubDataSetWin;
+//import version5.dataSet.DataSetParameter;
+//import version5.evidenceSynthesis.*;
+//import version5.feature.AverageFeatureSeparation;
+//import version5.feature.CustomizeFeatureSeparation;
+//import version5.feature.FeatureSeparation;
+//import version5.feature.MedianFeatureSeparation;
+//import version5.hereditary.HereditaryParameter;
+//import version5.hereditary.OrderParentChrosChoose;
+//import version5.hereditary.ParentChrosChoose;
+//import version5.hereditary.RouletteParentChrosChoose;
+//import version5.run.RunFeatureSelectionAndSubSpace;
+//import version5.run.RunParameter;
+//import version5.run.TestRunParameter;
+//import version5.subSpace.*;
+//import version5.win.CreateSubDataSetWin;
 //
 //import javax.swing.*;
 //import java.awt.*;
@@ -120,11 +120,11 @@
 //	public void actionPerformed(ActionEvent e) {
 //		try{
 //			setParameter();
-//			EvidenceSynthesis[] evidenceSyntheses = {new TeaEvidenceSynthesis(), new MyEvidenceSynthesis(), new My2EvidenceSynthesis()};
+//			EvidenceSynthesis[] evidenceSyntheses = {new TeaEvidenceSynthesis(), new DistanceEvidenceSynthesis(), new Distance2EvidenceSynthesis()};
 //			File trainOutputFile=new File(outputFolder.getAbsolutePath()+"/train-"+dataSetFile.getName());
 //			File testOutputFile=new File(outputFolder.getAbsolutePath()+"/test-"+dataSetFile.getName());
 //
-//			Run.run(runParameter, dataSetFile, dataSetParameter, evidenceSyntheses, trainOutputFile, testOutputFile,
+//			RunFeatureSelectionAndSubSpace.run(runParameter, dataSetFile, dataSetParameter, evidenceSyntheses, trainOutputFile, testOutputFile,
 //					hereditaryParameter, parentChrosChoose,
 //					featureSeparation, stop,
 //					subSpaceCreate,
@@ -168,7 +168,7 @@
 //		if (randomSubSpaceCreatej.isSelected()) {
 //			subSpaceCreate=new RandomSubSpaceCreate(runParameter);
 //		} else if (snSubSpaceCreatej.isSelected()) {
-//			subSpaceCreate=new SnSubSpaceCreate(runParameter,improtenceAdjust);
+//			subSpaceCreate=new SnFeatureSelectionSubSpaceCreate(runParameter,improtenceAdjust);
 //		}
 //		if ( averageEvidenceSynthesisj.isSelected()) {
 //			subSpaceEvidenceSynthesis=new AverageEvidenceSynthesis();
