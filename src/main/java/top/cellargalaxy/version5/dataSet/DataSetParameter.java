@@ -12,7 +12,7 @@ public class DataSetParameter {
 	private int labelCol;
 	
 	public DataSetParameter() {
-		coding = "utf-8";
+		coding = "gbk";
 		idClo = 0;
 		evidCol = 1;
 		ACol = 2;

@@ -17,7 +17,7 @@ public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
 		super(dataSetFile, dataSetParameter);
 	}
 	
-	void createIds(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
+	public void createIds(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
 		LinkedList<Id> ids = getIds();
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(new BufferedReader(new InputStreamReader(new FileInputStream(dataSetFile), dataSetParameter.getCoding())));
 		String id = null;
