@@ -201,6 +201,6 @@ public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
 
 	@Override
 	public String toString() {
-		return "Distance2EvidenceSynthesis{距离2istance}";
+		return "Distance2EvidenceSynthesis{距离2证据合成}";
 	}
 }
