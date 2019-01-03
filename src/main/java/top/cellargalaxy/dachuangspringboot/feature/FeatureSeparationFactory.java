@@ -16,8 +16,8 @@ public class FeatureSeparationFactory {
 	 * 用户指定值特征分割
 	 */
 	public static final int CUSTOMIZE_FEATURE_SEPARATION_NUM = 3;
-	
-	
+
+
 	public static final FeatureSeparation createFeatureSeparation(int featureSeparationNum, Double separationValue) {
 		if (featureSeparationNum == AVERAGE_FEATURE_SEPARATION_NUM) {
 			return createAverageFeatureSeparation();
@@ -30,7 +30,7 @@ public class FeatureSeparationFactory {
 		}
 		throw new RuntimeException("无效featureSeparationNum: " + featureSeparationNum);
 	}
-	
+
 	public static final boolean check(Integer featureSeparationNum, Double separationValue) {
 		if (featureSeparationNum == null) {
 			return false;
@@ -43,15 +43,15 @@ public class FeatureSeparationFactory {
 		}
 		return false;
 	}
-	
+
 	private static final FeatureSeparation createCustomizeFeatureSeparation(double separationValue) {
 		return new CustomizeFeatureSeparation(separationValue);
 	}
-	
+
 	private static final FeatureSeparation createMedianFeatureSeparation() {
 		return new MedianFeatureSeparation();
 	}
-	
+
 	private static final FeatureSeparation createAverageFeatureSeparation() {
 		return new AverageFeatureSeparation();
 	}

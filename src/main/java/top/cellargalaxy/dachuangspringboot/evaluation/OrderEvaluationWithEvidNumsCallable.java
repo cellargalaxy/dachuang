@@ -1,7 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.evaluation;
 
 
-
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 
 import java.util.List;
@@ -15,14 +14,14 @@ public final class OrderEvaluationWithEvidNumsCallable implements Callable<Doubl
 	private final DataSet dataSet;
 	private final List<Integer> withEvidNums;
 	private final double[] chro;
-	
+
 	public OrderEvaluationWithEvidNumsCallable(Evaluation evaluation, DataSet dataSet, List<Integer> withEvidNums, double[] chro) {
 		this.evaluation = evaluation;
 		this.dataSet = dataSet;
 		this.withEvidNums = withEvidNums;
 		this.chro = chro;
 	}
-	
+
 	public Double call() throws Exception {
 		return evaluation.countOrderEvaluationWithEvidNums(dataSet, withEvidNums, chro);
 	}

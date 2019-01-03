@@ -12,7 +12,7 @@ public class ParentChrosChooseFactory {
 	 * 轮盘法父母染色体选择
 	 */
 	public static final int ROULETTE_PARENT_CHROS_CHOOSE_NUM = 2;
-	
+
 	public static final ParentChrosChoose createParentChrosChoose(int parentChrosChooseNum) {
 		if (parentChrosChooseNum == ORDER_PARENT_CHROS_CHOOSE_NUM) {
 			return createOrderParentChrosChoose();
@@ -22,7 +22,7 @@ public class ParentChrosChooseFactory {
 		}
 		throw new RuntimeException("无效parentChrosChooseNum: " + parentChrosChooseNum);
 	}
-	
+
 	public static final boolean check(Integer parentChrosChooseNum) {
 		if (parentChrosChooseNum == null) {
 			return false;
@@ -32,11 +32,11 @@ public class ParentChrosChooseFactory {
 		}
 		return false;
 	}
-	
+
 	private static final ParentChrosChoose createOrderParentChrosChoose() {
 		return new OrderParentChrosChoose();
 	}
-	
+
 	private static final ParentChrosChoose createRouletteParentChrosChoose() {
 		return new RouletteParentChrosChoose();
 	}

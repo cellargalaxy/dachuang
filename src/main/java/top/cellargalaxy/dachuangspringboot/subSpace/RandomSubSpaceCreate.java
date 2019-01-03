@@ -28,8 +28,8 @@ public final class RandomSubSpaceCreate extends AbstractSubSpaceCreate {
 		}
 		return subSpaces;
 	}
-	
-	
+
+
 	@Override
 	public String toString() {
 		return "RandomSubSpaceCreate{完全随机子空间创建}";

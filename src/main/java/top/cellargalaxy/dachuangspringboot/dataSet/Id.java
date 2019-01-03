@@ -13,21 +13,21 @@ public class Id implements Serializable {
 	private final String id;
 	private final LinkedList<double[]> evidences;
 	private final int label;
-	
+
 	public Id(String id, LinkedList<double[]> evidences, int label) {
 		this.id = id;
 		this.evidences = evidences;
 		this.label = label;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public LinkedList<double[]> getEvidences() {
 		return evidences;
 	}
-	
+
 	public int getLabel() {
 		return label;
 	}

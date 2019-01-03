@@ -15,11 +15,11 @@ import java.util.List;
  */
 public final class Auc implements Evaluation {
 	private EvidenceSynthesis evidenceSynthesis;
-	
+
 	public Auc(EvidenceSynthesis evidenceSynthesis) {
 		this.evidenceSynthesis = evidenceSynthesis;
 	}
-	
+
 	public double countEvaluation(DataSet cloneDataSet) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
@@ -33,7 +33,7 @@ public final class Auc implements Evaluation {
 		}
 		return doCountAuc(ds0s, ds1s);
 	}
-	
+
 	public double countEvaluationWithoutEvidNum(DataSet dataSet, Integer withoutEvidNum) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
@@ -47,13 +47,13 @@ public final class Auc implements Evaluation {
 		}
 		return doCountAuc(ds0s, ds1s);
 	}
-	
+
 	public double countEvaluationWithEvidNums(DataSet dataSet, List<Integer> withEvidNums) throws IOException, ClassNotFoundException {
 		DataSet newDataSet = CloneObject.clone(dataSet);
 		newDataSet.removeNotEqual(withEvidNums);
 		return countEvaluation(newDataSet);
 	}
-	
+
 	public double countIndexEvaluation(DataSet dataSet, double[] chro) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
@@ -67,7 +67,7 @@ public final class Auc implements Evaluation {
 		}
 		return doCountAuc(ds0s, ds1s);
 	}
-	
+
 	public double countOrderEvaluation(DataSet cloneDataSet, double[] chro) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
@@ -81,7 +81,7 @@ public final class Auc implements Evaluation {
 		}
 		return doCountAuc(ds0s, ds1s);
 	}
-	
+
 	public double countIndexEvaluationWithoutEvidNum(DataSet dataSet, Integer withoutEvidNum, double[] chro) {
 		LinkedList<double[]> ds1s = new LinkedList<double[]>();
 		LinkedList<double[]> ds0s = new LinkedList<double[]>();
@@ -95,13 +95,13 @@ public final class Auc implements Evaluation {
 		}
 		return doCountAuc(ds0s, ds1s);
 	}
-	
+
 	public double countOrderEvaluationWithEvidNums(DataSet dataSet, List<Integer> withEvidNums, double[] chro) throws IOException, ClassNotFoundException {
 		DataSet newDataSet = CloneObject.clone(dataSet);
 		newDataSet.removeNotEqual(withEvidNums);
 		return countOrderEvaluation(newDataSet, chro);
 	}
-	
+
 	private final double doCountAuc(LinkedList<double[]> ds0s, LinkedList<double[]> ds1s) {
 		double auc = 0;
 		for (double[] ds1 : ds1s) {
@@ -115,15 +115,15 @@ public final class Auc implements Evaluation {
 		}
 		return auc / ds1s.size() / ds0s.size();
 	}
-	
+
 	public EvidenceSynthesis getEvidenceSynthesis() {
 		return evidenceSynthesis;
 	}
-	
+
 	public void setEvidenceSynthesis(EvidenceSynthesis evidenceSynthesis) {
 		this.evidenceSynthesis = evidenceSynthesis;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Auc{" +

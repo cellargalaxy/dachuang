@@ -22,14 +22,14 @@ public class Hereditary {
 	private double maxAuc;
 	//最大AUC对应的基因
 	private double[] maxChro;
-	
+
 	private HereditaryParameter hereditaryParameter;
 	private final DataSet dataSet;
-	
+
 	public Hereditary(DataSet dataSet) {
 		this.dataSet = dataSet;
 	}
-	
+
 	public final void evolution(HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, EvaluationExecutor evaluationExecutor) throws IOException, ClassNotFoundException, ExecutionException, InterruptedException {
 		initEvolution(dataSet, hereditaryParameter);
 		//最大AUC
@@ -40,7 +40,7 @@ public class Hereditary {
 //			Printer.print("进化auc:"+maxAuc);
 		} while (chros != null);
 	}
-	
+
 	public final void evolution(HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, EvaluationExecutor evaluationExecutor, Integer withoutEvidNum) throws IOException, ClassNotFoundException, ExecutionException, InterruptedException {
 		initEvolution(dataSet, hereditaryParameter);
 		//最大AUC
@@ -51,7 +51,7 @@ public class Hereditary {
 //			Printer.print("进化auc:"+maxAuc);
 		} while (chros != null);
 	}
-	
+
 	public final DataSet evolution(HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, EvaluationExecutor evaluationExecutor, List<Integer> withEvidNums) throws IOException, ClassNotFoundException, ExecutionException, InterruptedException {
 		DataSet cloneDataSet = CloneObject.clone(dataSet);
 		cloneDataSet.removeNotEqual(withEvidNums);
@@ -65,7 +65,7 @@ public class Hereditary {
 		} while (chros != null);
 		return cloneDataSet;
 	}
-	
+
 	private void initEvolution(DataSet dataSet, HereditaryParameter hereditaryParameter) {
 		this.hereditaryParameter = hereditaryParameter;
 		hereditaryParameter.init(dataSet.getEvidenceNums().size());
@@ -79,46 +79,46 @@ public class Hereditary {
 			maxChro[i] = 1;
 		}
 	}
-	
+
 	private double[][] createIndexNewChros(DataSet dataSet, double[][] oldChros, EvaluationExecutor evaluationExecutor, ParentChrosChoose parentChrosChoose) throws IOException, ClassNotFoundException {
 		yetIterCount++;
 		if (yetIterCount > hereditaryParameter.getIterNum()) {
 //			Printer.print("到达最大迭代次数，跳出迭代");
 			return null;
 		}
-		
+
 		Map<Double, double[]> map = indexDataSetMulChros(dataSet, evaluationExecutor, oldChros);
 		return doCreateNewChros(map, parentChrosChoose);
 	}
-	
+
 	private double[][] createIndexNewChros(DataSet dataSet, double[][] oldChros, EvaluationExecutor evaluationExecutor, ParentChrosChoose parentChrosChoose, Integer withoutEvidNum) throws IOException, ClassNotFoundException {
 		yetIterCount++;
 		if (yetIterCount > hereditaryParameter.getIterNum()) {
 //			Printer.print("到达最大迭代次数，跳出迭代");
 			return null;
 		}
-		
+
 		Map<Double, double[]> map = indexDataSetMulChros(dataSet, evaluationExecutor, oldChros, withoutEvidNum);
 		return doCreateNewChros(map, parentChrosChoose);
 	}
-	
+
 	private double[][] createOrderNewChros(DataSet cloneDataSet, double[][] oldChros, EvaluationExecutor evaluationExecutor, ParentChrosChoose parentChrosChoose) throws IOException, ClassNotFoundException {
 		yetIterCount++;
 		if (yetIterCount > hereditaryParameter.getIterNum()) {
 //			Printer.print("到达最大迭代次数，跳出迭代");
 			return null;
 		}
-		
+
 		Map<Double, double[]> map = orderDataSetMulChros(cloneDataSet, evaluationExecutor, oldChros);
 		return doCreateNewChros(map, parentChrosChoose);
 	}
-	
+
 	private double[][] doCreateNewChros(Map<Double, double[]> map, ParentChrosChoose parentChrosChoose) throws IOException, ClassNotFoundException {
 		if (map.size() < 2) {
 //			Printer.print("多样性进化失败，跳出迭代");
 			return null;
 		}
-		
+
 		int startPoint;
 		if (map.size() > hereditaryParameter.getSaveChroNum()) {
 			startPoint = hereditaryParameter.getSaveChroNum();
@@ -134,7 +134,7 @@ public class Hereditary {
 			if (auc == -1) {
 				auc = entry.getKey();
 				chro = entry.getValue();
-				
+
 				if (auc <= maxAuc + hereditaryParameter.getSameDeviation()) {
 					yetSameCount++;
 				} else {
@@ -144,22 +144,22 @@ public class Hereditary {
 //					Printer.print("达到相同最大迭代次数，跳出迭代");
 					return null;
 				}
-				
+
 				if (auc > maxAuc) {
 					maxAuc = auc;
 					maxChro = CloneObject.clone(chro);
 				}
 			}
-			
+
 			aucs[i] = entry.getKey();
 			newChros[i] = entry.getValue();
-			
+
 			i++;
 			if (i >= startPoint) {
 				break;
 			}
 		}
-		
+
 		double[][] parentchros = parentChrosChoose.chooseParentChros(aucs, newChros);
 		for (int j = startPoint; j < newChros.length; j++) {
 			double[][] ds = geneEx(parentchros[j - startPoint], parentchros[j - startPoint + 1]);
@@ -170,14 +170,14 @@ public class Hereditary {
 			}
 			newChros[j] = ds[1];
 		}
-		
+
 		for (int k = 0; k < newChros.length; k++) {
 			newChros[k] = geneMul(newChros[k]);
 		}
-		
+
 		return newChros;
 	}
-	
+
 	private Map<Double, double[]> indexDataSetMulChros(DataSet dataSet, EvaluationExecutor evaluationExecutor, double[][] chros) throws IOException, ClassNotFoundException {
 		Map<Double, double[]> map = new TreeMap<Double, double[]>(new Comparator<Double>() {
 			public int compare(Double a, Double b) {
@@ -205,7 +205,7 @@ public class Hereditary {
 		}
 		return map;
 	}
-	
+
 	private Map<Double, double[]> indexDataSetMulChros(DataSet dataSet, EvaluationExecutor evaluationExecutor, double[][] chros, Integer withoutEvidNum) throws IOException, ClassNotFoundException {
 		Map<Double, double[]> map = new TreeMap<Double, double[]>(new Comparator<Double>() {
 			public int compare(Double a, Double b) {
@@ -233,7 +233,7 @@ public class Hereditary {
 		}
 		return map;
 	}
-	
+
 	private Map<Double, double[]> orderDataSetMulChros(DataSet cloneDataSet, EvaluationExecutor evaluationExecutor, double[][] chros) throws IOException, ClassNotFoundException {
 		Map<Double, double[]> map = new TreeMap<Double, double[]>(new Comparator<Double>() {
 			public int compare(Double a, Double b) {
@@ -261,7 +261,7 @@ public class Hereditary {
 		}
 		return map;
 	}
-	
+
 	private double[] geneMul(double[] chro) {
 		int count = 0;
 		for (int i = 0; i < chro.length; i++) {
@@ -274,7 +274,7 @@ public class Hereditary {
 		}
 		return chro;
 	}
-	
+
 	private double[][] geneEx(double[] chro1, double[] chro2) throws IOException, ClassNotFoundException {
 		double[] c1 = CloneObject.clone(chro1);
 		double[] c2 = CloneObject.clone(chro2);
@@ -289,7 +289,7 @@ public class Hereditary {
 		ds[1] = c2;
 		return ds;
 	}
-	
+
 	private LinkedList<Integer> createRandomIntSet(int len, int count) {
 		LinkedList<Integer> points = new LinkedList<Integer>();
 		while (points.size() < count) {
@@ -300,7 +300,7 @@ public class Hereditary {
 		}
 		return points;
 	}
-	
+
 	private double[][] createInitChros() {
 		double[][] chros = new double[hereditaryParameter.getChrosNum()][hereditaryParameter.getChroLen()];
 		for (int i = 0; i < chros.length; i++) {
@@ -310,28 +310,28 @@ public class Hereditary {
 		}
 		return chros;
 	}
-	
+
 	private double createRandomGene() {
 		double d = Math.random();
 		return d - (d % hereditaryParameter.getStep()) + hereditaryParameter.getStep();
 	}
-	
+
 	public double getMaxAuc() {
 		return maxAuc;
 	}
-	
+
 	public void setMaxAuc(double maxAuc) {
 		this.maxAuc = maxAuc;
 	}
-	
+
 	public double[] getMaxChro() {
 		return maxChro;
 	}
-	
+
 	public void setMaxChro(double[] maxChro) {
 		this.maxChro = maxChro;
 	}
-	
+
 	public DataSet getDataSet() {
 		return dataSet;
 	}

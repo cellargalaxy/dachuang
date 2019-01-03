@@ -7,7 +7,7 @@ import top.cellargalaxy.dachuangspringboot.dataSet.Id;
  * Created by cellargalaxy on 17-9-9.
  */
 public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
-	
+
 	public double[] synthesisEvidence(Id id) {
 		double[] ds = {0, 0, 0};
 		for (double[] doubles : id.getEvidences()) {
@@ -18,7 +18,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 		ds[2] /= id.getEvidences().size();
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidence(Id id, Integer withoutEvidNum) {
 		double[] ds = {0, 0, 0};
 		for (double[] doubles : id.getEvidences()) {
@@ -32,7 +32,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 		ds[2] /= id.getEvidences().size();
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, double[] chro) {
 		double[] ds = {0, 0, 0};
 		for (double[] doubles : id.getEvidences()) {
@@ -43,7 +43,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 		ds[2] /= id.getEvidences().size();
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidenceOrder(Id id, double[] chro) {
 		double[] ds = {0, 0, 0};
 		int i = 0;
@@ -56,7 +56,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 		ds[2] /= id.getEvidences().size();
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro) {
 		double[] ds = {0, 0, 0};
 		for (double[] doubles : id.getEvidences()) {
@@ -70,7 +70,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 		ds[2] /= id.getEvidences().size();
 		return ds;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "AverageEvidenceSynthesis{平均证据合成}";

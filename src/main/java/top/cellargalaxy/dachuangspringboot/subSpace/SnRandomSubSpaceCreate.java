@@ -14,12 +14,12 @@ import java.util.List;
 public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 	private final int[][] sns;
 	private final int[] fnMins;
-	
+
 	public SnRandomSubSpaceCreate(int[][] sns, int[] fnMins) {
 		this.sns = sns;
 		this.fnMins = fnMins;
 	}
-	
+
 	public List<List<Integer>> createSubSpaces(DataSet dataSet) throws IOException, ClassNotFoundException {
 		LinkedList<Integer> features = dataSet.getEvidenceNums();
 		int[] sn = null;
@@ -48,7 +48,7 @@ public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 			}
 		}
 		int fn = fnMin + (int) (Math.random() * (fnMax - fnMin));
-		
+
 		List<List<Integer>> subSpaces = new LinkedList<List<Integer>>();
 		for (int i = 0; i < fn; i++) {
 			List<Integer> subSpace = createSnRandomSubSpace(features, sn[(int) (sn.length * Math.random())]);
@@ -60,11 +60,11 @@ public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 		}
 		return subSpaces;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "SnRandomSubSpaceCreate(sn随机子空间创建){" +
-				"sns=" + Arrays.toString(sns) +
+				"sns=" + Arrays.deepToString(sns) +
 				", fnMins=" + Arrays.toString(fnMins) +
 				'}';
 	}

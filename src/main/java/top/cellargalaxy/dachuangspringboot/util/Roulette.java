@@ -14,7 +14,7 @@ public class Roulette {
 		}
 		return roulette(ds, count);
 	}
-	
+
 	public static int roulette(double[] ds) {
 		double count = 0;
 		for (double d : ds) {
@@ -22,7 +22,7 @@ public class Roulette {
 		}
 		return roulette(ds, count);
 	}
-	
+
 	public static int roulette(List<Double> ds, double count) {
 		if (count == 0) {
 			return (int) (ds.size() * Math.random());
@@ -39,7 +39,7 @@ public class Roulette {
 		}
 		throw new RuntimeException("轮盘异常");
 	}
-	
+
 	public static int roulette(double[] ds, double count) {
 		if (count == 0) {
 			return (int) (ds.length * Math.random());

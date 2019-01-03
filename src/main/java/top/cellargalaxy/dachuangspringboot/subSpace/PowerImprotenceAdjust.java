@@ -13,7 +13,7 @@ public final class PowerImprotenceAdjust implements ImprotenceAdjust {
 		}
 		return listImpros;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PowerImprotenceAdjust{平方调整算法}";

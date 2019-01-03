@@ -16,7 +16,7 @@ public final class OrderParentChrosChoose implements ParentChrosChoose {
 		}
 		return parentChros;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "OrderParentChrosChoose{顺序父母染色体选择算法}";

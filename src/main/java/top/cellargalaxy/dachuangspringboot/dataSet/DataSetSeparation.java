@@ -5,21 +5,21 @@ package top.cellargalaxy.dachuangspringboot.dataSet;
  */
 public interface DataSetSeparation {
 	DataSet[] separationDataSet(double test, double trainMiss, double testMiss, double label1);
-	
+
 	int getCom0Count();
-	
+
 	int getCom1Count();
-	
+
 	int getMiss0Count();
-	
+
 	int getMiss1Count();
-	
+
 	double getTest();
-	
+
 	double getTrainMiss();
-	
+
 	double getTestMiss();
-	
+
 	double getLabel1();
-	
+
 }

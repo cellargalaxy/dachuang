@@ -7,11 +7,11 @@ import java.util.LinkedList;
  */
 public final class CustomizeFeatureSeparation implements FeatureSeparation {
 	private double separationValue;
-	
+
 	public CustomizeFeatureSeparation(double separationValue) {
 		this.separationValue = separationValue;
 	}
-	
+
 	public void separationFeature(LinkedList<AucImprotence> aucImprotences, LinkedList<Integer> imroEvid, LinkedList<Integer> unImproEvid) {
 		for (AucImprotence aucImprotence : aucImprotences) {
 			if (aucImprotence.getAucD() <= separationValue) {
@@ -21,7 +21,7 @@ public final class CustomizeFeatureSeparation implements FeatureSeparation {
 			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "CustomizeFeatureSeparation(用户自定义特征选择){" +

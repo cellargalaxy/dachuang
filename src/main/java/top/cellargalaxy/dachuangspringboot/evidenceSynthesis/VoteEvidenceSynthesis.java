@@ -1,7 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.evidenceSynthesis;
 
 
-
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
 
 import java.util.LinkedList;
@@ -14,15 +13,15 @@ public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 	private final double thrnf;
 	private final double d1;
 	private final double d2;
-	
+
 	public VoteEvidenceSynthesis(double thrf, double thrnf, double d1, double d2) {
 		this.thrf = thrf;
 		this.thrnf = thrnf;
 		this.d1 = d1;
 		this.d2 = d2;
 	}
-	
-	
+
+
 	public double[] synthesisEvidence(Id id) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		double a = 0;
@@ -42,7 +41,7 @@ public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidence(Id id, Integer withoutEvidNum) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		double a = 0;
@@ -65,7 +64,7 @@ public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, double[] chro) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		double a = 0;
@@ -85,7 +84,7 @@ public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidenceOrder(Id id, double[] chro) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		double a = 0;
@@ -107,7 +106,7 @@ public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		return ds;
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		double a = 0;
@@ -130,7 +129,7 @@ public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
 		}
 		return ds;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "VoteEvidenceSynthesis(投票法证据合成){" +

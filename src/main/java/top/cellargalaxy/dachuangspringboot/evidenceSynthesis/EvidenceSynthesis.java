@@ -8,12 +8,12 @@ import top.cellargalaxy.dachuangspringboot.dataSet.Id;
  */
 public interface EvidenceSynthesis {
 	double[] synthesisEvidence(Id id);
-	
+
 	double[] synthesisEvidence(Id id, Integer withoutEvidNum);
-	
+
 	double[] synthesisEvidenceIndex(Id id, double[] chro);
-	
+
 	double[] synthesisEvidenceOrder(Id id, double[] chro);
-	
+
 	double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro);
 }

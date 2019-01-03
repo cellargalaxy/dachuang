@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  * Created by cellargalaxy on 17-9-8.
  */
 public class FeatureSelection {
-	
+
 	public static final LinkedList<AucImprotence> featureSelection(FeatureSeparation featureSeparation, double stop,
 	                                                               Hereditary hereditary, HereditaryParameter hereditaryParameter,
 	                                                               ParentChrosChoose parentChrosChoose, EvaluationExecutor evaluationExecutor) throws IOException, ClassNotFoundException, ExecutionException, InterruptedException {
@@ -30,11 +30,11 @@ public class FeatureSelection {
 			aucImprotences.add(new AucImprotence(auc, integer));
 		}
 		Collections.sort(aucImprotences);
-		
+
 		LinkedList<Integer> imroEvid = new LinkedList<Integer>();
 		LinkedList<Integer> unInproEvid = new LinkedList<Integer>();
 		featureSeparation.separationFeature(aucImprotences, imroEvid, unInproEvid);
-		
+
 		hereditary.evolution(hereditaryParameter, parentChrosChoose, evaluationExecutor, imroEvid);
 		double auc = hereditary.getMaxAuc();
 		while (aucFull - auc > stop && unInproEvid.size() > 0) {
@@ -49,12 +49,12 @@ public class FeatureSelection {
 					evidenceNum = integer;
 				}
 			}
-			
+
 			imroEvid.add(evidenceNum);
 			unInproEvid.remove(new Integer(evidenceNum));
 			auc = aucJ;
 		}
-		
+
 		aucImprotences.add(new AucImprotence(Double.MAX_VALUE, imroEvid.size()));
 		return aucImprotences;
 	}

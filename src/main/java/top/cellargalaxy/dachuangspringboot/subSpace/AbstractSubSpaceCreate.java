@@ -23,7 +23,7 @@ public abstract class AbstractSubSpaceCreate implements SubSpaceCreate {
 		}
 		return mm / nn;
 	}
-	
+
 	List<Integer> createRandomSubSpace(List<Integer> features) {
 		int i;
 		do {
@@ -42,7 +42,7 @@ public abstract class AbstractSubSpaceCreate implements SubSpaceCreate {
 		Collections.sort(subSpace);
 		return subSpace;
 	}
-	
+
 	List<Integer> createSnRandomSubSpace(List<Integer> oldFeatures, int len) {
 		List<Integer> newFeatures = new LinkedList<Integer>();
 		for (Integer oldFeature : oldFeatures) {
@@ -65,7 +65,7 @@ public abstract class AbstractSubSpaceCreate implements SubSpaceCreate {
 		Collections.sort(subSpace);
 		return subSpace;
 	}
-	
+
 	List<Integer> createFeatureSelectionSubSpace(List<Integer> oldFeatures, List<Double> oldImpros, int len) {
 		List<Integer> newFeatures = new LinkedList<Integer>();
 		for (Integer oldFeature : oldFeatures) {
@@ -85,7 +85,7 @@ public abstract class AbstractSubSpaceCreate implements SubSpaceCreate {
 		Collections.sort(subSpace);
 		return subSpace;
 	}
-	
+
 	boolean siContainSubSpace(List<List<Integer>> subSpaces, List<Integer> features) {
 		main:
 		for (List<Integer> subSpace : subSpaces) {

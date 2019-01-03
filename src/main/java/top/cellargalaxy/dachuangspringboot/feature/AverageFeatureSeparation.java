@@ -20,7 +20,7 @@ public final class AverageFeatureSeparation implements FeatureSeparation {
 			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "AverageFeatureSeparation{平均数特征选择}";

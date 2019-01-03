@@ -138,12 +138,12 @@ public class DataSet implements Serializable {
 	}
 
 	public static final JSONObject outputDataSetResutl(DataSet subDataSet,
-													   DataSetSeparation dataSetSeparation, DataSet dataSet, EvidenceSynthesis evidenceSynthesis,
-													   Evaluation evaluation,
-													   ParentChrosChoose parentChrosChoose,
-													   SubSpaceCreate subSpaceCreate,
-													   Map<DataSet, double[]> subSpaceMap,
-													   double subSpaceAuc) throws IOException {
+	                                                   DataSetSeparation dataSetSeparation, DataSet dataSet, EvidenceSynthesis evidenceSynthesis,
+	                                                   Evaluation evaluation,
+	                                                   ParentChrosChoose parentChrosChoose,
+	                                                   SubSpaceCreate subSpaceCreate,
+	                                                   Map<DataSet, double[]> subSpaceMap,
+	                                                   double subSpaceAuc) throws IOException {
 		JSONObject outputDataSet = new JSONObject();
 
 		JSONArray datas = new JSONArray();
@@ -228,12 +228,12 @@ public class DataSet implements Serializable {
 	}
 
 	public static final void outputDataSetResutl(File outputDataSet, DataSetParameter dataSetParameter, DataSet subDataSet,
-												 DataSetSeparation dataSetSeparation, DataSet dataSet, EvidenceSynthesis evidenceSynthesis,
-												 Evaluation evaluation,
-												 ParentChrosChoose parentChrosChoose,
-												 SubSpaceCreate subSpaceCreate,
-												 Map<DataSet, double[]> subSpaceMap,
-												 double subSpaceAuc) throws IOException {
+	                                             DataSetSeparation dataSetSeparation, DataSet dataSet, EvidenceSynthesis evidenceSynthesis,
+	                                             Evaluation evaluation,
+	                                             ParentChrosChoose parentChrosChoose,
+	                                             SubSpaceCreate subSpaceCreate,
+	                                             Map<DataSet, double[]> subSpaceMap,
+	                                             double subSpaceAuc) throws IOException {
 		if (outputDataSet.getParentFile() != null) {
 			outputDataSet.getParentFile().mkdirs();
 		}

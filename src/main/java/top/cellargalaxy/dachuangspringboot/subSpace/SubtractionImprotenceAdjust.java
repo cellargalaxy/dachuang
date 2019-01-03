@@ -7,11 +7,11 @@ import java.util.LinkedList;
  */
 public final class SubtractionImprotenceAdjust implements ImprotenceAdjust {
 	private final double adjustD;
-	
+
 	public SubtractionImprotenceAdjust(double adjustD) {
 		this.adjustD = adjustD;
 	}
-	
+
 	public final LinkedList<Double> adjustImprotence(double[] impros) {
 		LinkedList<Double> listImpros = new LinkedList<Double>();
 		double minImp = Double.MIN_VALUE;
@@ -26,7 +26,7 @@ public final class SubtractionImprotenceAdjust implements ImprotenceAdjust {
 		}
 		return listImpros;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "SubtractionImprotenceAdjust(减法调整算法){" +

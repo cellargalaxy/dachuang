@@ -1,7 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.run;
 
 
-
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
@@ -28,7 +27,7 @@ public class SubSpace2DataSet {
 				newId.getEvidences().add(evidenceSynthesis.synthesisEvidenceOrder(id, chro));
 			}
 		}
-		
+
 		LinkedList<Id> ids = new LinkedList<Id>();
 		for (Map.Entry<String, Id> entry : map.entrySet()) {
 			ids.add(entry.getValue());

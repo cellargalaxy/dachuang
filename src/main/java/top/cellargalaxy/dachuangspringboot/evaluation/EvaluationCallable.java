@@ -11,12 +11,12 @@ import java.util.concurrent.Callable;
 public final class EvaluationCallable implements Callable<Double> {
 	private final Evaluation evaluation;
 	private final DataSet dataSet;
-	
+
 	public EvaluationCallable(Evaluation evaluation, DataSet dataSet) {
 		this.evaluation = evaluation;
 		this.dataSet = dataSet;
 	}
-	
+
 	public Double call() throws Exception {
 		return evaluation.countEvaluation(dataSet);
 	}

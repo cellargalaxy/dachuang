@@ -1,7 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.evidenceSynthesis;
 
 
-
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
 
 import java.util.LinkedList;
@@ -10,7 +9,7 @@ import java.util.LinkedList;
  * Created by cellargalaxy on 17-9-19.
  */
 public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
-	
+
 	public double[] synthesisEvidence(Id id) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		if (evidences.size() == 0) {
@@ -47,7 +46,7 @@ public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
 			return ds;
 		}
 	}
-	
+
 	public double[] synthesisEvidence(Id id, Integer withoutEvidNum) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		if (evidences.size() == 0) {
@@ -86,7 +85,7 @@ public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
 			return ds;
 		}
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, double[] chro) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		if (evidences.size() == 0) {
@@ -123,7 +122,7 @@ public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
 			return ds;
 		}
 	}
-	
+
 	public double[] synthesisEvidenceOrder(Id id, double[] chro) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		if (evidences.size() == 0) {
@@ -160,7 +159,7 @@ public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
 			return ds;
 		}
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro) {
 		LinkedList<double[]> evidences = id.getEvidences();
 		if (evidences.size() == 0) {
@@ -199,7 +198,7 @@ public final class Distance2EvidenceSynthesis implements EvidenceSynthesis {
 			return ds;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Distance2EvidenceSynthesis{距离2istance}";

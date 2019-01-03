@@ -12,7 +12,7 @@ public class ImprotenceAdjustFactory {
 	 * 减法调整算法
 	 */
 	public static final int SUBTRACTION_IMPROTENCE_ADJUST_NUM = 2;
-	
+
 	public static final ImprotenceAdjust createImprotenceAdjust(int improtenceAdjustNum, Double adjustD) {
 		if (improtenceAdjustNum == POWER_IMPROTENCE_ADJUST_NUM) {
 			return createPowerImprotenceAdjust();
@@ -22,7 +22,7 @@ public class ImprotenceAdjustFactory {
 		}
 		throw new RuntimeException("无效improtenceAdjustNum: " + improtenceAdjustNum);
 	}
-	
+
 	public static final boolean check(Integer improtenceAdjustNum, Double adjustD) {
 		if (improtenceAdjustNum == null) {
 			return false;
@@ -35,11 +35,11 @@ public class ImprotenceAdjustFactory {
 		}
 		return false;
 	}
-	
+
 	private static final ImprotenceAdjust createSubtractionImprotenceAdjust(double adjustD) {
 		return new SubtractionImprotenceAdjust(adjustD);
 	}
-	
+
 	private static final ImprotenceAdjust createPowerImprotenceAdjust() {
 		return new PowerImprotenceAdjust();
 	}

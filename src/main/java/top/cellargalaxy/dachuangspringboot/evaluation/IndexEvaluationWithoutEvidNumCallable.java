@@ -13,14 +13,14 @@ public final class IndexEvaluationWithoutEvidNumCallable implements Callable<Dou
 	private final DataSet dataSet;
 	private final Integer withoutEvidNum;
 	private final double[] chro;
-	
+
 	public IndexEvaluationWithoutEvidNumCallable(Evaluation evaluation, DataSet dataSet, Integer withoutEvidNum, double[] chro) {
 		this.evaluation = evaluation;
 		this.dataSet = dataSet;
 		this.withoutEvidNum = withoutEvidNum;
 		this.chro = chro;
 	}
-	
+
 	public Double call() throws Exception {
 		return evaluation.countIndexEvaluationWithoutEvidNum(dataSet, withoutEvidNum, chro);
 	}

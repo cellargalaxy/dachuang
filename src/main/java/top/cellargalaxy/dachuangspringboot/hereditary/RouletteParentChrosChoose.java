@@ -23,7 +23,7 @@ public final class RouletteParentChrosChoose implements ParentChrosChoose {
 		}
 		return parentChros;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "RouletteParentChrosChoose{轮盘父母染色体选择算法}";

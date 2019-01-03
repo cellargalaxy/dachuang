@@ -1,7 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.evaluation;
 
 
-
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 
 import java.util.concurrent.Callable;
@@ -13,13 +12,13 @@ public final class OrderEvaluationCallable implements Callable<Double> {
 	private final Evaluation evaluation;
 	private final DataSet cloneDataSet;
 	private final double[] chro;
-	
+
 	public OrderEvaluationCallable(Evaluation evaluation, DataSet cloneDataSet, double[] chro) {
 		this.evaluation = evaluation;
 		this.cloneDataSet = cloneDataSet;
 		this.chro = chro;
 	}
-	
+
 	public Double call() throws Exception {
 		return evaluation.countOrderEvaluation(cloneDataSet, chro);
 	}

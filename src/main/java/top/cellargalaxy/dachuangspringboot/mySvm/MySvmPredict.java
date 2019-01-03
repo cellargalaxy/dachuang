@@ -11,7 +11,7 @@ import java.io.Writer;
  * Created by cellargalaxy on 17-9-7.
  */
 public class MySvmPredict {
-	
+
 	/**
 	 * 参数，文件读取以及检查模型，检查完调用预测方法
 	 *
@@ -27,20 +27,20 @@ public class MySvmPredict {
 		}
 		return predict(problem, model);
 	}
-	
+
 	private static double predict(svm_problem problem, svm_model model) {
 		int correct = 0;
 		int total = 0;
 		double error = 0;
 		double sumv = 0, sumy = 0, sumvv = 0, sumyy = 0, sumvy = 0;
-		
+
 		int svm_type = svm.svm_get_svm_type(model);
-		
+
 		for (int i = 0; i < problem.x.length; i++) {
 			svm_node[] x = problem.x[i];
 			double target = problem.y[i];
 			double v = svm.svm_predict(model, x);
-			
+
 			if (v == target) {
 				++correct;
 			}
@@ -52,7 +52,7 @@ public class MySvmPredict {
 			sumvy += v * target;
 			++total;
 		}
-		
+
 		if (svm_type == svm_parameter.EPSILON_SVR || svm_type == svm_parameter.NU_SVR) {
 //			System.out.println("Mean squared error = " + error / total + " (regression)");
 //			System.out.println("Squared correlation coefficient = " +

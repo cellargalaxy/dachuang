@@ -12,11 +12,11 @@ import java.util.Map;
  * Created by cellargalaxy on 17-9-28.
  */
 public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
-	
+
 	public DataSetSeparationImpl(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
 		super(dataSetFile, dataSetParameter);
 	}
-	
+
 	public void createIds(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
 		LinkedList<Id> ids = getIds();
 		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(new BufferedReader(new InputStreamReader(new FileInputStream(dataSetFile), dataSetParameter.getCoding())));
@@ -30,12 +30,12 @@ public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
 				evidences = new LinkedList<double[]>();
 			} else if (!id.equals(record.get(dataSetParameter.getIdClo()))) {
 				ids.add(new Id(id, evidences, label));
-				
+
 				id = record.get(dataSetParameter.getIdClo());
 				label = new Integer(record.get(dataSetParameter.getLabelCol()));
 				evidences = new LinkedList<double[]>();
 			}
-			
+
 			double[] evidence = {createEvidNum(record.get(dataSetParameter.getEvidCol())), new Double(record.get(dataSetParameter.getACol())), new Double(record.get(dataSetParameter.getBCol()))};
 			evidences.add(evidence);
 		}
@@ -43,27 +43,27 @@ public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
 			ids.add(new Id(id, evidences, label));
 		}
 	}
-	
+
 	public DataSet[] separationDataSet() {
 		double test = getTest();
 		double trainMiss = getTrainMiss();
 		double testMiss = getTestMiss();
 		double label1 = getLabel1();
-		
+
 		LinkedList<Id> ids = getIds();
 		LinkedList<Integer> evidenceNums = getEvidenceNums();
 		Map<String, Integer> evidNameToId = getEvidNameToId();
-		
+
 		double com0Pro = (1 - (trainMiss * (1 - test) + testMiss * test)) * (1 - label1);
 		double com1Pro = (1 - (trainMiss * (1 - test) + testMiss * test)) * label1;
 		double miss0Pro = (trainMiss * (1 - test) + testMiss * test) * (1 - label1);
 		double miss1Pro = (trainMiss * (1 - test) + testMiss * test) * label1;
-		
+
 		double com0ProD = 1.0 * getCom0Count() / ids.size() - com0Pro;
 		double com1ProD = 1.0 * getCom1Count() / ids.size() - com1Pro;
 		double miss0ProD = 1.0 * getMiss0Count() / ids.size() - miss0Pro;
 		double miss1ProD = 1.0 * getMiss1Count() / ids.size() - miss1Pro;
-		
+
 		double minProD = Double.MAX_VALUE;
 		if (getCom0Count() != 0 && com0ProD < minProD) {
 			minProD = com1ProD;
@@ -77,7 +77,7 @@ public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
 		if (getMiss1Count() != 0 && miss1ProD < minProD) {
 			minProD = miss1ProD;
 		}
-		
+
 		int addCom0Count = -1;
 		int addCom1Count = -1;
 		int addMiss0Count = -1;
@@ -116,32 +116,32 @@ public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
 		if (getMiss1Count() != 0) {
 			count += addMiss1Count;
 		}
-		
+
 		int addTestCom0Count = (int) (count * test * (1 - testMiss) * (1 - label1));
 		int addTestCom1Count = (int) (count * test * (1 - testMiss) * label1);
 		int addTestMiss0Count = (int) (count * test * testMiss * (1 - label1));
 		int addTestMiss1Count = (int) (count * test * testMiss * label1);
-		
+
 		int addTrainCom0Count = (int) (count * (1 - test) * (1 - trainMiss) * (1 - label1));
 		int addTrainCom1Count = (int) (count * (1 - test) * (1 - trainMiss) * label1);
 		int addTrainMiss0Count = (int) (count * (1 - test) * trainMiss * (1 - label1));
 		int addTrainMiss1Count = (int) (count * (1 - test) * trainMiss * label1);
-		
+
 		double addTrainCom0Pro = 1.0 * addTrainCom0Count / addCom0Count;
 		double addTrainCom1Pro = 1.0 * addTrainCom1Count / addCom1Count;
 		double addTrainMiss0Pro = 1.0 * addTrainMiss0Count / addMiss0Count;
 		double addTrainMiss1Pro = 1.0 * addTrainMiss1Count / addMiss1Count;
-		
+
 		int yetTestCom0Count = 0;
 		int yetTestCom1Count = 0;
 		int yetTestMiss0Count = 0;
 		int yetTestMiss1Count = 0;
-		
+
 		int yetTrainCom0Count = 0;
 		int yetTrainCom1Count = 0;
 		int yetTrainMiss0Count = 0;
 		int yetTrainMiss1Count = 0;
-		
+
 		LinkedList<Id> trainIds = new LinkedList<Id>();
 		LinkedList<Id> testIds = new LinkedList<Id>();
 		for (Id id : ids) {

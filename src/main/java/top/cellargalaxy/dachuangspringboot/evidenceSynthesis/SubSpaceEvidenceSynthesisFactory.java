@@ -12,7 +12,7 @@ public class SubSpaceEvidenceSynthesisFactory {
 	 * 投票法多推理结果合成
 	 */
 	public static final int VOTE_EVIDENCE_SYNTHESIS_NUM = 2;
-	
+
 	public static final EvidenceSynthesis createSubSpaceEvidenceSynthesis(int subSpaceEvidenceSynthesisNum, Double thrf, Double thrnf, Double d1, Double d2) {
 		if (subSpaceEvidenceSynthesisNum == AVERAGE_EVIDENCE_SYNTHESIS_NUM) {
 			return createAverageEvidenceSynthesis();
@@ -22,7 +22,7 @@ public class SubSpaceEvidenceSynthesisFactory {
 		}
 		throw new RuntimeException("无效subSpaceEvidenceSynthesisNum: " + subSpaceEvidenceSynthesisNum);
 	}
-	
+
 	public static final boolean check(Integer subSpaceEvidenceSynthesisNum, Double thrf, Double thrnf, Double d1, Double d2) {
 		if (subSpaceEvidenceSynthesisNum == null) {
 			return false;
@@ -35,11 +35,11 @@ public class SubSpaceEvidenceSynthesisFactory {
 		}
 		return false;
 	}
-	
+
 	private static final EvidenceSynthesis createVoteEvidenceSynthesis(double thrf, double thrnf, double d1, double d2) {
 		return new VoteEvidenceSynthesis(thrf, thrnf, d1, d2);
 	}
-	
+
 	private static final EvidenceSynthesis createAverageEvidenceSynthesis() {
 		return new AverageEvidenceSynthesis();
 	}

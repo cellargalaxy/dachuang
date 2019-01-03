@@ -39,7 +39,7 @@ public class MySvmTrain {
 		param.weight = new double[0];
 		return param;
 	}
-	
+
 	/**
 	 * 数据集检查
 	 *
@@ -56,7 +56,7 @@ public class MySvmTrain {
 		}
 		return prob;
 	}
-	
+
 	/**
 	 * 训练数据集
 	 *
@@ -73,13 +73,13 @@ public class MySvmTrain {
 		svm.svm_save_model(model, writer);
 		return writer;
 	}
-	
+
 	private static final svm_problem exchengeDataSetAfter(int max_index, svm_problem prob, svm_parameter param) {
 		//根据最大特征编号做一些参数设置
 		if (param.gamma == 0 && max_index > 0) {
 			param.gamma = 1.0 / max_index;
 		}
-		
+
 		if (param.kernel_type == svm_parameter.PRECOMPUTED) {
 			for (int i = 0; i < prob.l; i++) {
 				if (prob.x[i][0].index != 0) {
@@ -92,12 +92,12 @@ public class MySvmTrain {
 		}
 		return prob;
 	}
-	
-	
+
+
 	public static final svm_problem exchengeDataSet(DataSet dataSet, svm_parameter param) {
 		//最大的特征编号
 		int max_index = 0;
-		
+
 		svm_problem prob = new svm_problem();
 		//数据集对象的个数
 		prob.l = dataSet.getIds().size();
@@ -117,18 +117,18 @@ public class MySvmTrain {
 				j++;
 			}
 			prob.x[i] = x;
-			
+
 			prob.y[i] = id.getLabel();
 			i++;
 		}
 		return exchengeDataSetAfter(max_index, prob, param);
 	}
-	
-	
+
+
 	public static final svm_problem exchengeDataSetWithoutEvidNum(DataSet dataSet, svm_parameter param, Integer withoutEvidNum) {
 		//最大的特征编号
 		int max_index = 0;
-		
+
 		svm_problem prob = new svm_problem();
 		//数据集对象的个数
 		prob.l = dataSet.getIds().size();
@@ -149,7 +149,7 @@ public class MySvmTrain {
 				node.value = doubles[1];
 				nodes.add(node);
 			}
-			
+
 			svm_node[] x = new svm_node[nodes.size()];
 			int j = 0;
 			for (svm_node node : nodes) {
@@ -157,17 +157,17 @@ public class MySvmTrain {
 				j++;
 			}
 			prob.x[i] = x;
-			
+
 			prob.y[i] = id.getLabel();
 			i++;
 		}
 		return exchengeDataSetAfter(max_index, prob, param);
 	}
-	
+
 	public static final svm_problem exchengeDataSetIndexChro(DataSet dataSet, svm_parameter param, double[] chro) {
 		//最大的特征编号
 		int max_index = 0;
-		
+
 		svm_problem prob = new svm_problem();
 		//数据集对象的个数
 		prob.l = dataSet.getIds().size();
@@ -187,17 +187,17 @@ public class MySvmTrain {
 				j++;
 			}
 			prob.x[i] = x;
-			
+
 			prob.y[i] = id.getLabel();
 			i++;
 		}
 		return exchengeDataSetAfter(max_index, prob, param);
 	}
-	
+
 	public static final svm_problem exchengeDataSetOrderChro(DataSet dataSet, svm_parameter param, double[] chro) {
 		//最大的特征编号
 		int max_index = 0;
-		
+
 		svm_problem prob = new svm_problem();
 		//数据集对象的个数
 		prob.l = dataSet.getIds().size();
@@ -217,17 +217,17 @@ public class MySvmTrain {
 				j++;
 			}
 			prob.x[i] = x;
-			
+
 			prob.y[i] = id.getLabel();
 			i++;
 		}
 		return exchengeDataSetAfter(max_index, prob, param);
 	}
-	
+
 	public static final svm_problem exchengeDataSetIndexChro(DataSet dataSet, svm_parameter param, Integer withoutEvidNum, double[] chro) {
 		//最大的特征编号
 		int max_index = 0;
-		
+
 		svm_problem prob = new svm_problem();
 		//数据集对象的个数
 		prob.l = dataSet.getIds().size();
@@ -248,7 +248,7 @@ public class MySvmTrain {
 				node.value = doubles[1] * chro[2 * (int) (doubles[0]) - 2];
 				nodes.add(node);
 			}
-			
+
 			svm_node[] x = new svm_node[nodes.size()];
 			int j = 0;
 			for (svm_node node : nodes) {
@@ -256,7 +256,7 @@ public class MySvmTrain {
 				j++;
 			}
 			prob.x[i] = x;
-			
+
 			prob.y[i] = id.getLabel();
 			i++;
 		}

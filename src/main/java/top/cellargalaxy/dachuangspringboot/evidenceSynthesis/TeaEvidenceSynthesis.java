@@ -1,7 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.evidenceSynthesis;
 
 
-
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
 
 import java.util.Iterator;
@@ -10,8 +9,8 @@ import java.util.Iterator;
  * Created by cellargalaxy on 17-9-9.
  */
 public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
-	
-	
+
+
 	public double[] synthesisEvidence(Id id) {
 		if (id.getEvidences().size() == 0) {
 			return null;
@@ -26,7 +25,7 @@ public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 			return ds1;
 		}
 	}
-	
+
 	public double[] synthesisEvidence(Id id, Integer withoutEvidNum) {
 		if (id.getEvidences().size() == 0) {
 			return null;
@@ -53,7 +52,7 @@ public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 			return ds1;
 		}
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, double[] chro) {
 		if (id.getEvidences().size() == 0) {
 			return null;
@@ -69,7 +68,7 @@ public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 			return ds1;
 		}
 	}
-	
+
 	public double[] synthesisEvidenceOrder(Id id, double[] chro) {
 		if (id.getEvidences().size() == 0) {
 			return null;
@@ -87,7 +86,7 @@ public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 			return ds1;
 		}
 	}
-	
+
 	public double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro) {
 		if (id.getEvidences().size() == 0) {
 			return null;
@@ -115,7 +114,7 @@ public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 			return ds1;
 		}
 	}
-	
+
 	private final double[] countEvidence(double[] d1, double[] d2) {
 		double[] ds = new double[3];
 		double k = countK(d1, d2);
@@ -123,19 +122,19 @@ public final class TeaEvidenceSynthesis implements EvidenceSynthesis {
 		ds[2] = countB(d1, d2, k);
 		return ds;
 	}
-	
+
 	private final double countA(double[] d1, double[] d2, double k) {
 		return (d1[1] * d2[1] + d1[1] * (1 - d2[1] - d2[2]) + d2[1] * (1 - d1[1] - d1[2])) / k;
 	}
-	
+
 	private final double countB(double[] d1, double[] d2, double k) {
 		return (d1[2] * d2[2] + d1[2] * (1 - d2[1] - d2[2]) + d2[2] * (1 - d1[1] - d1[2])) / k;
 	}
-	
+
 	private final double countK(double[] d1, double[] d2) {
 		return 1 - d1[1] * d2[2] - d1[2] * d2[1];
 	}
-	
+
 	@Override
 	public String toString() {
 		return "TeaEvidenceSynthesis{DS证据合成}";
