@@ -1,138 +1,88 @@
 package top.cellargalaxy.dachuangspringboot.evidenceSynthesis;
 
 
+import lombok.Data;
+import top.cellargalaxy.dachuangspringboot.dataSet.Evidence;
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
-
-import java.util.LinkedList;
+import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
+import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 
 /**
  * Created by cellargalaxy on 17-9-19.
  */
+@Data
 public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
+	public static final int evidenceId = -VoteEvidenceSynthesis.class.getSimpleName().hashCode();
+	public static final String evidenceName = "投票法合成证据";
 	private final double thrf;
 	private final double thrnf;
 	private final double d1;
 	private final double d2;
 
-	public VoteEvidenceSynthesis(double thrf, double thrnf, double d1, double d2) {
-		this.thrf = thrf;
-		this.thrnf = thrnf;
-		this.d1 = d1;
-		this.d2 = d2;
-	}
-
-
-	public double[] synthesisEvidence(Id id) {
-		LinkedList<double[]> evidences = id.getEvidences();
+	@Override
+	public Evidence synthesisEvidence(Id id) {
+		if (id.getEvidences().size() == 0) {
+			return null;
+		}
 		double a = 0;
 		double b = 0;
-		for (double[] evidence : evidences) {
-			if (evidence[1] > thrf) {
+		for (Evidence evidence : id.getEvidences()) {
+			if (evidence.getFraud() > thrf) {
 				a++;
-			} else if (evidence[2] < thrnf) {
+			} else if (evidence.getUnfraud() < thrnf) {
 				b++;
 			}
 		}
-		double[] ds = {0, 0, 0};
+		double fraud = 0;
+		double unfraud = 0;
 		if (a > b) {
-			ds[1] = (a - b) / (a + b) * d1;
+			fraud = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2] = (b - a) / (a + b) * d2;
+			unfraud = (b - a) / (a + b) * d2;
 		}
-		return ds;
+		return new Evidence(evidenceId, evidenceName, new double[]{fraud, unfraud});
 	}
 
-	public double[] synthesisEvidence(Id id, Integer withoutEvidNum) {
-		LinkedList<double[]> evidences = id.getEvidences();
+	@Override
+	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId) {
+		if (id.getEvidences().size() == 0) {
+			return null;
+		}
 		double a = 0;
 		double b = 0;
-		for (double[] evidence : evidences) {
-			if (withoutEvidNum.equals((int) (evidence[0]))) {
+		for (Evidence evidence : id.getEvidences()) {
+			if (withoutEvidenceId.equals(evidence.getEvidenceId())) {
 				continue;
 			}
-			if (evidence[1] > thrf) {
+			if (evidence.getFraud() > thrf) {
 				a++;
-			} else if (evidence[2] < thrnf) {
+			} else if (evidence.getUnfraud() < thrnf) {
 				b++;
 			}
 		}
-		double[] ds = {0, 0, 0};
+		double fraud = 0;
+		double unfraud = 0;
 		if (a > b) {
-			ds[1] = (a - b) / (a + b) * d1;
+			fraud = (a - b) / (a + b) * d1;
 		} else if (a < b) {
-			ds[2] = (b - a) / (a + b) * d2;
+			unfraud = (b - a) / (a + b) * d2;
 		}
-		return ds;
+		return new Evidence(evidenceId, evidenceName, new double[]{fraud, unfraud});
 	}
 
-	public double[] synthesisEvidenceIndex(Id id, double[] chro) {
-		LinkedList<double[]> evidences = id.getEvidences();
-		double a = 0;
-		double b = 0;
-		for (double[] evidence : evidences) {
-			if (evidence[1] * chro[2 * (int) (evidence[0]) - 2] > thrf) {
-				a++;
-			} else if (evidence[2] * chro[2 * (int) (evidence[0]) - 1] < thrnf) {
-				b++;
-			}
-		}
-		double[] ds = {0, 0, 0};
-		if (a > b) {
-			ds[1] = (a - b) / (a + b) * d1;
-		} else if (a < b) {
-			ds[2] = (b - a) / (a + b) * d2;
-		}
-		return ds;
+	@Override
+	public Evidence synthesisEvidence(Id id, Chromosome chromosome) {
+		return synthesisEvidence(HereditaryUtils.evolution(id.clone(), chromosome));
 	}
 
-	public double[] synthesisEvidenceOrder(Id id, double[] chro) {
-		LinkedList<double[]> evidences = id.getEvidences();
-		double a = 0;
-		double b = 0;
-		int i = 0;
-		for (double[] evidence : evidences) {
-			if (evidence[1] * chro[2 * i] > thrf) {
-				a++;
-			} else if (evidence[2] * chro[2 * i + 1] < thrnf) {
-				b++;
-			}
-			i++;
-		}
-		double[] ds = {0, 0, 0};
-		if (a > b) {
-			ds[1] = (a - b) / (a + b) * d1;
-		} else if (a < b) {
-			ds[2] = (b - a) / (a + b) * d2;
-		}
-		return ds;
-	}
-
-	public double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro) {
-		LinkedList<double[]> evidences = id.getEvidences();
-		double a = 0;
-		double b = 0;
-		for (double[] evidence : evidences) {
-			if (withoutEvidNum.equals((int) (evidence[0]))) {
-				continue;
-			}
-			if (evidence[1] * chro[2 * (int) (evidence[0]) - 2] > thrf) {
-				a++;
-			} else if (evidence[2] * chro[2 * (int) (evidence[0]) - 1] < thrnf) {
-				b++;
-			}
-		}
-		double[] ds = {0, 0, 0};
-		if (a > b) {
-			ds[1] = (a - b) / (a + b) * d1;
-		} else if (a < b) {
-			ds[2] = (b - a) / (a + b) * d2;
-		}
-		return ds;
+	@Override
+	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId, Chromosome chromosome) {
+		return synthesisEvidence(HereditaryUtils.evolution(id.clone(), chromosome), withoutEvidenceId);
 	}
 
 	@Override
 	public String toString() {
-		return "VoteEvidenceSynthesis(投票法证据合成){" +
+		return "投票法证据合成{" +
 				"thrf=" + thrf +
 				", thrnf=" + thrnf +
 				", d1=" + d1 +

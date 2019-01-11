@@ -1,58 +1,62 @@
 package top.cellargalaxy.dachuangspringboot.dataSet;
 
+import lombok.Data;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
-
-import java.io.*;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by cellargalaxy on 17-9-28.
+ * @author cellargalaxy
+ * @time 2019/1/11
  */
-public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
+@Data
+public class DataSetSplitImpl implements DataSetSplit {
+	private final DataSet dataSet;
+	private final int com0Count;
+	private final int com1Count;
+	private final int miss0Count;
+	private final int miss1Count;
+	private DataSet trainDataSet;
+	private DataSet testDataSet;
 
-	public DataSetSeparationImpl(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
-		super(dataSetFile, dataSetParameter);
-	}
-
-	public void createIds(File dataSetFile, DataSetParameter dataSetParameter) throws IOException {
-		LinkedList<Id> ids = getIds();
-		Iterable<CSVRecord> records = CSVFormat.EXCEL.withHeader().parse(new BufferedReader(new InputStreamReader(new FileInputStream(dataSetFile), dataSetParameter.getCoding())));
-		String id = null;
-		int label = -1;
-		LinkedList<double[]> evidences = null;
-		for (CSVRecord record : records) {
-			if (id == null) {
-				id = record.get(dataSetParameter.getIdClo());
-				label = new Integer(record.get(dataSetParameter.getLabelCol()));
-				evidences = new LinkedList<double[]>();
-			} else if (!id.equals(record.get(dataSetParameter.getIdClo()))) {
-				ids.add(new Id(id, evidences, label));
-
-				id = record.get(dataSetParameter.getIdClo());
-				label = new Integer(record.get(dataSetParameter.getLabelCol()));
-				evidences = new LinkedList<double[]>();
+	public DataSetSplitImpl(DataSet dataSet) {
+		this.dataSet = dataSet;
+		int com0Count = 0;
+		int com1Count = 0;
+		int miss0Count = 0;
+		int miss1Count = 0;
+		Collection<Id> ids = dataSet.getIds();
+		int evidenceCount = dataSet.getEvidenceName2EvidenceId().size();
+		for (Id id : ids) {
+			if (id.getEvidences().size() == evidenceCount) {
+				if (id.getLabel() == Id.LABEL_0) {
+					com0Count++;
+				} else if (id.getLabel() == Id.LABEL_1) {
+					com1Count++;
+				} else {
+					throw new RuntimeException("数据集存在第三类标签:" + id.getLabel());
+				}
+			} else {
+				if (id.getLabel() == Id.LABEL_0) {
+					miss0Count++;
+				} else if (id.getLabel() == Id.LABEL_1) {
+					miss1Count++;
+				} else {
+					throw new RuntimeException("数据集存在第三类标签:" + id.getLabel());
+				}
 			}
-
-			double[] evidence = {createEvidNum(record.get(dataSetParameter.getEvidCol())), new Double(record.get(dataSetParameter.getACol())), new Double(record.get(dataSetParameter.getBCol()))};
-			evidences.add(evidence);
 		}
-		if (id != null) {
-			ids.add(new Id(id, evidences, label));
-		}
+		this.com0Count = com0Count;
+		this.com1Count = com1Count;
+		this.miss0Count = miss0Count;
+		this.miss1Count = miss1Count;
 	}
 
-	public DataSet[] separationDataSet() {
-		double test = getTest();
-		double trainMiss = getTrainMiss();
-		double testMiss = getTestMiss();
-		double label1 = getLabel1();
-
-		LinkedList<Id> ids = getIds();
-		LinkedList<Integer> evidenceNums = getEvidenceNums();
-		Map<String, Integer> evidNameToId = getEvidNameToId();
+	@Override
+	public DataSetSplit splitDataSet(double test, double trainMiss, double testMiss, double label1) {
+		Collection<Id> ids = dataSet.getIds();
+		int evidenceCount = dataSet.getEvidenceName2EvidenceId().size();
 
 		double com0Pro = (1 - (trainMiss * (1 - test) + testMiss * test)) * (1 - label1);
 		double com1Pro = (1 - (trainMiss * (1 - test) + testMiss * test)) * label1;
@@ -142,47 +146,49 @@ public final class DataSetSeparationImpl extends AbstractDataSetSeparation {
 		int yetTrainMiss0Count = 0;
 		int yetTrainMiss1Count = 0;
 
-		LinkedList<Id> trainIds = new LinkedList<Id>();
-		LinkedList<Id> testIds = new LinkedList<Id>();
+		Map<String, Id> trainIdMaps = new HashMap<>();
+		Map<String, Id> testIdMaps = new HashMap<>();
 		for (Id id : ids) {
-			if (id.getEvidences().size() == evidenceNums.size()) {
+			if (id.getEvidences().size() == evidenceCount) {
 				if (id.getLabel() == Id.LABEL_0) {  //com0
 					if (yetTrainCom0Count < addTrainCom0Count && (yetTestCom0Count >= addTestCom0Count || Math.random() > addTrainCom0Pro)) {
-						trainIds.add(id);
+						trainIdMaps.put(id.getId(), id);
 						yetTrainCom0Count++;
 					} else if (yetTestCom0Count < addTestCom0Count) {
-						testIds.add(id);
+						testIdMaps.put(id.getId(), id);
 						yetTestCom0Count++;
 					}
 				} else {    //com1
 					if (yetTrainCom1Count < addTrainCom1Count && (yetTestCom1Count >= addTestCom1Count || Math.random() > addTrainCom1Pro)) {
-						trainIds.add(id);
+						trainIdMaps.put(id.getId(), id);
 						yetTrainCom1Count++;
 					} else if (yetTestCom1Count < addTestCom1Count) {
-						testIds.add(id);
+						testIdMaps.put(id.getId(), id);
 						yetTestCom1Count++;
 					}
 				}
 			} else {
 				if (id.getLabel() == Id.LABEL_0) {  //miss0
 					if (yetTrainMiss0Count < addTrainMiss0Count && (yetTestMiss0Count >= addTestMiss0Count || Math.random() > addTrainMiss0Pro)) {
-						trainIds.add(id);
+						trainIdMaps.put(id.getId(), id);
 						yetTrainMiss0Count++;
 					} else if (yetTestMiss0Count < addTestMiss0Count) {
-						testIds.add(id);
+						testIdMaps.put(id.getId(), id);
 						yetTestMiss0Count++;
 					}
 				} else {    //miss1
 					if (yetTrainMiss1Count < addTrainMiss1Count && (yetTestMiss1Count >= addTestMiss1Count || Math.random() > addTrainMiss1Pro)) {
-						trainIds.add(id);
+						trainIdMaps.put(id.getId(), id);
 						yetTrainMiss1Count++;
 					} else if (yetTestMiss1Count < addTestMiss1Count) {
-						testIds.add(id);
+						testIdMaps.put(id.getId(), id);
 						yetTestMiss1Count++;
 					}
 				}
 			}
 		}
-		return new DataSet[]{new DataSet(trainIds, evidenceNums, evidNameToId), new DataSet(testIds, evidenceNums, evidNameToId)};
+		trainDataSet = new DataSet(trainIdMaps);
+		testDataSet = new DataSet(testIdMaps);
+		return this;
 	}
 }

@@ -38,7 +38,7 @@ runParameter对应的json结构如下
         "sameNum": 100, //最多相同最大解次数(0,+00)
         "chrosNum": 30, //染色体数(0,+00)
         "geneMutNumPro": 0.5, //基因突变比例(0,1)
-        "geneMutPro": 0.3, //基因突变概率(0,1)
+        "baseMutPro": 0.3, //基因突变概率(0,1)
         "sameDeviation": 0.001, //相同解范围(0,1)
         "step": 0.01, //基因步长(0,1)
         "iterNum": 500, //迭代次数(0,+00)
@@ -184,7 +184,7 @@ app.post('/solutionResult', function (req, res) {
                          "label1": 0.1, //1标签比例
                          "parentChrosChoose": "RouletteParentChrosChoose{轮盘父母染色体选择算法}", //父母染色体选择算法
                          "AUC": 0.8473953488372094, //最终auc值
-                         "evaluation": "Auc{evidenceSynthesis=TeaEvidenceSynthesis{DS证据合成}}", //评价算法
+                         "evaluation": DsEvidenceSynthesis, //评价算法
                          "miss1Count": 0, //缺失1标签个数
                          "evidNameToIds": [
                              {

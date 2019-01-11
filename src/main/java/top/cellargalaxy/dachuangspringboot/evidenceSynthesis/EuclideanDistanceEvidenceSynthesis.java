@@ -7,44 +7,65 @@ import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
 import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 
 /**
- * Created by cellargalaxy on 17-9-9.
+ * Created by cellargalaxy on 17-9-19.
  */
-public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
-	public static final int evidenceId = -AverageEvidenceSynthesis.class.getSimpleName().hashCode();
-	public static final String evidenceName = "平均法合成证据";
-
+public final class EuclideanDistanceEvidenceSynthesis implements EvidenceSynthesis {
+	public static final int evidenceId = -EuclideanDistanceEvidenceSynthesis.class.getSimpleName().hashCode();
+	public static final String evidenceName = "欧几距离合成证据";
 	@Override
 	public Evidence synthesisEvidence(Id id) {
 		if (id.getEvidences().size() == 0) {
 			return null;
 		}
+		double[] weights = new double[id.getEvidences().size()];
+		int i = 0;
+		for (Evidence evidence : id.getEvidences()) {
+			weights[i] = Math.pow(Math.pow(evidence.getFraud(), 2) + Math.pow(evidence.getUnfraud(), 2), 0.5);
+			i++;
+		}
+		double count = 0;
+		for (double weight : weights) {
+			count += weight;
+		}
 		double fraud = 0;
 		double unfraud = 0;
 		for (Evidence evidence : id.getEvidences()) {
-			fraud += evidence.getFraud();
-			unfraud += evidence.getUnfraud();
+			fraud += evidence.getFraud() * weights[i] / count;
+			unfraud += evidence.getUnfraud() * weights[i] / count;
+			i++;
 		}
-		fraud /= id.getEvidences().size();
-		unfraud /= id.getEvidences().size();
 		return new Evidence(evidenceId, evidenceName, new double[]{fraud, unfraud});
 	}
-
 	@Override
 	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId) {
 		if (id.getEvidences().size() == 0) {
 			return null;
 		}
+		double[] weights = new double[id.getEvidences().size()];
+		int i = 0;
+		for (Evidence evidence : id.getEvidences()) {
+			if (withoutEvidenceId.equals(evidence.getEvidenceId())) {
+				i++;
+				continue;
+			}
+			weights[i] = Math.pow(Math.pow(evidence.getFraud(), 2) + Math.pow(evidence.getUnfraud(), 2), 0.5);
+			i++;
+		}
+		double count = 0;
+		for (double weight : weights) {
+			count += weight;
+		}
 		double fraud = 0;
 		double unfraud = 0;
 		for (Evidence evidence : id.getEvidences()) {
 			if (withoutEvidenceId.equals(evidence.getEvidenceId())) {
+				i++;
 				continue;
 			}
-			fraud += evidence.getFraud();
-			unfraud += evidence.getUnfraud();
+			fraud += evidence.getFraud() * weights[i] / count;
+			unfraud += evidence.getUnfraud() * weights[i] / count;
+			i++;
 		}
-		fraud /= id.getEvidences().size();
-		unfraud /= id.getEvidences().size();
 		return new Evidence(evidenceId, evidenceName, new double[]{fraud, unfraud});
 	}
 
@@ -60,6 +81,6 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 
 	@Override
 	public String toString() {
-		return "平均证据合成";
+		return "欧几距离合成证据";
 	}
 }

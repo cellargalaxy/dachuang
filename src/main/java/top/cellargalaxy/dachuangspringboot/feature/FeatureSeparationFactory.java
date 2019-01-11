@@ -18,7 +18,7 @@ public class FeatureSeparationFactory {
 	public static final int CUSTOMIZE_FEATURE_SEPARATION_NUM = 3;
 
 
-	public static final FeatureSeparation createFeatureSeparation(int featureSeparationNum, Double separationValue) {
+	public static final FeatureSplit createFeatureSeparation(int featureSeparationNum, Double separationValue) {
 		if (featureSeparationNum == AVERAGE_FEATURE_SEPARATION_NUM) {
 			return createAverageFeatureSeparation();
 		}
@@ -44,15 +44,15 @@ public class FeatureSeparationFactory {
 		return false;
 	}
 
-	private static final FeatureSeparation createCustomizeFeatureSeparation(double separationValue) {
-		return new CustomizeFeatureSeparation(separationValue);
+	private static final FeatureSplit createCustomizeFeatureSeparation(double separationValue) {
+		return new CustomizeFeatureSplit(separationValue);
 	}
 
-	private static final FeatureSeparation createMedianFeatureSeparation() {
-		return new MedianFeatureSeparation();
+	private static final FeatureSplit createMedianFeatureSeparation() {
+		return new MedianFeatureSplit();
 	}
 
-	private static final FeatureSeparation createAverageFeatureSeparation() {
-		return new AverageFeatureSeparation();
+	private static final FeatureSplit createAverageFeatureSeparation() {
+		return new AverageFeatureSplit();
 	}
 }

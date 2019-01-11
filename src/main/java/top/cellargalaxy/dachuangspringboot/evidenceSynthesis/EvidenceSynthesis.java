@@ -1,19 +1,19 @@
 package top.cellargalaxy.dachuangspringboot.evidenceSynthesis;
 
 
+import top.cellargalaxy.dachuangspringboot.dataSet.Evidence;
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
+import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
 
 /**
  * Created by cellargalaxy on 17-9-7.
  */
 public interface EvidenceSynthesis {
-	double[] synthesisEvidence(Id id);
+	Evidence synthesisEvidence(Id id);
 
-	double[] synthesisEvidence(Id id, Integer withoutEvidNum);
+	Evidence synthesisEvidence(Id id, Integer withoutEvidenceId);
 
-	double[] synthesisEvidenceIndex(Id id, double[] chro);
+	Evidence synthesisEvidence(Id id, Chromosome chromosome);
 
-	double[] synthesisEvidenceOrder(Id id, double[] chro);
-
-	double[] synthesisEvidenceIndex(Id id, Integer withoutEvidNum, double[] chro);
+	Evidence synthesisEvidence(Id id, Integer withoutEvidenceId, Chromosome chromosome);
 }

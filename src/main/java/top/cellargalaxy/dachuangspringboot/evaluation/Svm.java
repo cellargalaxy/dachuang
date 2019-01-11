@@ -1,11 +1,12 @@
 package top.cellargalaxy.dachuangspringboot.evaluation;
 
+import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
+import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
+import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 import top.cellargalaxy.dachuangspringboot.libsvm.svm_parameter;
 import top.cellargalaxy.dachuangspringboot.libsvm.svm_problem;
 import top.cellargalaxy.dachuangspringboot.mySvm.MySvmPredict;
 import top.cellargalaxy.dachuangspringboot.mySvm.MySvmTrain;
-import top.cellargalaxy.dachuangspringboot.util.CloneObject;
-import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -16,60 +17,41 @@ import java.util.List;
  */
 public class Svm implements Evaluation {
 
-	public double countEvaluation(DataSet cloneDataSet) throws IOException {
+	public double countEvaluation(DataSet dataSet) throws IOException {
 		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
-		svm_problem problem = MySvmTrain.exchengeDataSet(cloneDataSet, parameter);
+		svm_problem problem = MySvmTrain.exchangeDataSet(dataSet, parameter);
 		problem = MySvmTrain.checkDataSet(problem, parameter);
 		Writer writer = MySvmTrain.trainDataSet(problem, parameter);
 		return MySvmPredict.predict(problem, writer);
 	}
 
-	public double countEvaluationWithoutEvidNum(DataSet dataSet, Integer withoutEvidNum) throws IOException {
-		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
-		svm_problem problem = MySvmTrain.exchengeDataSetWithoutEvidNum(dataSet, parameter, withoutEvidNum);
-		problem = MySvmTrain.checkDataSet(problem, parameter);
-		Writer writer = MySvmTrain.trainDataSet(problem, parameter);
-		return MySvmPredict.predict(problem, writer);
+	@Override
+	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId) throws IOException {
+		return countEvaluation(dataSet.clone(withoutEvidenceId));
 	}
 
-	public double countEvaluationWithEvidNums(DataSet dataSet, List<Integer> withEvidNums) throws IOException, ClassNotFoundException {
-		DataSet newDataSet = CloneObject.clone(dataSet);
-		newDataSet.removeNotEqual(withEvidNums);
-		return countEvaluation(newDataSet);
+	@Override
+	public double countEvaluation(DataSet dataSet, List<Integer> withEvidenceIds) throws IOException {
+		return countEvaluation(dataSet.clone(withEvidenceIds));
 	}
 
-	public double countIndexEvaluation(DataSet dataSet, double[] chro) throws IOException {
-		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
-		svm_problem problem = MySvmTrain.exchengeDataSetIndexChro(dataSet, parameter, chro);
-		problem = MySvmTrain.checkDataSet(problem, parameter);
-		Writer writer = MySvmTrain.trainDataSet(problem, parameter);
-		return MySvmPredict.predict(problem, writer);
+	@Override
+	public double countEvaluation(DataSet dataSet, Chromosome chromosome) throws IOException {
+		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(), chromosome));
 	}
 
-	public double countOrderEvaluation(DataSet cloneDataSet, double[] chro) throws IOException {
-		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
-		svm_problem problem = MySvmTrain.exchengeDataSetOrderChro(cloneDataSet, parameter, chro);
-		problem = MySvmTrain.checkDataSet(problem, parameter);
-		Writer writer = MySvmTrain.trainDataSet(problem, parameter);
-		return MySvmPredict.predict(problem, writer);
+	@Override
+	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId, Chromosome chromosome) throws IOException {
+		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withoutEvidenceId), chromosome));
 	}
 
-	public double countIndexEvaluationWithoutEvidNum(DataSet dataSet, Integer withoutEvidNum, double[] chro) throws IOException {
-		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
-		svm_problem problem = MySvmTrain.exchengeDataSetIndexChro(dataSet, parameter, withoutEvidNum, chro);
-		problem = MySvmTrain.checkDataSet(problem, parameter);
-		Writer writer = MySvmTrain.trainDataSet(problem, parameter);
-		return MySvmPredict.predict(problem, writer);
-	}
-
-	public double countOrderEvaluationWithEvidNums(DataSet dataSet, List<Integer> withEvidNums, double[] chro) throws IOException, ClassNotFoundException {
-		DataSet newDataSet = CloneObject.clone(dataSet);
-		newDataSet.removeNotEqual(withEvidNums);
-		return countOrderEvaluation(newDataSet, chro);
+	@Override
+	public double countEvaluation(DataSet dataSet, List<Integer> withEvidenceIds, Chromosome chromosome) throws IOException {
+		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withEvidenceIds), chromosome));
 	}
 
 	@Override
 	public String toString() {
-		return "Svm{}";
+		return "SVM";
 	}
 }
