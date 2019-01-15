@@ -10,18 +10,20 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by cellargalaxy on 17-9-9.
  */
 public final class Auc implements Evaluation {
+	public static final String NAME = "auc";
 	private EvidenceSynthesis evidenceSynthesis;
 
 	public Auc(EvidenceSynthesis evidenceSynthesis) {
 		this.evidenceSynthesis = evidenceSynthesis;
 	}
 
+	@Override
 	public double countEvaluation(DataSet dataSet) {
 		LinkedList<Evidence> ds1s = new LinkedList<>();
 		LinkedList<Evidence> ds0s = new LinkedList<>();
@@ -42,7 +44,7 @@ public final class Auc implements Evaluation {
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, List<Integer> withEvidenceIds) {
+	public double countEvaluation(DataSet dataSet, Set<Integer> withEvidenceIds) {
 		return countEvaluation(dataSet.clone(withEvidenceIds));
 	}
 
@@ -57,7 +59,7 @@ public final class Auc implements Evaluation {
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, List<Integer> withEvidenceIds, Chromosome chromosome) {
+	public double countEvaluation(DataSet dataSet, Set<Integer> withEvidenceIds, Chromosome chromosome) {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withEvidenceIds), chromosome));
 	}
 

@@ -1,14 +1,16 @@
 package top.cellargalaxy.dachuangspringboot.feature;
 
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created by cellargalaxy on 17-9-9.
  */
 public final class AverageFeatureSplit implements FeatureSplit {
+	public static final String NAME = "平均数特征选择";
 
 	@Override
-	public void separationFeature(LinkedList<FeatureImportance> featureImportances, LinkedList<Integer> importanceEvidenceId, LinkedList<Integer> unImportanceEvidenceId) {
+	public void splitFeature(LinkedList<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
 		double count = 0;
 		for (FeatureImportance featureImportance : featureImportances) {
 			count += featureImportance.getEvaluationD();
@@ -16,9 +18,9 @@ public final class AverageFeatureSplit implements FeatureSplit {
 		double avg = count / featureImportances.size();
 		for (FeatureImportance featureImportance : featureImportances) {
 			if (featureImportance.getEvaluationD() <= avg) {
-				importanceEvidenceId.add(featureImportance.getEvidenceId());
+				importanceEvidenceIds.add(featureImportance.getEvidenceId());
 			} else {
-				unImportanceEvidenceId.add(featureImportance.getEvidenceId());
+				unImportanceEvidenceIds.add(featureImportance.getEvidenceId());
 			}
 		}
 	}

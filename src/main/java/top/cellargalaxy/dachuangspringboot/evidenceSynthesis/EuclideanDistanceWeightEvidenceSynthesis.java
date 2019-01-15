@@ -10,6 +10,7 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
  * Created by cellargalaxy on 17-9-19.
  */
 public final class EuclideanDistanceWeightEvidenceSynthesis implements EvidenceSynthesis {
+	public static final String NAME = "欧几距离加权证据合成";
 	public static final int evidenceId = -EuclideanDistanceWeightEvidenceSynthesis.class.getSimpleName().hashCode();
 	public static final String evidenceName = "欧几距离加权合成证据";
 

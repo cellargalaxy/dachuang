@@ -12,6 +12,7 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
  */
 @Data
 public final class VoteEvidenceSynthesis implements EvidenceSynthesis {
+	public static final String NAME = "投票法证据合成";
 	public static final int evidenceId = -VoteEvidenceSynthesis.class.getSimpleName().hashCode();
 	public static final String evidenceName = "投票法合成证据";
 	private final double thrf;

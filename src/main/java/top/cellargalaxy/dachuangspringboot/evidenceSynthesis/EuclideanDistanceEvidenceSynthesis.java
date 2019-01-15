@@ -10,8 +10,10 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
  * Created by cellargalaxy on 17-9-19.
  */
 public final class EuclideanDistanceEvidenceSynthesis implements EvidenceSynthesis {
+	public static final String NAME = "欧几距离证据合成";
 	public static final int evidenceId = -EuclideanDistanceEvidenceSynthesis.class.getSimpleName().hashCode();
 	public static final String evidenceName = "欧几距离合成证据";
+
 	@Override
 	public Evidence synthesisEvidence(Id id) {
 		if (id.getEvidences().size() == 0) {
@@ -29,6 +31,7 @@ public final class EuclideanDistanceEvidenceSynthesis implements EvidenceSynthes
 		}
 		double fraud = 0;
 		double unfraud = 0;
+		i = 0;
 		for (Evidence evidence : id.getEvidences()) {
 			fraud += evidence.getFraud() * weights[i] / count;
 			unfraud += evidence.getUnfraud() * weights[i] / count;
@@ -36,6 +39,7 @@ public final class EuclideanDistanceEvidenceSynthesis implements EvidenceSynthes
 		}
 		return new Evidence(evidenceId, evidenceName, new double[]{fraud, unfraud});
 	}
+
 	@Override
 	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId) {
 		if (id.getEvidences().size() == 0) {

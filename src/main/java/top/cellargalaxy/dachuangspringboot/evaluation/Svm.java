@@ -10,13 +10,15 @@ import top.cellargalaxy.dachuangspringboot.mySvm.MySvmTrain;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by cellargalaxy on 17-10-24.
  */
 public class Svm implements Evaluation {
+	public static final String NAME = "svm";
 
+	@Override
 	public double countEvaluation(DataSet dataSet) throws IOException {
 		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
 		svm_problem problem = MySvmTrain.exchangeDataSet(dataSet, parameter);
@@ -31,7 +33,7 @@ public class Svm implements Evaluation {
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, List<Integer> withEvidenceIds) throws IOException {
+	public double countEvaluation(DataSet dataSet, Set<Integer> withEvidenceIds) throws IOException {
 		return countEvaluation(dataSet.clone(withEvidenceIds));
 	}
 
@@ -46,7 +48,7 @@ public class Svm implements Evaluation {
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, List<Integer> withEvidenceIds, Chromosome chromosome) throws IOException {
+	public double countEvaluation(DataSet dataSet, Set<Integer> withEvidenceIds, Chromosome chromosome) throws IOException {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withEvidenceIds), chromosome));
 	}
 

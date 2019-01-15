@@ -9,29 +9,26 @@ import lombok.Data;
 public class HereditaryParameter {
 	//染色体数
 	private final int chroNum;
-	//每个染色体的基因数
-	private int geneNum;
 	//每个基因的碱基数
 	private final int baseNum;
-
 	//保留染色体比例
 	private final double saveChroPro;
 	//保留染色体数
 	private final int saveChroNum;
-
 	//碱基交换比例
 	private final double baseExPro;
 	//碱基突变概率
 	private final double baseMutPro;
 	//碱基步长
 	private final double step;
-
 	//迭代次数
 	private final int iterationCount;
 	//相同解范围
 	private final double sameDeviation;
 	//最多相同最大解次数
 	private final int sameCount;
+	//每个染色体的基因数
+	private int geneNum;
 
 	public HereditaryParameter() {
 		//染色体数

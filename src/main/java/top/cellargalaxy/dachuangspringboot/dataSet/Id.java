@@ -6,8 +6,8 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by cellargalaxy on 17-9-7.
@@ -43,7 +43,7 @@ public class Id implements Serializable {
 		return new Id(id, evidenceMap, label);
 	}
 
-	public Id clone(List<Integer> withEvidenceIds) {
+	public Id clone(Collection<Integer> withEvidenceIds) {
 		Map<Integer, Evidence> evidenceMap = new HashMap<>();
 		for (Map.Entry<Integer, Evidence> entry : this.evidenceMap.entrySet()) {
 			if (!withEvidenceIds.contains(entry.getKey())) {

@@ -10,6 +10,7 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
  * Created by cellargalaxy on 17-9-9.
  */
 public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
+	public static final String NAME = "平均法证据合成";
 	public static final int evidenceId = -AverageEvidenceSynthesis.class.getSimpleName().hashCode();
 	public static final String evidenceName = "平均法合成证据";
 

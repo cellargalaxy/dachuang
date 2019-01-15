@@ -6,7 +6,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,7 +54,7 @@ public class DataSet implements Serializable {
 		return new DataSet(idMap, evidenceName2EvidenceId);
 	}
 
-	public DataSet clone(List<Integer> withEvidenceIds) {
+	public DataSet clone(Collection<Integer> withEvidenceIds) {
 		Map<String, Id> idMap = new HashMap<>();
 		for (Map.Entry<String, Id> entry : this.idMap.entrySet()) {
 			idMap.put(entry.getKey(), entry.getValue().clone(withEvidenceIds));
