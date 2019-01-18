@@ -21,15 +21,15 @@ public class DataSetSplitImpl implements DataSetSplit {
 		dataSetParameter.setEvidenceColumnName("证据");
 		dataSetParameter.setFraudColumnName("A");
 		dataSetParameter.setUnfraudColumnName("B");
-		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.createFromFileReadDataSet(runParameter);
+		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
 		DataSet dataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/trainAll.csv"), dataSetParameter);
 		DataSet[] dataSets = new DataSetSplitImpl().splitDataSet(dataSet, 0.2, 0.6, 0.8, 0.1, 0.4);
 
-		File trainFile=new File("D:/trainFile.csv");
-		File testFile=new File("D:/testFile.csv");
+		File trainFile = new File("D:/trainFile.csv");
+		File testFile = new File("D:/testFile.csv");
 
-		dataSetFileIO.writeDataSetToFile(dataSetParameter,dataSets[0],trainFile);
-		dataSetFileIO.writeDataSetToFile(dataSetParameter,dataSets[1],testFile);
+		dataSetFileIO.writeDataSetToFile(dataSetParameter, dataSets[0], trainFile);
+		dataSetFileIO.writeDataSetToFile(dataSetParameter, dataSets[1], testFile);
 	}
 
 	@Override

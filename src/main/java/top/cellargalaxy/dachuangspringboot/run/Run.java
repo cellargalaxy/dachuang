@@ -1,25 +1,18 @@
 package top.cellargalaxy.dachuangspringboot.run;
 
 
-import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
-import top.cellargalaxy.dachuangspringboot.dataSet.DataSetParameter;
-import top.cellargalaxy.dachuangspringboot.dataSet.DataSetFileIO;
-import top.cellargalaxy.dachuangspringboot.dataSet.DataSetFileIOFactory;
+import top.cellargalaxy.dachuangspringboot.dataSet.*;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesisFactory;
 import top.cellargalaxy.dachuangspringboot.hereditary.*;
-import top.cellargalaxy.dachuangspringboot.subSpace.RandomSubSpaceCreate;
 import top.cellargalaxy.dachuangspringboot.subSpace.SubSpaceCreate;
+import top.cellargalaxy.dachuangspringboot.subSpace.SubSpaceCreateFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
 
 /**
  * Created by cellargalaxy on 17-9-9.
@@ -30,27 +23,40 @@ public class Run {
 		RunParameter runParameter = new RunParameter();
 
 		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-		dataSetParameter.setEvidenceColumnName("证据");
-		dataSetParameter.setFraudColumnName("A");
-		dataSetParameter.setUnfraudColumnName("B");
-		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.createFromFileReadDataSet(runParameter);
-		DataSet trainDataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/trainAll.csv"), dataSetParameter);
-		DataSet teatDataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/testAll.csv"), dataSetParameter);
+		dataSetParameter.setIdColumnName("id");
+		dataSetParameter.setEvidenceColumnName("evidence");
+		dataSetParameter.setFraudColumnName("fraud");
+		dataSetParameter.setUnfraudColumnName("unfraud");
+		dataSetParameter.setLabelColumnName("collusion_transaction");
+		dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
+		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
+		DataSet dataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/8000+交易 获取满证据 9证据-所有证据数据 - 副本.csv"), dataSetParameter);
+		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro());
+
+		DataSet trainDataSet = dataSets[0];
+		DataSet teatDataSet = dataSets[1];
+
 
 		runParameter.setEvidenceSynthesisName(null);
 
-		run(trainDataSet, teatDataSet, runParameter.getHereditaryParameter(), ParentChrosChooseFactory.createParentChrosChoose(runParameter), new RandomSubSpaceCreate(), EvidenceSynthesisFactory.createEvidenceSynthesis(runParameter,trainDataSet), EvaluationFactory.createEvaluation(runParameter,trainDataSet));
+		run(runParameter, trainDataSet, teatDataSet);
 
 	}
 
-	public static final void run(DataSet trainDataSet, DataSet testDataSet,//全局参数
-	                             HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,//遗传算法
-	                             SubSpaceCreate subSpaceCreate, EvidenceSynthesis subSpaceEvidenceSynthesis,//子空间合成
-	                             Evaluation evaluation
-	) throws IOException {
-		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(trainDataSet);
+	public static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet) throws IOException {
+		EvidenceSynthesisFactory.setEvidenceSynthesis(null);
+		HereditaryParameter hereditaryParameter = runParameter.getHereditaryParameter();
+		ParentChrosChoose parentChrosChoose = ParentChrosChooseFactory.getParentChrosChoose(runParameter);
+		Evaluation evaluation = EvaluationFactory.getEvaluation(runParameter, trainDataSet);
+		SubSpaceCreate subSpaceCreate = SubSpaceCreateFactory.getSubSpaceCreate(runParameter, trainDataSet);
 
 		HereditaryResult fullHereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);
+
+		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(trainDataSet);
+		System.out.println("子空间：" + subSpaces.size());
+		for (List<Integer> subSpace : subSpaces) {
+			System.out.println(subSpace);
+		}
 
 		Map<DataSet, HereditaryResult> trainSubSpaceMap = new HashMap<>();
 		for (List<Integer> subSpace : subSpaces) {
@@ -66,9 +72,9 @@ public class Run {
 			trainSubSpaceMap.put(trainDataSet, fullHereditaryResult);
 		}
 
-		DataSet trainSubSpaceDataSet = SubSpace2DataSet.subSpace2DataSet(trainSubSpaceMap, subSpaceEvidenceSynthesis);
-		double trainSubSpaceAuc = evaluation.countEvaluation(trainSubSpaceDataSet);
-		System.out.println("trainSubSpaceAuc: " + trainSubSpaceAuc);
+		SubSpace2DataSetResult subSpace2DataSetResult = SubSpace2DataSet.subSpace2DataSet(runParameter, trainSubSpaceMap, evaluation);
+		EvidenceSynthesis subSpaceEvidenceSynthesis = subSpace2DataSetResult.getEvidenceSynthesis();
+		System.out.println("trainSubSpaceAuc: " + subSpace2DataSetResult.getEvaluationValue());
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +88,11 @@ public class Run {
 		DataSet testSubSpaceDataSet = SubSpace2DataSet.subSpace2DataSet(testSubSpaceMap, subSpaceEvidenceSynthesis);
 		double testSubSpaceAuc = evaluation.countEvaluation(testSubSpaceDataSet);
 		System.out.println("testSubSpaceAuc: " + testSubSpaceAuc);
+
+		System.out.println();
+		System.out.println("evaluation: " + evaluation);
+		System.out.println("subSpaceEvidenceSynthesis: " + subSpaceEvidenceSynthesis);
+
 	}
 
 }

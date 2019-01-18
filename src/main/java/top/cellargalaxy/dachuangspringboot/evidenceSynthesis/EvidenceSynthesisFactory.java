@@ -14,37 +14,46 @@ import top.cellargalaxy.dachuangspringboot.util.StringUtils;
  * @time 2019/1/14
  */
 public class EvidenceSynthesisFactory {
+	public static final String[] NAMES = {AverageEvidenceSynthesis.NAME, DsEvidenceSynthesis.NAME, EuclideanDistanceEvidenceSynthesis.NAME, EuclideanDistanceWeightEvidenceSynthesis.NAME, VoteEvidenceSynthesis.NAME};
 	private static EvidenceSynthesis evidenceSynthesis;
 
-	public static final EvidenceSynthesis getEvidenceSynthesis() {
+	public static final EvidenceSynthesis getEvidenceSynthesis(RunParameter runParameter, DataSet dataSet) {
+		if (evidenceSynthesis == null) {
+			evidenceSynthesis = createEvidenceSynthesis(runParameter, dataSet);
+		}
 		return evidenceSynthesis;
+	}
+
+	public static void setEvidenceSynthesis(EvidenceSynthesis evidenceSynthesis) {
+		EvidenceSynthesisFactory.evidenceSynthesis = evidenceSynthesis;
 	}
 
 	public static final EvidenceSynthesis createEvidenceSynthesis(RunParameter runParameter, DataSet dataSet) {
 		String name = runParameter.getEvidenceSynthesisName();
+		evidenceSynthesis = createEvidenceSynthesis(name, runParameter, dataSet);
+		return evidenceSynthesis;
+	}
+
+	public static final EvidenceSynthesis createEvidenceSynthesis(String name, RunParameter runParameter, DataSet dataSet) {
 		if (StringUtils.isBlank(name)) {
-			evidenceSynthesis = createEvidenceSynthesis(runParameter, dataSet, ParentChrosChooseFactory.createParentChrosChoose(runParameter));
-			return evidenceSynthesis;
+			if (dataSet != null) {
+				return createEvidenceSynthesis(runParameter, dataSet, ParentChrosChooseFactory.getParentChrosChoose(runParameter));
+			}
 		}
 		if (AverageEvidenceSynthesis.NAME.equals(name)) {
-			evidenceSynthesis = new AverageEvidenceSynthesis();
-			return evidenceSynthesis;
+			return new AverageEvidenceSynthesis();
 		}
 		if (DsEvidenceSynthesis.NAME.equals(name)) {
-			evidenceSynthesis = new DsEvidenceSynthesis();
-			return evidenceSynthesis;
+			return new DsEvidenceSynthesis();
 		}
 		if (EuclideanDistanceEvidenceSynthesis.NAME.equals(name)) {
-			evidenceSynthesis = new EuclideanDistanceEvidenceSynthesis();
-			return evidenceSynthesis;
+			return new EuclideanDistanceEvidenceSynthesis();
 		}
 		if (EuclideanDistanceWeightEvidenceSynthesis.NAME.equals(name)) {
-			evidenceSynthesis = new EuclideanDistanceWeightEvidenceSynthesis();
-			return evidenceSynthesis;
+			return new EuclideanDistanceWeightEvidenceSynthesis();
 		}
 		if (VoteEvidenceSynthesis.NAME.equals(name)) {
-			evidenceSynthesis = new VoteEvidenceSynthesis(runParameter.getThrf(), runParameter.getThrnf(), runParameter.getD1(), runParameter.getD2());
-			return evidenceSynthesis;
+			return new VoteEvidenceSynthesis(runParameter.getThrf(), runParameter.getThrnf(), runParameter.getD1(), runParameter.getD2());
 		}
 		throw new RuntimeException("无效-EvidenceSynthesis: " + name);
 	}

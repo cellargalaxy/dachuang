@@ -17,7 +17,7 @@ public final class EuclideanDistanceWeightEvidenceSynthesis implements EvidenceS
 	@Override
 	public Evidence synthesisEvidence(Id id) {
 		if (id.getEvidences().size() == 0) {
-			return null;
+			throw new RuntimeException("特征数量为零，无法合成");
 		}
 		int aCount = 0;
 		int bCount = 0;
@@ -54,7 +54,7 @@ public final class EuclideanDistanceWeightEvidenceSynthesis implements EvidenceS
 	@Override
 	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId) {
 		if (id.getEvidences().size() == 0) {
-			return null;
+			throw new RuntimeException("特征数量为零，无法合成");
 		}
 		int aCount = 0;
 		int bCount = 0;

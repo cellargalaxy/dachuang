@@ -30,7 +30,7 @@ public final class Auc implements Evaluation {
 			Evidence evidence = evidenceSynthesis.synthesisEvidence(id);
 			if (id.getLabel() == Id.LABEL_0) {
 				ds0s.add(evidence);
-			} else {
+			} else if (id.getLabel() == Id.LABEL_1) {
 				ds1s.add(evidence);
 			}
 		}
@@ -45,7 +45,7 @@ public final class Auc implements Evaluation {
 			Evidence evidence = evidenceSynthesis.synthesisEvidence(id, withoutEvidenceId);
 			if (id.getLabel() == Id.LABEL_0) {
 				ds0s.add(evidence);
-			} else {
+			} else if (id.getLabel() == Id.LABEL_1) {
 				ds1s.add(evidence);
 			}
 		}

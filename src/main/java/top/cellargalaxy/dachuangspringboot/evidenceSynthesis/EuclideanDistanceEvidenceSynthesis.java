@@ -17,7 +17,7 @@ public final class EuclideanDistanceEvidenceSynthesis implements EvidenceSynthes
 	@Override
 	public Evidence synthesisEvidence(Id id) {
 		if (id.getEvidences().size() == 0) {
-			return null;
+			throw new RuntimeException("特征数量为零，无法合成");
 		}
 		double[] weights = new double[id.getEvidences().size()];
 		int i = 0;
@@ -43,7 +43,7 @@ public final class EuclideanDistanceEvidenceSynthesis implements EvidenceSynthes
 	@Override
 	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId) {
 		if (id.getEvidences().size() == 0) {
-			return null;
+			throw new RuntimeException("特征数量为零，无法合成");
 		}
 		double[] weights = new double[id.getEvidences().size()];
 		int i = 0;

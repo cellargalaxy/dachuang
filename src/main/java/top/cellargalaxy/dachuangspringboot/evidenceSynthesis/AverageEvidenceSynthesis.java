@@ -17,7 +17,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 	@Override
 	public Evidence synthesisEvidence(Id id) {
 		if (id.getEvidences().size() == 0) {
-			return null;
+			throw new RuntimeException("特征数量为零，无法合成");
 		}
 		double fraud = 0;
 		double unfraud = 0;
@@ -33,7 +33,7 @@ public final class AverageEvidenceSynthesis implements EvidenceSynthesis {
 	@Override
 	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId) {
 		if (id.getEvidences().size() == 0) {
-			return null;
+			throw new RuntimeException("特征数量为零，无法合成");
 		}
 		double fraud = 0;
 		double unfraud = 0;

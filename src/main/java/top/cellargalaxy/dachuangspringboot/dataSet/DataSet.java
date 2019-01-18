@@ -42,7 +42,10 @@ public class DataSet implements Serializable {
 	public DataSet clone(Integer withoutEvidenceId) {
 		Map<String, Id> idMap = new HashMap<>();
 		for (Map.Entry<String, Id> entry : this.idMap.entrySet()) {
-			idMap.put(entry.getKey(), entry.getValue().clone(withoutEvidenceId));
+			Id id = entry.getValue().clone(withoutEvidenceId);
+			if (id.getEvidences().size() > 0) {
+				idMap.put(entry.getKey(), id);
+			}
 		}
 		Map<String, Integer> evidenceName2EvidenceId = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : this.evidenceName2EvidenceId.entrySet()) {
@@ -57,7 +60,10 @@ public class DataSet implements Serializable {
 	public DataSet clone(Collection<Integer> withEvidenceIds) {
 		Map<String, Id> idMap = new HashMap<>();
 		for (Map.Entry<String, Id> entry : this.idMap.entrySet()) {
-			idMap.put(entry.getKey(), entry.getValue().clone(withEvidenceIds));
+			Id id = entry.getValue().clone(withEvidenceIds);
+			if (id.getEvidences().size() > 0) {
+				idMap.put(entry.getKey(), id);
+			}
 		}
 		Map<String, Integer> evidenceName2EvidenceId = new HashMap<>();
 		for (Map.Entry<String, Integer> entry : this.evidenceName2EvidenceId.entrySet()) {

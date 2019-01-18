@@ -23,10 +23,10 @@ public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 		int fnMax = 0;
 		Sn fitSn = null;
 		for (Sn sn : sns) {
-			if (sn.getSn().size() > features.size() || (fitSn != null && sn.getSn().size() < fitSn.getSn().size())) {
+			if (sn.getSn().length > features.size() || (fitSn != null && sn.getSn().length < fitSn.getSn().length)) {
 				continue;
 			}
-			int max = sn.getSn().stream().max(Comparator.comparing(Integer::valueOf)).get();
+			int max = Arrays.stream(sn.getSn()).max().getAsInt();
 			if (max <= features.size()) {
 				int count = 0;
 				for (Integer integer : sn.getSn()) {
@@ -39,7 +39,7 @@ public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 			}
 		}
 		int fn = fitSn.getFnMin() + (int) (Math.random() * (fnMax - fitSn.getFnMin()));
-		Integer[] ints = (Integer[]) fitSn.getSn().toArray();
+		int[] ints = fitSn.getSn();
 		List<List<Integer>> subSpaces = new LinkedList<>();
 		for (int i = 0; i < fn; i++) {
 			List<Integer> subSpace = createSnRandomSubSpace(features, ints[(int) (ints.length * Math.random())]);
