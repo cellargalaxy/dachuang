@@ -1,4 +1,4 @@
-package top.cellargalaxy.dachuangspringboot.run;
+package top.cellargalaxy.dachuangspringboot.subSpaceSynthesis;
 
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 import top.cellargalaxy.dachuangspringboot.dataSet.Id;
@@ -6,6 +6,7 @@ import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesisFactory;
 import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryResult;
+import top.cellargalaxy.dachuangspringboot.run.RunParameter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,26 +15,26 @@ import java.util.Map;
  * @author cellargalaxy
  * @time 2019/1/15
  */
-public class SubSpace2DataSet {
+public class SubSpaceSynthesis {
 
-	public static final SubSpace2DataSetResult subSpace2DataSet(RunParameter runParameter, Map<DataSet, HereditaryResult> subSpaceMap, Evaluation evaluation) {
-		SubSpace2DataSetResult fitSubSpace2DataSetResult = null;
+	public static final SubSpaceSynthesisResult synthesisSubSpace(RunParameter runParameter, Map<DataSet, HereditaryResult> subSpaceMap, Evaluation evaluation) {
+		SubSpaceSynthesisResult fitSubSpaceSynthesisResult = null;
 		for (String name : EvidenceSynthesisFactory.NAMES) {
 			EvidenceSynthesis evidenceSynthesis = EvidenceSynthesisFactory.createEvidenceSynthesis(name, runParameter, null);
 			try {
-				DataSet dataSet = subSpace2DataSet(subSpaceMap, evidenceSynthesis);
+				DataSet dataSet = synthesisSubSpace(subSpaceMap, evidenceSynthesis);
 				double evaluationValue = evaluation.countEvaluation(dataSet);
-				if (fitSubSpace2DataSetResult == null || evaluationValue > fitSubSpace2DataSetResult.getEvaluationValue()) {
-					fitSubSpace2DataSetResult = new SubSpace2DataSetResult(dataSet, evidenceSynthesis, evaluationValue);
+				if (fitSubSpaceSynthesisResult == null || evaluationValue > fitSubSpaceSynthesisResult.getEvaluationValue()) {
+					fitSubSpaceSynthesisResult = new SubSpaceSynthesisResult(dataSet, evidenceSynthesis, evaluationValue);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return fitSubSpace2DataSetResult;
+		return fitSubSpaceSynthesisResult;
 	}
 
-	public static final DataSet subSpace2DataSet(Map<DataSet, HereditaryResult> subSpaceMap, EvidenceSynthesis evidenceSynthesis) {
+	public static final DataSet synthesisSubSpace(Map<DataSet, HereditaryResult> subSpaceMap, EvidenceSynthesis evidenceSynthesis) {
 		Map<String, Id> idMap = new HashMap<>();
 		int i = 1;
 		for (Map.Entry<DataSet, HereditaryResult> entry : subSpaceMap.entrySet()) {

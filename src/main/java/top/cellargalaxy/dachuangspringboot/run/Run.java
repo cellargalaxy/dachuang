@@ -1,14 +1,18 @@
 package top.cellargalaxy.dachuangspringboot.run;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.cellargalaxy.dachuangspringboot.dataSet.*;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
-import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesisFactory;
 import top.cellargalaxy.dachuangspringboot.hereditary.*;
 import top.cellargalaxy.dachuangspringboot.subSpace.SubSpaceCreate;
 import top.cellargalaxy.dachuangspringboot.subSpace.SubSpaceCreateFactory;
+import top.cellargalaxy.dachuangspringboot.subSpaceSynthesis.SubSpaceSynthesis;
+import top.cellargalaxy.dachuangspringboot.subSpaceSynthesis.SubSpaceSynthesisResult;
+import top.cellargalaxy.dachuangspringboot.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +22,7 @@ import java.util.*;
  * Created by cellargalaxy on 17-9-9.
  */
 public class Run {
+	private static final Logger logger = LoggerFactory.getLogger(Run.class);
 
 	public static void main(String[] args) throws IOException {
 		RunParameter runParameter = new RunParameter();
@@ -29,52 +34,74 @@ public class Run {
 		dataSetParameter.setUnfraudColumnName("unfraud");
 		dataSetParameter.setLabelColumnName("collusion_transaction");
 		dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
-		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
-		DataSet dataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/8000+交易 获取满证据 9证据-所有证据数据 - 副本.csv"), dataSetParameter);
-		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro());
 
+		runParameter.setDataSetParameter(dataSetParameter);
+
+		runParameter.setDataSetPath("D:/g/8000+交易 获取满证据 9证据-所有证据数据 - 副本.csv");
+
+		run(runParameter);
+	}
+
+	public static final void run(RunParameter runParameter) throws IOException {
+		if (!StringUtils.isBlank(runParameter.getTrainDataSetPath()) && !StringUtils.isBlank(runParameter.getTeatDataSettPath())) {
+			run(runParameter, new File(runParameter.getTrainDataSetPath()), new File(runParameter.getTeatDataSettPath()));
+		} else {
+			run(runParameter, new  File(runParameter.getDataSetPath()));
+		}
+	}
+
+	public static final void run(RunParameter runParameter, File file) throws IOException {
+		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
+		DataSet dataSet = dataSetFileIO.readFileToDataSet(file, runParameter.getDataSetParameter());
+		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro());
 		DataSet trainDataSet = dataSets[0];
 		DataSet teatDataSet = dataSets[1];
-
-
-		runParameter.setEvidenceSynthesisName(null);
-
 		run(runParameter, trainDataSet, teatDataSet);
 
 	}
 
+	public static final void run(RunParameter runParameter, File trainDataSetFile, File teatDataSettFile) throws IOException {
+		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
+		DataSet trainDataSet = dataSetFileIO.readFileToDataSet(trainDataSetFile, runParameter.getDataSetParameter());
+		DataSet testDataSet = dataSetFileIO.readFileToDataSet(teatDataSettFile, runParameter.getDataSetParameter());
+		run(runParameter, trainDataSet, testDataSet);
+	}
+
 	public static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet) throws IOException {
-		EvidenceSynthesisFactory.setEvidenceSynthesis(null);
 		HereditaryParameter hereditaryParameter = runParameter.getHereditaryParameter();
 		ParentChrosChoose parentChrosChoose = ParentChrosChooseFactory.getParentChrosChoose(runParameter);
 		Evaluation evaluation = EvaluationFactory.getEvaluation(runParameter, trainDataSet);
 		SubSpaceCreate subSpaceCreate = SubSpaceCreateFactory.getSubSpaceCreate(runParameter, trainDataSet);
 
+		logger.info("使用的父母染色体选择算法: {}", parentChrosChoose);
+		logger.info("使用的评价算法: {}", evaluation);
+		logger.info("使用的子空间算法: {}", subSpaceCreate);
+
 		HereditaryResult fullHereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);
+		logger.info("训练集-完整数据集的AUC: {}", fullHereditaryResult.getEvaluationValue());
 
 		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(trainDataSet);
-		System.out.println("子空间：" + subSpaces.size());
-		for (List<Integer> subSpace : subSpaces) {
-			System.out.println(subSpace);
-		}
-
 		Map<DataSet, HereditaryResult> trainSubSpaceMap = new HashMap<>();
 		for (List<Integer> subSpace : subSpaces) {
 			DataSet dataSet = trainDataSet.clone(subSpace);
 			HereditaryResult hereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);
 			if (hereditaryResult.getEvaluationValue() >= fullHereditaryResult.getEvaluationValue() * 0.9) {
 				trainSubSpaceMap.put(dataSet, hereditaryResult);
-				System.out.println("train auc: " + hereditaryResult.getEvaluationValue());
+				logger.info("训练集-优秀子空间AUC: {},\t {}", hereditaryResult.getEvaluationValue(), subSpace);
+			} else {
+				logger.info("训练集-劣质子空间AUC: {},\t {}", hereditaryResult.getEvaluationValue(), subSpace);
 			}
 		}
 
 		if (trainSubSpaceMap.size() == 0) {
 			trainSubSpaceMap.put(trainDataSet, fullHereditaryResult);
+			logger.info("训练集-没有优秀子空间，添加完整特征集作为默认");
 		}
 
-		SubSpace2DataSetResult subSpace2DataSetResult = SubSpace2DataSet.subSpace2DataSet(runParameter, trainSubSpaceMap, evaluation);
-		EvidenceSynthesis subSpaceEvidenceSynthesis = subSpace2DataSetResult.getEvidenceSynthesis();
-		System.out.println("trainSubSpaceAuc: " + subSpace2DataSetResult.getEvaluationValue());
+		SubSpaceSynthesisResult subSpaceSynthesisResult = SubSpaceSynthesis.synthesisSubSpace(runParameter, trainSubSpaceMap, evaluation);
+		EvidenceSynthesis subSpaceEvidenceSynthesis = subSpaceSynthesisResult.getEvidenceSynthesis();
+		logger.info("训练集-子空间合成所自动选择的合成算法: {}", subSpaceEvidenceSynthesis);
+		logger.info("训练集-子空间合成所自动选择的合成算法的子空间AUC: {}", subSpaceSynthesisResult.getEvaluationValue());
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,15 +110,10 @@ public class Run {
 			Collection<Integer> subSpace = entry.getKey().getEvidenceName2EvidenceId().values();
 			DataSet dataSet = testDataSet.clone(subSpace);
 			testSubSpaceMap.put(dataSet, entry.getValue());
-			System.out.println("test auc: " + evaluation.countEvaluation(dataSet, entry.getValue().getChromosome()));
+			logger.info("测试集-使用优秀子空间AUC: {},\t {}", evaluation.countEvaluation(dataSet, entry.getValue().getChromosome()), subSpace);
 		}
-		DataSet testSubSpaceDataSet = SubSpace2DataSet.subSpace2DataSet(testSubSpaceMap, subSpaceEvidenceSynthesis);
-		double testSubSpaceAuc = evaluation.countEvaluation(testSubSpaceDataSet);
-		System.out.println("testSubSpaceAuc: " + testSubSpaceAuc);
-
-		System.out.println();
-		System.out.println("evaluation: " + evaluation);
-		System.out.println("subSpaceEvidenceSynthesis: " + subSpaceEvidenceSynthesis);
+		DataSet testSubSpaceDataSet = SubSpaceSynthesis.synthesisSubSpace(testSubSpaceMap, subSpaceEvidenceSynthesis);
+		logger.info("测试集-使用子空间合成所自动选择的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet));
 
 	}
 

@@ -13,10 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Sn {
 	private int[] sn;
-	private int fnMin;
+	private int minFn;
+	private int maxFn;
 
-	public Sn(int fnMin, int... sn) {
-		this.fnMin = fnMin;
+	public Sn(int minFn, int maxFn, int... sn) {
+		this.minFn = minFn;
+		this.maxFn = maxFn;
 		this.sn = sn;
 	}
 }

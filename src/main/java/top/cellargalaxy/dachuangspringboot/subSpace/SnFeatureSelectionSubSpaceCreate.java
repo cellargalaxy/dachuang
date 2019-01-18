@@ -1,6 +1,8 @@
 package top.cellargalaxy.dachuangspringboot.subSpace;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.feature.FeatureImportance;
@@ -17,6 +19,7 @@ import java.util.*;
  */
 public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCreate {
 	public static final String NAME = "SN特征选择子空间";
+	private static final Logger logger = LoggerFactory.getLogger(SnFeatureSelectionSubSpaceCreate.class);
 	private final Sn[] sns;
 	private final FeatureSplit featureSplit;
 	private final double featureSelectionDeviation;
@@ -39,7 +42,6 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 		ArrayList<FeatureImportance> featureImportances = FeatureSelection.featureSelection(dataSet, featureSplit, featureSelectionDeviation, hereditaryParameter, parentChrosChoose, evaluation);
 
 		Collection<Integer> features = dataSet.getEvidenceName2EvidenceId().values();
-		int fnMax = 0;
 		Sn fitSn = null;
 		for (Sn sn : sns) {
 			if (sn.getSn().length > features.size() || (fitSn != null && sn.getSn().length < fitSn.getSn().length)) {
@@ -51,13 +53,13 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 				for (Integer integer : sn.getSn()) {
 					count += countC(integer, features.size());
 				}
-				if (sn.getFnMin() <= count) {
+				if (sn.getMinFn() <= count && sn.getMaxFn() <= count) {
 					fitSn = sn;
-					fnMax = count;
 				}
 			}
 		}
-		int fn = fitSn.getFnMin() + (int) (Math.random() * (fnMax - fitSn.getFnMin()));
+		int fn = fitSn.getMinFn() + (int) (Math.random() * (fitSn.getMaxFn() - fitSn.getMinFn()));
+		logger.info("子空间数量: {}", fn);
 		int[] ints = fitSn.getSn();
 		featureImportances = improtenceAdjust.adjustImportance(featureImportances);
 		List<List<Integer>> subSpaces = new LinkedList<>();
@@ -65,6 +67,7 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 			List<Integer> subSpace = createFeatureSelectionSubSpace(featureImportances, ints[(int) (ints.length * Math.random())]);
 			if (!siContainSubSpace(subSpaces, subSpace)) {
 				subSpaces.add(subSpace);
+				logger.info("子空间: {}", subSpace);
 			} else {
 				i--;
 			}
