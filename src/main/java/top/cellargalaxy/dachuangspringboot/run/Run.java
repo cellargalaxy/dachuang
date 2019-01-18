@@ -114,7 +114,6 @@ public class Run {
 		}
 		DataSet testSubSpaceDataSet = SubSpaceSynthesis.synthesisSubSpace(testSubSpaceMap, subSpaceEvidenceSynthesis);
 		logger.info("测试集-使用子空间合成所自动选择的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet));
-
 	}
 
 }
