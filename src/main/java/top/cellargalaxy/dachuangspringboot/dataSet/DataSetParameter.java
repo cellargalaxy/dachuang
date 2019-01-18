@@ -3,7 +3,7 @@ package top.cellargalaxy.dachuangspringboot.dataSet;
 import lombok.Data;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created by cellargalaxy on 17-9-7.
@@ -16,7 +16,7 @@ public class DataSetParameter {
 	private String fraudColumnName;
 	private String unfraudColumnName;
 	private String labelColumnName;
-	private List<String> withoutEvidences;
+	private Collection<String> withoutEvidences;
 
 	public DataSetParameter() {
 		coding = "UTF-8";

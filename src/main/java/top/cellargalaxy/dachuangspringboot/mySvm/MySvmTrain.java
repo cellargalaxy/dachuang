@@ -199,7 +199,7 @@ public class MySvmTrain {
 		prob.y = new double[prob.l];
 		int i = 0;
 		for (Id id : dataSet.getIds()) {
-			ArrayList<svm_node> nodes = new ArrayList<>();
+			ArrayList<svm_node> nodes = new ArrayList<>(id.getEvidences().size());
 			for (Evidence evidence : id.getEvidences()) {
 				if (withoutEvidenceId.equals(evidence.getEvidenceId())) {
 					continue;

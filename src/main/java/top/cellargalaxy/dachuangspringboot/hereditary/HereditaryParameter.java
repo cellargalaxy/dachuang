@@ -27,8 +27,6 @@ public class HereditaryParameter {
 	private final double sameDeviation;
 	//最多相同最大解次数
 	private final int sameCount;
-	//每个染色体的基因数
-	private int geneNum;
 
 	public HereditaryParameter() {
 		//染色体数

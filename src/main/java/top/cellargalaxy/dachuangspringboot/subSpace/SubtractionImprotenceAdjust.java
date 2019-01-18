@@ -17,7 +17,7 @@ public final class SubtractionImprotenceAdjust implements ImprotenceAdjust {
 
 	@Override
 	public ArrayList<FeatureImportance> adjustImportance(ArrayList<FeatureImportance> featureImportances) {
-		double min = Math.abs(featureImportances.stream().min(FeatureImportance::sortByEvaluationD).get().getEvaluationD());
+		double min = Math.abs(featureImportances.stream().min(FeatureImportance::sortAscByEvaluationD).get().getEvaluationD());
 		for (FeatureImportance featureImportance : featureImportances) {
 			featureImportance.setEvaluationD(Math.abs(featureImportance.getEvaluationD()) - (min - adjustD));
 		}

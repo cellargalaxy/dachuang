@@ -2,8 +2,6 @@ package top.cellargalaxy.dachuangspringboot.hereditary;
 
 import lombok.Data;
 
-import java.util.Arrays;
-
 /**
  * @author cellargalaxy
  * @time 2019/1/11
@@ -20,10 +18,5 @@ public class Gene {
 	@Override
 	public Gene clone() {
 		return new Gene(evidenceId, bases.clone());
-	}
-
-	@Override
-	public String toString() {
-		return Arrays.toString(bases);
 	}
 }

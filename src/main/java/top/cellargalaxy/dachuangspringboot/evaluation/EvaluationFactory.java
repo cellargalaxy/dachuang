@@ -8,14 +8,22 @@ import top.cellargalaxy.dachuangspringboot.run.RunParameter;
  * @time 2019/1/14
  */
 public class EvaluationFactory {
-	public static final Evaluation createEvaluation() {
-		String name = RunParameter.evaluationName;
+	private static Evaluation evaluation;
+
+	public static final Evaluation createEvaluation(RunParameter runParameter) {
+		String name = runParameter.getEvaluationName();
 		if (Auc.NAME.equals(name)) {
-			return new Auc(EvidenceSynthesisFactory.createEvidenceSynthesis());
+			evaluation = new Auc(EvidenceSynthesisFactory.getEvidenceSynthesis());
+			return evaluation;
 		}
 		if (Svm.NAME.equals(name)) {
-			return new Svm();
+			evaluation = new Svm();
+			return evaluation;
 		}
 		throw new RuntimeException("无效-Evaluation: " + name);
+	}
+
+	public static final Evaluation getEvaluation() {
+		return evaluation;
 	}
 }

@@ -1,6 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.feature;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,7 +15,7 @@ public final class CustomizeFeatureSplit implements FeatureSplit {
 	}
 
 	@Override
-	public void splitFeature(LinkedList<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
+	public void splitFeature(List<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
 		for (FeatureImportance featureImportance : featureImportances) {
 			if (featureImportance.getEvaluationD() < splitValue) {
 				importanceEvidenceIds.add(featureImportance.getEvidenceId());

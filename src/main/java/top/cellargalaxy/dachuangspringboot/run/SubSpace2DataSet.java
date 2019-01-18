@@ -14,7 +14,7 @@ import java.util.Map;
  * @time 2019/1/15
  */
 public class SubSpace2DataSet {
-	public static final DataSet subSpace2DataSet(Map<DataSet, HereditaryResult> subSpaceMap, EvidenceSynthesis evidenceSynthesis) throws IOException, ClassNotFoundException {
+	public static final DataSet subSpace2DataSet(Map<DataSet, HereditaryResult> subSpaceMap, EvidenceSynthesis evidenceSynthesis)  {
 		Map<String, Id> idMap = new HashMap<>();
 		int i = 1;
 		for (Map.Entry<DataSet, HereditaryResult> entry : subSpaceMap.entrySet()) {

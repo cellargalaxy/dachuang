@@ -1,6 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.feature;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,7 +10,7 @@ public final class AverageFeatureSplit implements FeatureSplit {
 	public static final String NAME = "平均数特征选择";
 
 	@Override
-	public void splitFeature(LinkedList<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
+	public void splitFeature(List<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
 		double count = 0;
 		for (FeatureImportance featureImportance : featureImportances) {
 			count += featureImportance.getEvaluationD();

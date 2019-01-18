@@ -1,6 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.feature;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -9,8 +9,7 @@ import java.util.Set;
 public final class MedianFeatureSplit implements FeatureSplit {
 	public static final String NAME = "中位数特征选择";
 
-	public void splitFeature(LinkedList<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
-		featureImportances.sort(FeatureImportance::sortByEvaluationD);
+	public void splitFeature(List<FeatureImportance> featureImportances, Set<Integer> importanceEvidenceIds, Set<Integer> unImportanceEvidenceIds) {
 		int count = featureImportances.size() / 2;
 		int i = 0;
 		for (FeatureImportance featureImportance : featureImportances) {

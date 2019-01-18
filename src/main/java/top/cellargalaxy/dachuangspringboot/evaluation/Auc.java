@@ -10,14 +10,13 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Set;
 
 /**
  * Created by cellargalaxy on 17-9-9.
  */
 public final class Auc implements Evaluation {
 	public static final String NAME = "auc";
-	private EvidenceSynthesis evidenceSynthesis;
+	private final EvidenceSynthesis evidenceSynthesis;
 
 	public Auc(EvidenceSynthesis evidenceSynthesis) {
 		this.evidenceSynthesis = evidenceSynthesis;
@@ -25,8 +24,8 @@ public final class Auc implements Evaluation {
 
 	@Override
 	public double countEvaluation(DataSet dataSet) {
-		LinkedList<Evidence> ds1s = new LinkedList<>();
-		LinkedList<Evidence> ds0s = new LinkedList<>();
+		Collection<Evidence> ds1s = new LinkedList<>();
+		Collection<Evidence> ds0s = new LinkedList<>();
 		for (Id id : dataSet.getIds()) {
 			Evidence evidence = evidenceSynthesis.synthesisEvidence(id);
 			if (id.getLabel() == Id.LABEL_0) {
@@ -35,16 +34,26 @@ public final class Auc implements Evaluation {
 				ds1s.add(evidence);
 			}
 		}
-		return doCountAuc(ds0s, ds1s);
+		return countAuc(ds0s, ds1s);
 	}
 
 	@Override
 	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId) {
-		return countEvaluation(dataSet.clone(withoutEvidenceId));
+		Collection<Evidence> ds1s = new LinkedList<>();
+		Collection<Evidence> ds0s = new LinkedList<>();
+		for (Id id : dataSet.getIds()) {
+			Evidence evidence = evidenceSynthesis.synthesisEvidence(id, withoutEvidenceId);
+			if (id.getLabel() == Id.LABEL_0) {
+				ds0s.add(evidence);
+			} else {
+				ds1s.add(evidence);
+			}
+		}
+		return countAuc(ds0s, ds1s);
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Set<Integer> withEvidenceIds) {
+	public double countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds) {
 		return countEvaluation(dataSet.clone(withEvidenceIds));
 	}
 
@@ -59,11 +68,11 @@ public final class Auc implements Evaluation {
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Set<Integer> withEvidenceIds, Chromosome chromosome) {
+	public double countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds, Chromosome chromosome) {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withEvidenceIds), chromosome));
 	}
 
-	private final double doCountAuc(Collection<Evidence> ds0s, Collection<Evidence> ds1s) {
+	private final double countAuc(Collection<Evidence> ds0s, Collection<Evidence> ds1s) {
 		double auc = 0;
 		for (Evidence ds1 : ds1s) {
 			for (Evidence ds0 : ds0s) {

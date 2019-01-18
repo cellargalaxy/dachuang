@@ -75,7 +75,7 @@ public class Hereditary {
 	}
 
 	private static ArrayList<HereditaryResult> countEvaluation(DataSet dataSet, Chromosome[] chromosomes, Evaluation evaluation) throws IOException {
-		ArrayList<HereditaryResult> list = new ArrayList<>();
+		ArrayList<HereditaryResult> list = new ArrayList<>(chromosomes.length);
 		for (Chromosome chromosome : chromosomes) {
 			list.add(new HereditaryResult(evaluation.countEvaluation(dataSet, chromosome), chromosome));
 		}

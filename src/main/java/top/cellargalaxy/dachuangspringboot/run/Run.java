@@ -1,7 +1,10 @@
 package top.cellargalaxy.dachuangspringboot.run;
 
 
-import top.cellargalaxy.dachuangspringboot.dataSet.*;
+import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
+import top.cellargalaxy.dachuangspringboot.dataSet.DataSetParameter;
+import top.cellargalaxy.dachuangspringboot.dataSet.DataSetFileIO;
+import top.cellargalaxy.dachuangspringboot.dataSet.DataSetFileIOFactory;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
@@ -23,15 +26,20 @@ import java.util.concurrent.ExecutionException;
  */
 public class Run {
 
-	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException, ClassNotFoundException {
-		FromFileReadDataSet fromFileReadDataSet = new FromCsvReadDataSetImpl();
-		DataSetParameter dataSetParameter = new DataSetParameter();
+	public static void main(String[] args) throws IOException {
+		RunParameter runParameter = new RunParameter();
+
+		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
 		dataSetParameter.setEvidenceColumnName("证据");
 		dataSetParameter.setFraudColumnName("A");
 		dataSetParameter.setUnfraudColumnName("B");
-		DataSet trainDataSet = fromFileReadDataSet.readDataSetFromFile(new File("D:/g/trainAll.csv"), dataSetParameter);
-		DataSet teatDataSet = fromFileReadDataSet.readDataSetFromFile(new File("D:/g/testAll.csv"), dataSetParameter);
-		run(trainDataSet,teatDataSet,new HereditaryParameter(),ParentChrosChooseFactory.createParentChrosChoose(),new RandomSubSpaceCreate(), EvidenceSynthesisFactory.createEvidenceSynthesis(), EvaluationFactory.createEvaluation());
+		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.createFromFileReadDataSet(runParameter);
+		DataSet trainDataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/trainAll.csv"), dataSetParameter);
+		DataSet teatDataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/testAll.csv"), dataSetParameter);
+
+		runParameter.setEvidenceSynthesisName(null);
+
+		run(trainDataSet, teatDataSet, runParameter.getHereditaryParameter(), ParentChrosChooseFactory.createParentChrosChoose(runParameter), new RandomSubSpaceCreate(), EvidenceSynthesisFactory.createEvidenceSynthesis(runParameter,trainDataSet), EvaluationFactory.createEvaluation(runParameter,trainDataSet));
 
 	}
 
@@ -39,7 +47,7 @@ public class Run {
 	                             HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,//遗传算法
 	                             SubSpaceCreate subSpaceCreate, EvidenceSynthesis subSpaceEvidenceSynthesis,//子空间合成
 	                             Evaluation evaluation
-	) throws IOException, ClassNotFoundException, ExecutionException, InterruptedException {
+	) throws IOException {
 		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(trainDataSet);
 
 		HereditaryResult fullHereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);

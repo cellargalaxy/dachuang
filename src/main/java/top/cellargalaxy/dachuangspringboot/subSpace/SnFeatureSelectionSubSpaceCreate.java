@@ -17,26 +17,26 @@ import java.util.*;
  */
 public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCreate {
 	public static final String NAME = "SN特征选择子空间";
-	private final ImprotenceAdjust improtenceAdjust;
 	private final Sn[] sns;
 	private final FeatureSplit featureSplit;
 	private final double featureSelectionDeviation;
 	private final HereditaryParameter hereditaryParameter;
 	private final ParentChrosChoose parentChrosChoose;
 	private final Evaluation evaluation;
+	private final ImprotenceAdjust improtenceAdjust;
 
-	public SnFeatureSelectionSubSpaceCreate(ImprotenceAdjust improtenceAdjust, Sn[] sns, FeatureSplit featureSplit, double featureSelectionDeviation, HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) {
-		this.improtenceAdjust = improtenceAdjust;
+	public SnFeatureSelectionSubSpaceCreate(Sn[] sns, FeatureSplit featureSplit, double featureSelectionDeviation, HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation, ImprotenceAdjust improtenceAdjust) {
 		this.sns = sns;
 		this.featureSplit = featureSplit;
 		this.featureSelectionDeviation = featureSelectionDeviation;
 		this.hereditaryParameter = hereditaryParameter;
 		this.parentChrosChoose = parentChrosChoose;
 		this.evaluation = evaluation;
+		this.improtenceAdjust = improtenceAdjust;
 	}
 
 	public List<List<Integer>> createSubSpaces(DataSet dataSet) throws IOException {
-		ArrayList<FeatureImportance> featureImportances = FeatureSelection.featureSelection(featureSplit, featureSelectionDeviation, dataSet, hereditaryParameter, parentChrosChoose, evaluation);
+		ArrayList<FeatureImportance> featureImportances = FeatureSelection.featureSelection(dataSet, featureSplit, featureSelectionDeviation, hereditaryParameter, parentChrosChoose, evaluation);
 
 		Collection<Integer> features = dataSet.getEvidenceName2EvidenceId().values();
 		int fnMax = 0;

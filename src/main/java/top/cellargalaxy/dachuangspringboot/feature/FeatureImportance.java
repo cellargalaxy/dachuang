@@ -14,7 +14,7 @@ public class FeatureImportance {
 	private double evaluationD;
 	private int evidenceId;
 
-	public static final int sortByEvaluationD(FeatureImportance featureImportance1, FeatureImportance featureImportance2) {
+	public static final int sortAscByEvaluationD(FeatureImportance featureImportance1, FeatureImportance featureImportance2) {
 		if (featureImportance1.getEvaluationD() < featureImportance2.getEvaluationD()) {
 			return -1;
 		} else if (featureImportance1.getEvaluationD() > featureImportance2.getEvaluationD()) {

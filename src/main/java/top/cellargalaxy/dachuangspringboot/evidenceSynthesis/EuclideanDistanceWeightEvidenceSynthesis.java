@@ -103,7 +103,7 @@ public final class EuclideanDistanceWeightEvidenceSynthesis implements EvidenceS
 
 	@Override
 	public Evidence synthesisEvidence(Id id, Integer withoutEvidenceId, Chromosome chromosome) {
-		return synthesisEvidence(HereditaryUtils.evolution(id.clone(), chromosome), withoutEvidenceId);
+		return synthesisEvidence(HereditaryUtils.evolution(id.clone(withoutEvidenceId), chromosome));
 	}
 
 	@Override

@@ -9,10 +9,7 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryResult;
 import top.cellargalaxy.dachuangspringboot.hereditary.ParentChrosChoose;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,18 +17,19 @@ import java.util.stream.Collectors;
  */
 public class FeatureSelection {
 
-	public static final ArrayList<FeatureImportance> featureSelection(FeatureSplit featureSplit, double featureSelectionDeviation,
-	                                                                  DataSet dataSet, HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) throws IOException {
+	public static final ArrayList<FeatureImportance> featureSelection(DataSet dataSet,
+	                                                                  FeatureSplit featureSplit, double featureSelectionDeviation,
+	                                                                  HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) throws IOException {
 
 		HereditaryResult hereditaryResult = Hereditary.evolution(dataSet, hereditaryParameter, parentChrosChoose, evaluation);
-		double fullEvaluation = hereditaryResult.getEvaluationValue();
-		LinkedList<FeatureImportance> featureImportances = new LinkedList<>();
+		double fullEvaluationValue = hereditaryResult.getEvaluationValue();
+		List<FeatureImportance> featureImportances = new LinkedList<>();
 		for (Integer evidenceId : dataSet.getEvidenceName2EvidenceId().values()) {
 			hereditaryResult = Hereditary.evolution(dataSet.clone(evidenceId), hereditaryParameter, parentChrosChoose, evaluation);
-			double evaluationValueD = fullEvaluation - hereditaryResult.getEvaluationValue();
+			double evaluationValueD = fullEvaluationValue - hereditaryResult.getEvaluationValue();
 			featureImportances.add(new FeatureImportance(evaluationValueD, evidenceId));
 		}
-		featureImportances.sort(FeatureImportance::sortByEvaluationD);
+		featureImportances.sort(FeatureImportance::sortAscByEvaluationD);
 
 		Set<Integer> importanceEvidenceIds = new HashSet<>();
 		Set<Integer> unImportanceEvidenceIds = new HashSet<>();
@@ -39,9 +37,9 @@ public class FeatureSelection {
 
 		hereditaryResult = Hereditary.evolution(dataSet.clone(importanceEvidenceIds), hereditaryParameter, parentChrosChoose, evaluation);
 		double evaluationValueD = hereditaryResult.getEvaluationValue();
-		while (fullEvaluation - evaluationValueD > featureSelectionDeviation && unImportanceEvidenceIds.size() > 0) {
+		while (fullEvaluationValue - evaluationValueD > featureSelectionDeviation && unImportanceEvidenceIds.size() > 0) {
 			double aucJ = -1;
-			int evidenceId = -1;
+			Integer evidenceId = null;
 			for (Integer unImportanceEvidenceId : unImportanceEvidenceIds) {
 				Set<Integer> newImportanceEvidenceIds = importanceEvidenceIds.stream().collect(Collectors.toSet());
 				newImportanceEvidenceIds.add(unImportanceEvidenceId);
@@ -52,14 +50,15 @@ public class FeatureSelection {
 				}
 			}
 
-			if (evidenceId > 0) {
+			if (evidenceId != null) {
 				importanceEvidenceIds.add(evidenceId);
 				unImportanceEvidenceIds.remove(evidenceId);
 				evaluationValueD = aucJ;
 			}
 		}
-		ArrayList<FeatureImportance> arrayList = new ArrayList<>();
-		arrayList.addAll(featureImportances.stream().filter(featureImportance -> importanceEvidenceIds.contains(featureImportance.getEvidenceId())).collect(Collectors.toList()));
+		featureImportances = featureImportances.stream().filter(featureImportance -> importanceEvidenceIds.contains(featureImportance.getEvidenceId())).collect(Collectors.toList());
+		ArrayList<FeatureImportance> arrayList = new ArrayList<>(featureImportances.size());
+		arrayList.addAll(featureImportances);
 		return arrayList;
 	}
 }

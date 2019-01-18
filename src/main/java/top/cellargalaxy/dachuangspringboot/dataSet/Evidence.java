@@ -13,11 +13,11 @@ public class Evidence {
 	private final double[] values;
 
 	public double getFraud() {
-		return values[FromCsvReadDataSetImpl.FRAUD_INDEX];
+		return values[DataSetCsvFileIO.FRAUD_INDEX];
 	}
 
 	public double getUnfraud() {
-		return values[FromCsvReadDataSetImpl.UNFRAUD_INDEX];
+		return values[DataSetCsvFileIO.UNFRAUD_INDEX];
 	}
 
 	@Override
