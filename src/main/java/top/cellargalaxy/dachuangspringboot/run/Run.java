@@ -30,13 +30,16 @@ import java.util.*;
  * Created by cellargalaxy on 17-9-9.
  */
 public class Run {
-	public static final Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
+	public static Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
 	public static final Yaml YAML = new Yaml();
 
 	public static void main(String[] args) {
 		int i = 1;
 		for (double j = 0.1; j < 0.6; j = j + 0.1) {
 			for (int k = 0; k < 10; k++) {
+				String name="实验" + i;
+
+				logger = (Logger) LoggerFactory.getLogger(name);
 
 				RunParameter runParameter = new RunParameter();
 
@@ -58,7 +61,7 @@ public class Run {
 				runParameter.setTrainLabel1Pro(0.2);
 				runParameter.setTestLabel1Pro(0.2);
 
-				run(runParameter, "实验" + i);
+				run(runParameter, name);
 
 				i++;
 			}
