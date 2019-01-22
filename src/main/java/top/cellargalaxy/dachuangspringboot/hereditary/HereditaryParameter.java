@@ -1,32 +1,34 @@
 package top.cellargalaxy.dachuangspringboot.hereditary;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * Created by cellargalaxy on 17-9-8.
  */
 @Data
+@AllArgsConstructor
 public class HereditaryParameter {
 	//染色体数
-	private final int chroNum;
+	private int chroNum;
 	//每个基因的碱基数
-	private final int baseNum;
+	private int baseNum;
 	//保留染色体比例
-	private final double saveChroPro;
+	private double saveChroPro;
 	//保留染色体数
-	private final int saveChroNum;
+	private int saveChroNum;
 	//碱基交换比例
-	private final double baseExPro;
+	private double baseExPro;
 	//碱基突变概率
-	private final double baseMutPro;
+	private double baseMutPro;
 	//碱基步长
-	private final double step;
+	private double step;
 	//迭代次数
-	private final int iterationCount;
+	private int iterationCount;
 	//相同解范围
-	private final double sameDeviation;
+	private double sameDeviation;
 	//最多相同最大解次数
-	private final int sameCount;
+	private int sameCount;
 
 	public HereditaryParameter() {
 		//染色体数

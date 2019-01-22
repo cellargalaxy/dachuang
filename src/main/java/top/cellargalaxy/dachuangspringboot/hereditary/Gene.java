@@ -1,5 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.hereditary;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -7,9 +8,10 @@ import lombok.Data;
  * @time 2019/1/11
  */
 @Data
+@AllArgsConstructor
 public class Gene {
-	private final int evidenceId;
-	private final double[] bases;
+	private int evidenceId;
+	private double[] bases;
 
 	public double getBase(int index) {
 		return bases[index];

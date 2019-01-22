@@ -31,6 +31,7 @@ import java.util.*;
  */
 public class Run {
 	public static final Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
+	public static final Yaml YAML = new Yaml();
 
 	public static void main(String[] args) {
 		int i = 1;
@@ -74,7 +75,7 @@ public class Run {
 
 	public static final void run(File runParameterFile, String path) throws IOException {
 		String config = String.valueOf(IOUtils.readFile(runParameterFile));
-		RunParameter runParameter = new Yaml().loadAs(config, RunParameter.class);
+		RunParameter runParameter = YAML.loadAs(config, RunParameter.class);
 		run(runParameter, path);
 	}
 
@@ -95,8 +96,8 @@ public class Run {
 		logger.addAppender(appender);
 
 		try {
-			String config = new Yaml().dump(runParameter);
-			File runParameterFile = new File(path, "config.yaml");
+			String config = YAML.dump(runParameter);
+			File runParameterFile = new File(path, "config.yml");
 			IOUtils.writeFile(config.getBytes(), runParameterFile);
 			logger.info("配置文件保存在: {}", runParameterFile);
 
@@ -140,10 +141,11 @@ public class Run {
 		DataSet testDataSet = dataSetFileIO.readFileToDataSet(teatDataSetFile, runParameter.getDataSetParameter());
 		File trainSubSpaceDataSetFile = new File(path, "subSpaceDataSet-train.csv");
 		File testSubSpaceDataSetFile = new File(path, "subSpaceDataSet-test.csv");
-		run(runParameter, trainDataSet, testDataSet, trainSubSpaceDataSetFile, testSubSpaceDataSetFile);
+		File runResultFile = new File(path, "runResult.yml");
+		run(runParameter, trainDataSet, testDataSet, trainSubSpaceDataSetFile, testSubSpaceDataSetFile, runResultFile);
 	}
 
-	private static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet, File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException {
+	private static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet, File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile, File runResultFile) throws IOException {
 		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
 		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
 		HereditaryParameter hereditaryParameter = runParameter.getHereditaryParameter();
@@ -158,41 +160,45 @@ public class Run {
 		logger.info("使用的评价算法: {}", evaluation);
 		logger.info("使用的子空间算法: {}", subSpaceCreate);
 
-		run(runParameter, dataSetParameter, dataSetFileIO, trainDataSet, testDataSet,
+		List<RunResult> runResults = run(runParameter, dataSetParameter, dataSetFileIO, trainDataSet, testDataSet,
 				hereditaryParameter, parentChrosChoose,
 				evaluation,
 				subSpaceCreate,
 				trainSubSpaceDataSetFile, testSubSpaceDataSetFile);
+
+		String runResultString = YAML.dump(runResults);
+		IOUtils.writeFile(runResultString.getBytes(), runResultFile);
+		logger.info("运行结果文件保存在: {}", runResultFile);
 	}
 
-	private static final void run(RunParameter runParameter, DataSetParameter dataSetParameter, DataSetFileIO dataSetFileIO, DataSet trainDataSet, DataSet testDataSet,
-	                              HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,
-	                              Evaluation evaluation,
-	                              SubSpaceCreate subSpaceCreate,
-	                              File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException {
+	private static final List<RunResult> run(RunParameter runParameter, DataSetParameter dataSetParameter, DataSetFileIO dataSetFileIO, DataSet trainDataSet, DataSet testDataSet,
+	                                         HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,
+	                                         Evaluation evaluation,
+	                                         SubSpaceCreate subSpaceCreate,
+	                                         File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException {
 
 		HereditaryResult fullHereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);
 		logger.info("训练集-完整数据集的AUC: {}", fullHereditaryResult.getEvaluationValue());
 
 		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(trainDataSet);
-		List<SubSpaceResult> trainSubSpaceResults = new LinkedList<>();
+		List<RunResult> trainRunResults = new LinkedList<>();
 		for (List<Integer> subSpace : subSpaces) {
 			DataSet dataSet = trainDataSet.clone(subSpace);
 			HereditaryResult hereditaryResult = Hereditary.evolution(dataSet, hereditaryParameter, parentChrosChoose, evaluation);
 			if (hereditaryResult.getEvaluationValue() >= fullHereditaryResult.getEvaluationValue() * 0.9) {
-				trainSubSpaceResults.add(new SubSpaceResult(subSpace, dataSet, hereditaryResult.getChromosome()));
+				trainRunResults.add(new RunResult(subSpace, dataSet, hereditaryResult.getChromosome()));
 				logger.info("训练集-优秀子空间AUC: {},\t {}", hereditaryResult.getEvaluationValue(), subSpace);
 			} else {
 				logger.info("训练集-劣质子空间AUC: {},\t {}", hereditaryResult.getEvaluationValue(), subSpace);
 			}
 		}
 
-		if (trainSubSpaceResults.size() == 0) {
-			trainSubSpaceResults.add(new SubSpaceResult(trainDataSet.getEvidenceName2EvidenceId().values(), trainDataSet, fullHereditaryResult.getChromosome()));
+		if (trainRunResults.size() == 0) {
+			trainRunResults.add(new RunResult(trainDataSet.getEvidenceName2EvidenceId().values(), trainDataSet, fullHereditaryResult.getChromosome()));
 			logger.info("训练集-没有优秀子空间，添加完整特征集作为默认");
 		}
 
-		SubSpaceSynthesisResult subSpaceSynthesisResult = SubSpaceSynthesis.synthesisSubSpace(runParameter, trainSubSpaceResults, evaluation);
+		SubSpaceSynthesisResult subSpaceSynthesisResult = SubSpaceSynthesis.synthesisSubSpace(runParameter, trainRunResults, evaluation);
 		DataSet trainSubSpaceDataSet = subSpaceSynthesisResult.getDataSet();
 		dataSetFileIO.writeDataSetToFile(dataSetParameter, trainSubSpaceDataSet, trainSubSpaceDataSetFile);
 		logger.info("训练集-子空间合成数据集保存在: {}", testSubSpaceDataSetFile);
@@ -202,17 +208,19 @@ public class Run {
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		List<SubSpaceResult> testSubSpaceResults = new LinkedList<>();
-		for (SubSpaceResult trainSubSpaceResult : trainSubSpaceResults) {
-			Collection<Integer> subSpace = trainSubSpaceResult.getSubSpace();
+		List<RunResult> testRunResults = new LinkedList<>();
+		for (RunResult trainRunResult : trainRunResults) {
+			Collection<Integer> subSpace = trainRunResult.getSubSpace();
 			DataSet dataSet = testDataSet.clone(subSpace);
-			testSubSpaceResults.add(new SubSpaceResult(subSpace, dataSet, trainSubSpaceResult.getChromosome()));
-			logger.info("测试集-使用优秀子空间AUC: {},\t {}", evaluation.countEvaluation(dataSet, trainSubSpaceResult.getChromosome()), subSpace);
+			testRunResults.add(new RunResult(subSpace, dataSet, trainRunResult.getChromosome()));
+			logger.info("测试集-使用优秀子空间AUC: {},\t {}", evaluation.countEvaluation(dataSet, trainRunResult.getChromosome()), subSpace);
 		}
-		DataSet testSubSpaceDataSet = SubSpaceSynthesis.synthesisSubSpace(testSubSpaceResults, subSpaceEvidenceSynthesis);
+		DataSet testSubSpaceDataSet = SubSpaceSynthesis.synthesisSubSpace(testRunResults, subSpaceEvidenceSynthesis);
 		dataSetFileIO.writeDataSetToFile(dataSetParameter, testSubSpaceDataSet, testSubSpaceDataSetFile);
 		logger.info("测试集-子空间合成数据集保存在: {}", testSubSpaceDataSetFile);
 		logger.info("测试集-使用子空间合成所自动选择的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet));
+
+		return trainRunResults;
 	}
 
 }

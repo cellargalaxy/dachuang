@@ -7,7 +7,7 @@ import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesisFactory;
 import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
 import top.cellargalaxy.dachuangspringboot.run.RunParameter;
-import top.cellargalaxy.dachuangspringboot.run.SubSpaceResult;
+import top.cellargalaxy.dachuangspringboot.run.RunResult;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,12 +19,12 @@ import java.util.Map;
  */
 public class SubSpaceSynthesis {
 
-	public static final SubSpaceSynthesisResult synthesisSubSpace(RunParameter runParameter, List<SubSpaceResult> subSpaceResults, Evaluation evaluation) {
+	public static final SubSpaceSynthesisResult synthesisSubSpace(RunParameter runParameter, List<RunResult> runResults, Evaluation evaluation) {
 		SubSpaceSynthesisResult fitSubSpaceSynthesisResult = null;
 		for (String name : EvidenceSynthesisFactory.NAMES) {
 			EvidenceSynthesis evidenceSynthesis = EvidenceSynthesisFactory.createEvidenceSynthesis(name, runParameter, null);
 			try {
-				DataSet dataSet = synthesisSubSpace(subSpaceResults, evidenceSynthesis);
+				DataSet dataSet = synthesisSubSpace(runResults, evidenceSynthesis);
 				double evaluationValue = evaluation.countEvaluation(dataSet);
 				if (fitSubSpaceSynthesisResult == null || evaluationValue > fitSubSpaceSynthesisResult.getEvaluationValue()) {
 					fitSubSpaceSynthesisResult = new SubSpaceSynthesisResult(dataSet, evidenceSynthesis, evaluationValue);
@@ -36,12 +36,12 @@ public class SubSpaceSynthesis {
 		return fitSubSpaceSynthesisResult;
 	}
 
-	public static final DataSet synthesisSubSpace(List<SubSpaceResult> subSpaceResults, EvidenceSynthesis evidenceSynthesis) {
+	public static final DataSet synthesisSubSpace(List<RunResult> runResults, EvidenceSynthesis evidenceSynthesis) {
 		Map<String, Id> idMap = new HashMap<>();
 		int i = 1;
-		for (SubSpaceResult subSpaceResult : subSpaceResults) {
-			Chromosome chromosome = subSpaceResult.getChromosome();
-			DataSet dataSet = subSpaceResult.getDataSet();
+		for (RunResult runResult : runResults) {
+			Chromosome chromosome = runResult.getChromosome();
+			DataSet dataSet = runResult.getDataSet();
 			for (Id id : dataSet.getIds()) {
 				Id newId = idMap.get(id.getId());
 				if (newId == null) {

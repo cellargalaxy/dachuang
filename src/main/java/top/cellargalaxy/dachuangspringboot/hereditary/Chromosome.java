@@ -1,5 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.hereditary;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Collection;
@@ -11,8 +12,9 @@ import java.util.Map;
  * @time 2019/1/11
  */
 @Data
+@AllArgsConstructor
 public class Chromosome {
-	private final Map<Integer, Gene> geneMap;
+	private Map<Integer, Gene> geneMap;
 
 	public Gene getGene(int evidenceId) {
 		return geneMap.get(evidenceId);

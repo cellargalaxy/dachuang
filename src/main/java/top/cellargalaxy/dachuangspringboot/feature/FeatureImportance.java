@@ -2,13 +2,11 @@ package top.cellargalaxy.dachuangspringboot.feature;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Created by cellargalaxy on 17-11-1.
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class FeatureImportance {
 	private double evaluationD;

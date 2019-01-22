@@ -1,9 +1,9 @@
 package top.cellargalaxy.dachuangspringboot.run;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
-import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryResult;
 
 import java.util.Collection;
 
@@ -12,8 +12,9 @@ import java.util.Collection;
  * @time 2019/1/22
  */
 @Data
-public class SubSpaceResult {
-	private final Collection<Integer> subSpace;
-	private final DataSet dataSet;
-	private final Chromosome chromosome;
+@AllArgsConstructor
+public class RunResult {
+	private Collection<Integer> subSpace;
+	private DataSet dataSet;
+	private Chromosome chromosome;
 }

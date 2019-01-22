@@ -1,5 +1,6 @@
 package top.cellargalaxy.dachuangspringboot.hereditary;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -7,7 +8,8 @@ import lombok.Data;
  * @time 2019/1/11
  */
 @Data
+@AllArgsConstructor
 public class HereditaryResult {
-	private final double evaluationValue;
-	private final Chromosome chromosome;
+	private double evaluationValue;
+	private Chromosome chromosome;
 }
