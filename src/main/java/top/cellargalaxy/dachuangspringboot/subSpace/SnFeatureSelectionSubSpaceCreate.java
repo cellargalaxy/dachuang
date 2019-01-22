@@ -10,6 +10,7 @@ import top.cellargalaxy.dachuangspringboot.feature.FeatureSelection;
 import top.cellargalaxy.dachuangspringboot.feature.FeatureSplit;
 import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryParameter;
 import top.cellargalaxy.dachuangspringboot.hereditary.ParentChrosChoose;
+import top.cellargalaxy.dachuangspringboot.run.Run;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,7 +20,6 @@ import java.util.*;
  */
 public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCreate {
 	public static final String NAME = "SN特征选择子空间";
-	private static final Logger logger = LoggerFactory.getLogger(SnFeatureSelectionSubSpaceCreate.class);
 	private final Sn[] sns;
 	private final FeatureSplit featureSplit;
 	private final double featureSelectionDeviation;
@@ -59,7 +59,7 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 			}
 		}
 		int fn = fitSn.getMinFn() + (int) (Math.random() * (fitSn.getMaxFn() - fitSn.getMinFn()));
-		logger.info("子空间数量: {}", fn);
+		Run.logger.info("子空间数量: {}", fn);
 		int[] ints = fitSn.getSn();
 		featureImportances = improtenceAdjust.adjustImportance(featureImportances);
 		List<List<Integer>> subSpaces = new LinkedList<>();
@@ -67,7 +67,7 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 			List<Integer> subSpace = createFeatureSelectionSubSpace(featureImportances, ints[(int) (ints.length * Math.random())]);
 			if (!siContainSubSpace(subSpaces, subSpace)) {
 				subSpaces.add(subSpace);
-				logger.info("子空间: {}", subSpace);
+				Run.logger.info("子空间: {}", subSpace);
 			} else {
 				i--;
 			}

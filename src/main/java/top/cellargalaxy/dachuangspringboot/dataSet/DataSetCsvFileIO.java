@@ -91,4 +91,9 @@ public class DataSetCsvFileIO implements DataSetFileIO {
 			}
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "CSV文件";
+	}
 }

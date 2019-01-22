@@ -1,10 +1,8 @@
 package top.cellargalaxy.dachuangspringboot.dataSet;
 
 import lombok.Data;
-import top.cellargalaxy.dachuangspringboot.run.RunParameter;
+import top.cellargalaxy.dachuangspringboot.run.Run;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,23 +12,6 @@ import java.util.Map;
  */
 @Data
 public class DataSetSplitImpl implements DataSetSplit {
-	public static void main(String[] args) throws IOException {
-		RunParameter runParameter = new RunParameter();
-
-		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-		dataSetParameter.setEvidenceColumnName("证据");
-		dataSetParameter.setFraudColumnName("A");
-		dataSetParameter.setUnfraudColumnName("B");
-		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
-		DataSet dataSet = dataSetFileIO.readFileToDataSet(new File("D:/g/trainAll.csv"), dataSetParameter);
-		DataSet[] dataSets = new DataSetSplitImpl().splitDataSet(dataSet, 0.2, 0.6, 0.8, 0.1, 0.4);
-
-		File trainFile = new File("D:/trainFile.csv");
-		File testFile = new File("D:/testFile.csv");
-
-		dataSetFileIO.writeDataSetToFile(dataSetParameter, dataSets[0], trainFile);
-		dataSetFileIO.writeDataSetToFile(dataSetParameter, dataSets[1], testFile);
-	}
 
 	@Override
 	public DataSet[] splitDataSet(DataSet dataSet, double testPro, double trainMissPro, double testMissPro, double trainLabel1Pro, double testLabel1Pro) {
@@ -55,6 +36,11 @@ public class DataSetSplitImpl implements DataSetSplit {
 			}
 		}
 
+		Run.logger.info("完整-0标签-数量: {}", com0Count);
+		Run.logger.info("完整-1标签-数量: {}", com1Count);
+		Run.logger.info("缺失-0标签-数量: {}", miss0Count);
+		Run.logger.info("缺失-1标签-数量: {}", miss1Count);
+
 		double trainPro = 1 - testPro;
 		double trainComPro = 1 - trainMissPro;
 		double testComPro = 1 - testMissPro;
@@ -76,18 +62,22 @@ public class DataSetSplitImpl implements DataSetSplit {
 		double miss0Pro = trainMiss0Pro + testMiss0Pro;
 		double miss1Pro = trainMiss1Pro + testMiss1Pro;
 
+		Run.logger.info("完整-0标签-预计比例: {}", com0Pro);
+		Run.logger.info("完整-1标签-预计比例: {}", com1Pro);
+		Run.logger.info("缺失-0标签-预计比例: {}", miss0Pro);
+		Run.logger.info("缺失-1标签-预计比例: {}", miss1Pro);
 
 		int minNum = Integer.MAX_VALUE;
-		if (com0Count > 0 && com0Count < minNum) {
+		if (com0Count > 0 && com0Count < minNum && com0Pro > 0) {
 			minNum = com0Count;
 		}
-		if (com1Count > 0 && com1Count < minNum) {
+		if (com1Count > 0 && com1Count < minNum && com1Pro > 0) {
 			minNum = com1Count;
 		}
-		if (miss0Count > 0 && miss0Count < minNum) {
+		if (miss0Count > 0 && miss0Count < minNum && miss0Pro > 0) {
 			minNum = miss0Count;
 		}
-		if (miss1Count > 0 && miss1Count < minNum) {
+		if (miss1Count > 0 && miss1Count < minNum && miss1Pro > 0) {
 			minNum = miss1Count;
 		}
 
@@ -117,6 +107,11 @@ public class DataSetSplitImpl implements DataSetSplit {
 			miss1Num = miss1Count;
 		}
 
+		Run.logger.info("完整-0标签-预计数量: {}", com0Num);
+		Run.logger.info("完整-1标签-预计数量: {}", com1Num);
+		Run.logger.info("缺失-0标签-预计数量: {}", miss0Num);
+		Run.logger.info("缺失-1标签-预计数量: {}", miss1Num);
+
 		int trainCom0Num = (int) (com0Num * trainPro);
 		int trainCom1Num = (int) (com1Num * trainPro);
 		int trainMiss0Num = (int) (miss0Num * trainPro);
@@ -126,6 +121,16 @@ public class DataSetSplitImpl implements DataSetSplit {
 		int testCom1Num = (int) (com1Num * testPro);
 		int testMiss0Num = (int) (miss0Num * testPro);
 		int testMiss1Num = (int) (miss1Num * testPro);
+
+		Run.logger.info("训练集-完整-0标签-预计数量: {}", trainCom0Num);
+		Run.logger.info("训练集-完整-1标签-预计数量: {}", trainCom1Num);
+		Run.logger.info("训练集-缺失-0标签-预计数量: {}", trainMiss0Num);
+		Run.logger.info("训练集-缺失-1标签-预计数量: {}", trainMiss1Num);
+
+		Run.logger.info("测试集-完整-0标签-预计数量: {}", testCom0Num);
+		Run.logger.info("测试集-完整-1标签-预计数量: {}", testCom1Num);
+		Run.logger.info("测试集-缺失-0标签-预计数量: {}", testMiss0Num);
+		Run.logger.info("测试集-缺失-1标签-预计数量: {}", testMiss1Num);
 
 		int trainCom0Yet = 0;
 		int trainCom1Yet = 0;
@@ -250,6 +255,16 @@ public class DataSetSplitImpl implements DataSetSplit {
 //			}
 
 		}
+
+		Run.logger.info("训练集-完整-0标签-实际数量: {}", trainCom0Yet);
+		Run.logger.info("训练集-完整-1标签-实际数量: {}", trainCom1Yet);
+		Run.logger.info("训练集-缺失-0标签-实际数量: {}", trainMiss0Yet);
+		Run.logger.info("训练集-完整-1标签-实际数量: {}", trainMiss1Yet);
+
+		Run.logger.info("测试集-完整-0标签-实际数量: {}", testCom0Yet);
+		Run.logger.info("测试集-完整-1标签-实际数量: {}", testCom1Yet);
+		Run.logger.info("测试集-缺失-0标签-实际数量: {}", testMiss0Yet);
+		Run.logger.info("测试集-完整-1标签-实际数量: {}", testMiss1Yet);
 
 		return new DataSet[]{new DataSet(trainIdMap), new DataSet(testIdMap)};
 	}

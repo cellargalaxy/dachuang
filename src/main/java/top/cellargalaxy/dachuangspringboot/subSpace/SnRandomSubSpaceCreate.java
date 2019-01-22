@@ -4,6 +4,7 @@ package top.cellargalaxy.dachuangspringboot.subSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
+import top.cellargalaxy.dachuangspringboot.run.Run;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
  */
 public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 	public static final String NAME = "SN随机子空间";
-	private static final Logger logger = LoggerFactory.getLogger(SnRandomSubSpaceCreate.class);
 	private final Sn[] sns;
 
 	public SnRandomSubSpaceCreate(Sn[] sns) {
@@ -40,14 +40,14 @@ public class SnRandomSubSpaceCreate extends AbstractSubSpaceCreate {
 			}
 		}
 		int fn = fitSn.getMinFn() + (int) (Math.random() * (fitSn.getMaxFn() - fitSn.getMinFn()));
-		logger.info("子空间数量: {}", fn);
+		Run.logger.info("子空间数量: {}", fn);
 		int[] ints = fitSn.getSn();
 		List<List<Integer>> subSpaces = new LinkedList<>();
 		for (int i = 0; i < fn; i++) {
 			List<Integer> subSpace = createSnRandomSubSpace(features, ints[(int) (ints.length * Math.random())]);
 			if (!siContainSubSpace(subSpaces, subSpace)) {
 				subSpaces.add(subSpace);
-				logger.info("子空间: {}", subSpace);
+				Run.logger.info("子空间: {}", subSpace);
 			} else {
 				i--;
 			}

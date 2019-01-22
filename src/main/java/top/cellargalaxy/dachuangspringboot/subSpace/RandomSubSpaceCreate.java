@@ -4,6 +4,7 @@ package top.cellargalaxy.dachuangspringboot.subSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
+import top.cellargalaxy.dachuangspringboot.run.Run;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import java.util.List;
  */
 public final class RandomSubSpaceCreate extends AbstractSubSpaceCreate {
 	public static final String NAME = "完全随机子空间";
-	private static final Logger logger = LoggerFactory.getLogger(RandomSubSpaceCreate.class);
 
 	@Override
 	public List<List<Integer>> createSubSpaces(DataSet dataSet) {
@@ -27,13 +27,13 @@ public final class RandomSubSpaceCreate extends AbstractSubSpaceCreate {
 		do {
 			fn = (int) ((Math.pow(2, features.size()) - 1) * Math.random());
 		} while (fn == 0);
-		logger.info("子空间数量: {}", fn);
+		Run.logger.info("子空间数量: {}", fn);
 		List<List<Integer>> subSpaces = new LinkedList<>();
 		for (int i = 0; i < fn; i++) {
 			List<Integer> subSpace = createRandomSubSpace(features);
 			if (!siContainSubSpace(subSpaces, subSpace)) {
 				subSpaces.add(subSpace);
-				logger.info("子空间: {}", subSpace);
+				Run.logger.info("子空间: {}", subSpace);
 			} else {
 				i--;
 			}

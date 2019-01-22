@@ -16,13 +16,13 @@ import top.cellargalaxy.dachuangspringboot.subSpace.SnFeatureSelectionSubSpaceCr
  */
 @Data
 public class RunParameter {
-	private String dataSetPath;
-	private String trainDataSetPath;
-	private String teatDataSettPath;
+	private String dataSetPath = "";
+	private String trainDataSetPath = "";
+	private String teatDataSettPath = "";
 
 	private DataSetParameter dataSetParameter = new DataSetParameter();
 
-	private String evidenceSynthesisName;
+	private String evidenceSynthesisName = "";
 	private double thrf;
 	private double thrnf;
 	private double d1;
