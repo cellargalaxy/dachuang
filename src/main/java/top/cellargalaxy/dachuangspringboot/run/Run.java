@@ -19,8 +19,7 @@ import top.cellargalaxy.dachuangspringboot.subSpaceSynthesis.SubSpaceSynthesisRe
 import top.cellargalaxy.dachuangspringboot.util.IOUtils;
 import top.cellargalaxy.dachuangspringboot.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,10 +32,14 @@ public class Run {
 	public static Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
 	public static final Yaml YAML = new Yaml();
 
-	public static void main(String[] args) {
-		int i = 1;
+	public static void main(String[] args) throws IOException {
+		run();
+	}
+
+	public static void run() throws IOException {
+		int i = 51;
 		for (double j = 0.1; j < 0.6; j = j + 0.1) {
-			for (int k = 0; k < 10; k++) {
+			for (double k = 0.1; k < 1.1; k = k + 0.1) {
 				String name="实验" + i;
 
 				logger = (Logger) LoggerFactory.getLogger(name);
@@ -57,7 +60,7 @@ public class Run {
 
 				runParameter.setTestPro(j);
 				runParameter.setTrainMissPro(0);
-				runParameter.setTestMissPro(0);
+				runParameter.setTestMissPro(k);
 				runParameter.setTrainLabel1Pro(0.2);
 				runParameter.setTestLabel1Pro(0.2);
 
@@ -66,8 +69,62 @@ public class Run {
 				i++;
 			}
 		}
+	}
 
+	public static final void toTab() throws IOException {
+		List<String> keys = Arrays.asList(
+				"完整-0标签-数量",
+				"完整-1标签-数量",
+				"缺失-0标签-数量",
+				"缺失-1标签-数量",
+				"训练集-完整-0标签-实际数量",
+				"训练集-完整-1标签-实际数量",
+				"训练集-缺失-0标签-实际数量",
+				"训练集-缺失-1标签-实际数量",
+				"测试集-完整-0标签-实际数量",
+				"测试集-完整-1标签-实际数量",
+				"测试集-缺失-0标签-实际数量",
+				"测试集-缺失-1标签-实际数量",
+				"训练集-子空间合成所自动选择的合成算法的子空间AUC",
+				"测试集-使用子空间合成所自动选择的合成算法的子空间AUC"
+		);
+		Map<String, Map<String, String>> data = new HashMap<>();
+		File folder = new File("D:\\g\\dachuang-实验");
+		for (File file : folder.listFiles()) {
+			if (file.isDirectory()) {
+				File log = new File(file.getAbsolutePath(), "log.log");
+				Map<String, String> map = new HashMap<>();
+				try (BufferedReader reader = IOUtils.getReader(log)) {
+					String string;
+					while ((string = reader.readLine()) != null) {
+						for (String key : keys) {
+							if (map.get(key) != null) {
+								continue;
+							}
+							if (string.contains(key)) {
+								String[] strings = string.split(key);
+								map.put(key, strings[1].replaceFirst(":", "").trim());
+							}
+						}
+					}
+				}
+				data.put(log.getParentFile().getName().replaceFirst("实验", ""), map);
+			}
+		}
 
+		System.out.print("序号\t");
+		for (String string : keys) {
+			System.out.print(string + "\t");
+		}
+		System.out.println();
+		for (Map.Entry<String, Map<String, String>> entry : data.entrySet()) {
+			System.out.print(entry.getKey() + "\t");
+			Map<String, String> map = entry.getValue();
+			for (String key : keys) {
+				System.out.print(map.get(key) + "\t");
+			}
+			System.out.println();
+		}
 	}
 
 	public static final void run(RunParameter runParameter) {

@@ -15,6 +15,12 @@ public class DataSetSplitImpl implements DataSetSplit {
 
 	@Override
 	public DataSet[] splitDataSet(DataSet dataSet, double testPro, double trainMissPro, double testMissPro, double trainLabel1Pro, double testLabel1Pro) {
+		Run.logger.info("测试集比例: {}", testPro);
+		Run.logger.info("训练集-缺失比例: {}", trainMissPro);
+		Run.logger.info("测试集-缺失比例: {}", testMissPro);
+		Run.logger.info("训练集-1标签比例: {}", trainLabel1Pro);
+		Run.logger.info("测试集-1标签比例: {}", testLabel1Pro);
+
 		int com0Count = 0;
 		int com1Count = 0;
 		int miss0Count = 0;
@@ -259,12 +265,12 @@ public class DataSetSplitImpl implements DataSetSplit {
 		Run.logger.info("训练集-完整-0标签-实际数量: {}", trainCom0Yet);
 		Run.logger.info("训练集-完整-1标签-实际数量: {}", trainCom1Yet);
 		Run.logger.info("训练集-缺失-0标签-实际数量: {}", trainMiss0Yet);
-		Run.logger.info("训练集-完整-1标签-实际数量: {}", trainMiss1Yet);
+		Run.logger.info("训练集-缺失-1标签-实际数量: {}", trainMiss1Yet);
 
 		Run.logger.info("测试集-完整-0标签-实际数量: {}", testCom0Yet);
 		Run.logger.info("测试集-完整-1标签-实际数量: {}", testCom1Yet);
 		Run.logger.info("测试集-缺失-0标签-实际数量: {}", testMiss0Yet);
-		Run.logger.info("测试集-完整-1标签-实际数量: {}", testMiss1Yet);
+		Run.logger.info("测试集-缺失-1标签-实际数量: {}", testMiss1Yet);
 
 		return new DataSet[]{new DataSet(trainIdMap), new DataSet(testIdMap)};
 	}
