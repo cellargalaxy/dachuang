@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 import top.cellargalaxy.dachuangspringboot.dataSet.*;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
+import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.AverageEvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.DsEvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.hereditary.*;
@@ -291,8 +292,10 @@ public class Run {
 		dataSetFileIO.writeDataSetToFile(dataSetParameter, trainSubSpaceDataSet, trainSubSpaceDataSetFile);
 		logger.info("训练集-子空间合成数据集保存在: {}", testSubSpaceDataSetFile);
 		EvidenceSynthesis subSpaceEvidenceSynthesis = subSpaceSynthesisResult.getEvidenceSynthesis();
-		logger.info("训练集-子空间合成所自动选择的合成算法: {}", subSpaceEvidenceSynthesis);
-		logger.info("训练集-子空间合成所自动选择的合成算法的子空间AUC: {}", subSpaceSynthesisResult.getEvaluationValue());
+		logger.info("训练集-子空间合成的合成算法: {}", subSpaceEvidenceSynthesis);
+		logger.info("训练集-子空间合成的合成算法的子空间AUC: {}", subSpaceSynthesisResult.getEvaluationValue());
+		HereditaryResult trainSubSpaceHereditaryResult = Hereditary.evolution(trainSubSpaceDataSet, hereditaryParameter, parentChrosChoose, evaluation);
+		logger.info("训练集-子空间合成的合成算法的子空间遗传AUC: {}", trainSubSpaceHereditaryResult.getEvaluationValue());
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -306,7 +309,8 @@ public class Run {
 		DataSet testSubSpaceDataSet = SubSpaceSynthesis.synthesisSubSpace(testRunResults, subSpaceEvidenceSynthesis);
 		dataSetFileIO.writeDataSetToFile(dataSetParameter, testSubSpaceDataSet, testSubSpaceDataSetFile);
 		logger.info("测试集-子空间合成数据集保存在: {}", testSubSpaceDataSetFile);
-		logger.info("测试集-使用子空间合成所自动选择的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet));
+		logger.info("测试集-使用子空间合成的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet));
+		logger.info("测试集-使用子空间合成的合成算法的子空间遗传AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet, trainSubSpaceHereditaryResult.getChromosome()));
 
 		return trainRunResults;
 	}
