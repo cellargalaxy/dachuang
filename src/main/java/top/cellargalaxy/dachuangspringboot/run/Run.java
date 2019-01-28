@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 import top.cellargalaxy.dachuangspringboot.dataSet.*;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
+import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.DsEvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.hereditary.*;
 import top.cellargalaxy.dachuangspringboot.subSpace.SubSpaceCreate;
@@ -19,7 +20,9 @@ import top.cellargalaxy.dachuangspringboot.subSpaceSynthesis.SubSpaceSynthesisRe
 import top.cellargalaxy.dachuangspringboot.util.IOUtils;
 import top.cellargalaxy.dachuangspringboot.util.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,13 +37,30 @@ public class Run {
 
 	public static void main(String[] args) throws IOException {
 		run();
+//		RunParameter runParameter = new RunParameter();
+//
+//		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
+//		dataSetParameter.setIdColumnName("id");
+//		dataSetParameter.setEvidenceColumnName("evidence");
+//		dataSetParameter.setFraudColumnName("fraud");
+//		dataSetParameter.setUnfraudColumnName("unfraud");
+//		dataSetParameter.setLabelColumnName("collusion_transaction");
+//		dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
+//
+//		runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
+//		runParameter.setEvaluationName(Auc.NAME);
+//
+//		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
+//		DataSet dataSet = dataSetFileIO.readFileToDataSet(new File("C:\\Users\\GZS12613\\Documents\\WeChat Files\\wxid_e20g2wa97a0k22\\Files/auctest2.csv"), runParameter.getDataSetParameter());
+//		Evaluation evaluation = EvaluationFactory.getEvaluation(runParameter, null);
+//		System.out.println(evaluation.countEvaluation(dataSet));
 	}
 
 	public static void run() throws IOException {
-		int i = 51;
+		int i = 1;
 		for (double j = 0.1; j < 0.6; j = j + 0.1) {
-			for (double k = 0.1; k < 1.1; k = k + 0.1) {
-				String name="实验" + i;
+			for (int k = 0; k < 11; k++) {
+				String name = "实验" + i;
 
 				logger = (Logger) LoggerFactory.getLogger(name);
 
@@ -60,9 +80,12 @@ public class Run {
 
 				runParameter.setTestPro(j);
 				runParameter.setTrainMissPro(0);
-				runParameter.setTestMissPro(k);
+				runParameter.setTestMissPro(0);
 				runParameter.setTrainLabel1Pro(0.2);
 				runParameter.setTestLabel1Pro(0.2);
+
+				runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
+				runParameter.setSubSpaceEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
 
 				run(runParameter, name);
 
@@ -73,6 +96,11 @@ public class Run {
 
 	public static final void toTab() throws IOException {
 		List<String> keys = Arrays.asList(
+				"测试集比例",
+				"训练集-缺失比例",
+				"测试集-缺失比例",
+				"训练集-1标签比例",
+				"测试集-1标签比例",
 				"完整-0标签-数量",
 				"完整-1标签-数量",
 				"缺失-0标签-数量",
@@ -89,9 +117,9 @@ public class Run {
 				"测试集-使用子空间合成所自动选择的合成算法的子空间AUC"
 		);
 		Map<String, Map<String, String>> data = new HashMap<>();
-		File folder = new File("D:\\g\\dachuang-实验");
+		File folder = new File("D:\\g\\dachuang-springboot-nnn");
 		for (File file : folder.listFiles()) {
-			if (file.isDirectory()) {
+			if (file.isDirectory() && file.getName().startsWith("实验")) {
 				File log = new File(file.getAbsolutePath(), "log.log");
 				Map<String, String> map = new HashMap<>();
 				try (BufferedReader reader = IOUtils.getReader(log)) {

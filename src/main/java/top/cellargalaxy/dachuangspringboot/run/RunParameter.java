@@ -38,6 +38,7 @@ public class RunParameter {
 	private String improtenceAdjustName = PowerImprotenceAdjust.NAME;
 	private double adjustD;
 
+	private String subSpaceEvidenceSynthesisName = "";
 	private String subSpaceCreateName = SnFeatureSelectionSubSpaceCreate.NAME;
 	private Sn[] sns = new Sn[]{
 			new Sn(1, 1, 1),//1

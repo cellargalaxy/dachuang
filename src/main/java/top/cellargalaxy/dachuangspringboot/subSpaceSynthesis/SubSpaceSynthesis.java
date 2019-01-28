@@ -8,6 +8,7 @@ import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesisFa
 import top.cellargalaxy.dachuangspringboot.hereditary.Chromosome;
 import top.cellargalaxy.dachuangspringboot.run.RunParameter;
 import top.cellargalaxy.dachuangspringboot.run.RunResult;
+import top.cellargalaxy.dachuangspringboot.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,18 @@ public class SubSpaceSynthesis {
 
 	public static final SubSpaceSynthesisResult synthesisSubSpace(RunParameter runParameter, List<RunResult> runResults, Evaluation evaluation) {
 		SubSpaceSynthesisResult fitSubSpaceSynthesisResult = null;
+		try {
+			String subSpaceEvidenceSynthesisName = runParameter.getSubSpaceEvidenceSynthesisName();
+			if (!StringUtils.isBlank(subSpaceEvidenceSynthesisName)) {
+				EvidenceSynthesis evidenceSynthesis = EvidenceSynthesisFactory.createEvidenceSynthesis(subSpaceEvidenceSynthesisName, runParameter, null);
+				DataSet dataSet = synthesisSubSpace(runResults, evidenceSynthesis);
+				double evaluationValue = evaluation.countEvaluation(dataSet);
+				fitSubSpaceSynthesisResult = new SubSpaceSynthesisResult(dataSet, evidenceSynthesis, evaluationValue);
+				return fitSubSpaceSynthesisResult;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		for (String name : EvidenceSynthesisFactory.NAMES) {
 			EvidenceSynthesis evidenceSynthesis = EvidenceSynthesisFactory.createEvidenceSynthesis(name, runParameter, null);
 			try {
