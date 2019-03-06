@@ -77,7 +77,7 @@ public class Run {
 
 				runParameter.setDataSetParameter(dataSetParameter);
 
-				runParameter.setDataSetPath("D:/g/8000+交易 获取满证据 9证据-所有证据数据 - 副本.csv");
+				runParameter.setDataSetPath("E:/g/transaction.csv");
 
 				runParameter.setTestPro(j);
 				runParameter.setTrainMissPro(0);
@@ -206,7 +206,7 @@ public class Run {
 		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
 		logger.info("文件IO类型: {}", dataSetFileIO);
 		DataSet dataSet = dataSetFileIO.readFileToDataSet(dataSetFile, runParameter.getDataSetParameter());
-		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro());
+		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro(),0);
 		DataSet trainDataSet = dataSets[0];
 		DataSet testDataSet = dataSets[1];
 
