@@ -12,6 +12,7 @@ import top.cellargalaxy.dachuangspringboot.run.Run;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by cellargalaxy on 17-9-8.
@@ -36,7 +37,7 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 		this.improtenceAdjust = improtenceAdjust;
 	}
 
-	public List<List<Integer>> createSubSpaces(DataSet dataSet) throws IOException {
+	public List<List<Integer>> createSubSpaces(DataSet dataSet) throws IOException, ExecutionException, InterruptedException {
 		ArrayList<FeatureImportance> featureImportances = FeatureSelection.featureSelection(dataSet, featureSplit, featureSelectionDeviation, hereditaryParameter, parentChrosChoose, evaluation);
 
 		Collection<Integer> features = dataSet.getEvidenceName2EvidenceId().values();
@@ -102,6 +103,11 @@ public final class SnFeatureSelectionSubSpaceCreate extends AbstractSubSpaceCrea
 				return i;
 			}
 			i++;
+		}
+		Run.logger.error("轮盘异常");
+		Run.logger.error("sum: {}", sum);
+		for (FeatureImportance featureImportance : featureImportances) {
+			Run.logger.error("轮盘值: {}", featureImportance.getEvaluationD());
 		}
 		throw new RuntimeException("轮盘异常");
 	}

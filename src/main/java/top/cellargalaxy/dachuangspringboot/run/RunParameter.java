@@ -1,6 +1,8 @@
 package top.cellargalaxy.dachuangspringboot.run;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSetParameter;
 import top.cellargalaxy.dachuangspringboot.evaluation.Auc;
 import top.cellargalaxy.dachuangspringboot.feature.AverageFeatureSplit;
@@ -16,11 +18,16 @@ import top.cellargalaxy.dachuangspringboot.subSpace.SnFeatureSelectionSubSpaceCr
  */
 @Data
 public class RunParameter {
+	@Getter
+	@Setter
+	private static int threadNum = 2;
+
 	private String dataSetPath = "";
 	private String trainDataSetPath = "";
 	private String teatDataSettPath = "";
 
 	private DataSetParameter dataSetParameter = new DataSetParameter();
+	private double k = 0.1;
 
 	private String evidenceSynthesisName = "";
 	private double thrf;

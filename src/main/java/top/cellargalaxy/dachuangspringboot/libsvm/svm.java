@@ -198,7 +198,7 @@ abstract class Kernel extends QMatrix {
 	}
 
 	static double k_function(svm_node[] x, svm_node[] y,
-	                         svm_parameter param) {
+							 svm_parameter param) {
 		switch (param.kernel_type) {
 			case svm_parameter.LINEAR:
 				return dot(x, y);
@@ -417,7 +417,7 @@ class Solver {
 	}
 
 	void Solve(int l, QMatrix Q, double[] p_, byte[] y_,
-	           double[] alpha_, double Cp, double Cn, double eps, SolutionInfo si, int shrinking) {
+			   double[] alpha_, double Cp, double Cn, double eps, SolutionInfo si, int shrinking) {
 		this.l = l;
 		this.Q = Q;
 		QD = Q.get_QD();
@@ -848,8 +848,8 @@ final class Solver_NU extends Solver {
 	private SolutionInfo si;
 
 	void Solve(int l, QMatrix Q, double[] p, byte[] y,
-	           double[] alpha, double Cp, double Cn, double eps,
-	           SolutionInfo si, int shrinking) {
+			   double[] alpha, double Cp, double Cn, double eps,
+			   SolutionInfo si, int shrinking) {
 		this.si = si;
 		super.Solve(l, Q, p, y, alpha, Cp, Cn, eps, si, shrinking);
 	}
@@ -1229,8 +1229,8 @@ public class svm {
 	}
 
 	private static void solve_c_svc(svm_problem prob, svm_parameter param,
-	                                double[] alpha, Solver.SolutionInfo si,
-	                                double Cp, double Cn) {
+									double[] alpha, Solver.SolutionInfo si,
+									double Cp, double Cn) {
 		int l = prob.l;
 		double[] minus_ones = new double[l];
 		byte[] y = new byte[l];
@@ -1260,7 +1260,7 @@ public class svm {
 	}
 
 	private static void solve_nu_svc(svm_problem prob, svm_parameter param,
-	                                 double[] alpha, Solver.SolutionInfo si) {
+									 double[] alpha, Solver.SolutionInfo si) {
 		int i;
 		int l = prob.l;
 		double nu = param.nu;
@@ -1307,7 +1307,7 @@ public class svm {
 	}
 
 	private static void solve_one_class(svm_problem prob, svm_parameter param,
-	                                    double[] alpha, Solver.SolutionInfo si) {
+										double[] alpha, Solver.SolutionInfo si) {
 		int l = prob.l;
 		double[] zeros = new double[l];
 		byte[] ones = new byte[l];
@@ -1333,7 +1333,7 @@ public class svm {
 	}
 
 	private static void solve_epsilon_svr(svm_problem prob, svm_parameter param,
-	                                      double[] alpha, Solver.SolutionInfo si) {
+										  double[] alpha, Solver.SolutionInfo si) {
 		int l = prob.l;
 		double[] alpha2 = new double[2 * l];
 		double[] linear_term = new double[2 * l];
@@ -1365,7 +1365,7 @@ public class svm {
 	;
 
 	private static void solve_nu_svr(svm_problem prob, svm_parameter param,
-	                                 double[] alpha, Solver.SolutionInfo si) {
+									 double[] alpha, Solver.SolutionInfo si) {
 		int l = prob.l;
 		double C = param.C;
 		double[] alpha2 = new double[2 * l];
@@ -1447,7 +1447,7 @@ public class svm {
 
 	// Platt's binary SVM Probablistic Output: an improvement from Lin et al.
 	private static void sigmoid_train(int l, double[] dec_values, double[] labels,
-	                                  double[] probAB) {
+									  double[] probAB) {
 		double A, B;
 		double prior1 = 0, prior0 = 0;
 		int i;

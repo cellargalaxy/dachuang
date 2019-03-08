@@ -8,9 +8,9 @@ import ch.qos.logback.core.FileAppender;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import top.cellargalaxy.dachuangspringboot.dataSet.*;
+import top.cellargalaxy.dachuangspringboot.evaluation.AbstractEvaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
-import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.AverageEvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.DsEvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.EvidenceSynthesis;
 import top.cellargalaxy.dachuangspringboot.hereditary.*;
@@ -28,33 +28,49 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by cellargalaxy on 17-9-9.
  */
 public class Run {
-	public static Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
 	public static final Yaml YAML = new Yaml();
+	public static Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
 
 	public static void main(String[] args) throws IOException {
-		run();
-//		RunParameter runParameter = new RunParameter();
+		toTab();
+//		for (int i = 0; i < 30; i++) {
+//			String name = "实验" + i;
 //
-//		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-//		dataSetParameter.setIdColumnName("id");
-//		dataSetParameter.setEvidenceColumnName("evidence");
-//		dataSetParameter.setFraudColumnName("fraud");
-//		dataSetParameter.setUnfraudColumnName("unfraud");
-//		dataSetParameter.setLabelColumnName("collusion_transaction");
-//		dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
+//			logger = (Logger) LoggerFactory.getLogger(name);
 //
-//		runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//		runParameter.setEvaluationName(Auc.NAME);
+//			RunParameter runParameter = new RunParameter();
 //
-//		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
-//		DataSet dataSet = dataSetFileIO.readFileToDataSet(new File("C:\\Users\\GZS12613\\Documents\\WeChat Files\\wxid_e20g2wa97a0k22\\Files/auctest2.csv"), runParameter.getDataSetParameter());
-//		Evaluation evaluation = EvaluationFactory.getEvaluation(runParameter, null);
-//		System.out.println(evaluation.countEvaluation(dataSet));
+//			DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
+//			dataSetParameter.setIdColumnName("id");
+//			dataSetParameter.setEvidenceColumnName("evidence");
+//			dataSetParameter.setFraudColumnName("fraud");
+//			dataSetParameter.setUnfraudColumnName("unfraud");
+//			dataSetParameter.setLabelColumnName("collusion_transaction");
+//			dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
+//
+//			runParameter.setDataSetParameter(dataSetParameter);
+//
+//			runParameter.setDataSetPath("E:/g/transaction.csv");
+//
+//			runParameter.setTestPro(0.3);
+//			runParameter.setTrainMissPro(1);
+//			runParameter.setTestMissPro(1);
+//			runParameter.setTrainLabel1Pro(0.2);
+//			runParameter.setTestLabel1Pro(0.2);
+//
+//			runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
+//			runParameter.setSubSpaceEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
+//
+//			run(runParameter, name);
+//		}
+//
+//		AbstractEvaluation.shutdownExecutorService();
 	}
 
 	public static void run() throws IOException {
@@ -114,11 +130,19 @@ public class Run {
 				"测试集-完整-1标签-实际数量",
 				"测试集-缺失-0标签-实际数量",
 				"测试集-缺失-1标签-实际数量",
-				"训练集-子空间合成所自动选择的合成算法的子空间AUC",
-				"测试集-使用子空间合成所自动选择的合成算法的子空间AUC"
+				"训练集-证据统计-实际数量",
+				"测试集-证据统计-实际数量",
+				"训练集-原生数据集AUC",
+				"训练集-原生数据集遗传AUC",
+				"训练集-子空间合成的合成算法的子空间AU",
+				"训练集-子空间合成的合成算法的子空间遗传AUC",
+				"测试集-原生数据集AUC",
+				"测试集-原生数据集遗传AUC",
+				"测试集-使用子空间合成的合成算法的子空间AU",
+				"测试集-使用子空间合成的合成算法的子空间遗传AUC"
 		);
 		Map<String, Map<String, String>> data = new HashMap<>();
-		File folder = new File("D:\\g\\dachuang-springboot-nnn");
+		File folder = new File("E:/git/dachuang");
 		for (File file : folder.listFiles()) {
 			if (file.isDirectory() && file.getName().startsWith("实验")) {
 				File log = new File(file.getAbsolutePath(), "log.log");
@@ -197,16 +221,16 @@ public class Run {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(StringUtils.printException(e));
+			logger.error("\n" + StringUtils.printException(e));
 		}
 	}
 
-	private static final void run(RunParameter runParameter, String path, File dataSetFile) throws IOException {
+	private static final void run(RunParameter runParameter, String path, File dataSetFile) throws IOException, ExecutionException, InterruptedException {
 		logger.info("数据集文件: {}", dataSetFile);
 		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
 		logger.info("文件IO类型: {}", dataSetFileIO);
 		DataSet dataSet = dataSetFileIO.readFileToDataSet(dataSetFile, runParameter.getDataSetParameter());
-		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro(),0);
+		DataSet[] dataSets = DataSetSplitFactory.getDataSetSplit(runParameter).splitDataSet(dataSet, runParameter.getTestPro(), runParameter.getTrainMissPro(), runParameter.getTestMissPro(), runParameter.getTrainLabel1Pro(), runParameter.getTestLabel1Pro(), runParameter.getK());
 		DataSet trainDataSet = dataSets[0];
 		DataSet testDataSet = dataSets[1];
 
@@ -222,7 +246,7 @@ public class Run {
 		run(runParameter, path, trainDataSetFile, testDataSetFile);
 	}
 
-	private static final void run(RunParameter runParameter, String path, File trainDataSetFile, File teatDataSetFile) throws IOException {
+	private static final void run(RunParameter runParameter, String path, File trainDataSetFile, File teatDataSetFile) throws IOException, ExecutionException, InterruptedException {
 		logger.info("训练集文件: {}", trainDataSetFile);
 		logger.info("测试集文件: {}", teatDataSetFile);
 		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
@@ -234,7 +258,7 @@ public class Run {
 		run(runParameter, trainDataSet, testDataSet, trainSubSpaceDataSetFile, testSubSpaceDataSetFile, runResultFile);
 	}
 
-	private static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet, File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile, File runResultFile) throws IOException {
+	private static final void run(RunParameter runParameter, DataSet trainDataSet, DataSet testDataSet, File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile, File runResultFile) throws IOException, ExecutionException, InterruptedException {
 		DataSetFileIO dataSetFileIO = DataSetFileIOFactory.getDataSetFileIO(runParameter);
 		DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
 		HereditaryParameter hereditaryParameter = runParameter.getHereditaryParameter();
@@ -261,13 +285,14 @@ public class Run {
 	}
 
 	private static final List<RunResult> run(RunParameter runParameter, DataSetParameter dataSetParameter, DataSetFileIO dataSetFileIO, DataSet trainDataSet, DataSet testDataSet,
-	                                         HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,
-	                                         Evaluation evaluation,
-	                                         SubSpaceCreate subSpaceCreate,
-	                                         File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException {
+											 HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,
+											 Evaluation evaluation,
+											 SubSpaceCreate subSpaceCreate,
+											 File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException, ExecutionException, InterruptedException {
 
+		logger.info("训练集-原生数据集AUC: {}", evaluation.countEvaluation(trainDataSet).get());
 		HereditaryResult fullHereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);
-		logger.info("训练集-完整数据集的AUC: {}", fullHereditaryResult.getEvaluationValue());
+		logger.info("训练集-原生数据集遗传AUC: {}", fullHereditaryResult.getEvaluationValue());
 
 		List<List<Integer>> subSpaces = subSpaceCreate.createSubSpaces(trainDataSet);
 		List<RunResult> trainRunResults = new LinkedList<>();
@@ -299,18 +324,21 @@ public class Run {
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		logger.info("测试集-原生数据集AUC: {}", evaluation.countEvaluation(testDataSet).get());
+		logger.info("测试集-原生数据集遗传AUC: {}", evaluation.countEvaluation(testDataSet, fullHereditaryResult.getChromosome()).get());
+
 		List<RunResult> testRunResults = new LinkedList<>();
 		for (RunResult trainRunResult : trainRunResults) {
 			Collection<Integer> subSpace = trainRunResult.getSubSpace();
 			DataSet dataSet = testDataSet.clone(subSpace);
 			testRunResults.add(new RunResult(subSpace, dataSet, trainRunResult.getChromosome()));
-			logger.info("测试集-使用优秀子空间AUC: {},\t {}", evaluation.countEvaluation(dataSet, trainRunResult.getChromosome()), subSpace);
+			logger.info("测试集-使用优秀子空间AUC: {},\t {}", evaluation.countEvaluation(dataSet, trainRunResult.getChromosome()).get(), subSpace);
 		}
 		DataSet testSubSpaceDataSet = SubSpaceSynthesis.synthesisSubSpace(testRunResults, subSpaceEvidenceSynthesis);
 		dataSetFileIO.writeDataSetToFile(dataSetParameter, testSubSpaceDataSet, testSubSpaceDataSetFile);
 		logger.info("测试集-子空间合成数据集保存在: {}", testSubSpaceDataSetFile);
-		logger.info("测试集-使用子空间合成的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet));
-		logger.info("测试集-使用子空间合成的合成算法的子空间遗传AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet, trainSubSpaceHereditaryResult.getChromosome()));
+		logger.info("测试集-使用子空间合成的合成算法的子空间AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet).get());
+		logger.info("测试集-使用子空间合成的合成算法的子空间遗传AUC: {}", evaluation.countEvaluation(testSubSpaceDataSet, trainSubSpaceHereditaryResult.getChromosome()).get());
 
 		return trainRunResults;
 	}

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author cellargalaxy
@@ -21,13 +22,13 @@ import java.util.Map;
  */
 public class SubSpaceSynthesis {
 
-	public static final SubSpaceSynthesisResult synthesisSubSpace(RunParameter runParameter, List<RunResult> runResults, Evaluation evaluation) throws IOException {
+	public static final SubSpaceSynthesisResult synthesisSubSpace(RunParameter runParameter, List<RunResult> runResults, Evaluation evaluation) throws IOException, ExecutionException, InterruptedException {
 		SubSpaceSynthesisResult fitSubSpaceSynthesisResult = null;
 		String subSpaceEvidenceSynthesisName = runParameter.getSubSpaceEvidenceSynthesisName();
 		if (!StringUtils.isBlank(subSpaceEvidenceSynthesisName)) {
 			EvidenceSynthesis evidenceSynthesis = EvidenceSynthesisFactory.createEvidenceSynthesis(subSpaceEvidenceSynthesisName, runParameter, null);
 			DataSet dataSet = synthesisSubSpace(runResults, evidenceSynthesis);
-			double evaluationValue = evaluation.countEvaluation(dataSet);
+			double evaluationValue = evaluation.countEvaluation(dataSet).get();
 			fitSubSpaceSynthesisResult = new SubSpaceSynthesisResult(dataSet, evidenceSynthesis, evaluationValue);
 			return fitSubSpaceSynthesisResult;
 		}
@@ -35,7 +36,7 @@ public class SubSpaceSynthesis {
 			try {
 				EvidenceSynthesis evidenceSynthesis = EvidenceSynthesisFactory.createEvidenceSynthesis(name, runParameter, null);
 				DataSet dataSet = synthesisSubSpace(runResults, evidenceSynthesis);
-				double evaluationValue = evaluation.countEvaluation(dataSet);
+				double evaluationValue = evaluation.countEvaluation(dataSet).get();
 				if (fitSubSpaceSynthesisResult == null || evaluationValue > fitSubSpaceSynthesisResult.getEvaluationValue()) {
 					fitSubSpaceSynthesisResult = new SubSpaceSynthesisResult(dataSet, evidenceSynthesis, evaluationValue);
 				}

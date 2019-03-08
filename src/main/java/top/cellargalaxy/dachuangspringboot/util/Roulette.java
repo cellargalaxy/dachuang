@@ -1,5 +1,8 @@
 package top.cellargalaxy.dachuangspringboot.util;
 
+import top.cellargalaxy.dachuangspringboot.run.Run;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,6 +25,9 @@ public class Roulette {
 			}
 			i++;
 		}
+		Run.logger.error("轮盘异常");
+		Run.logger.error("sum: {}", sum);
+		Run.logger.error("轮盘值: {}", weights);
 		throw new RuntimeException("轮盘异常");
 	}
 
@@ -39,6 +45,9 @@ public class Roulette {
 			}
 			i++;
 		}
+		Run.logger.error("轮盘异常");
+		Run.logger.error("sum: {}", sum);
+		Run.logger.error("轮盘值: {}", Arrays.toString(weights));
 		throw new RuntimeException("轮盘异常");
 	}
 }

@@ -3,10 +3,7 @@ package top.cellargalaxy.dachuangspringboot.dataSet;
 import lombok.Data;
 import top.cellargalaxy.dachuangspringboot.run.Run;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author cellargalaxy
@@ -14,52 +11,9 @@ import java.util.Map;
  */
 @Data
 public class DataSetSplitImpl implements DataSetSplit {
-// 1  2  3  4  5  6  7  8  9
-// 33 31 29 27 25 23 21 19 17		225
-// 67 69 71 73 75 77 79 81 83		675
-
-	public static void main(String[] args) {
-		System.out.println(65.0 + 55.0 + 45.0 + 35.0 + 25.0 + 15.0 + 5.0);
-		System.out.println(35.0 + 45.0 + 55.0 + 65.0 + 75.0 + 85.0 + 95.0 + 100.0 + 100.0);
-
-		double trainPro = 0.75;
-		double testPro = 0.25;
-		int evidenceCount = 9;
-		double k = 20;
-
-		double x = (100 / ((trainPro / testPro) + 1)) + ((evidenceCount - 1) / 2 * k);
-		double[] trainEvidencePros = new double[evidenceCount];
-		double[] testEvidencePros = new double[evidenceCount];
-		for (int i = 0; i < testEvidencePros.length; i++) {
-			testEvidencePros[i] = (x - i * k);
-			if (testEvidencePros[i] < 0) {
-				testEvidencePros[i] = 0;
-			}
-			if (testEvidencePros[i] > 100) {
-				testEvidencePros[i] = 100;
-			}
-			testEvidencePros[i]=testEvidencePros[i]/100;
-		}
-		for (int i = 0; i < trainEvidencePros.length; i++) {
-			trainEvidencePros[i] = 1 - testEvidencePros[i];
-		}
-
-		double sum = 0;
-		for (double testEvidencePro : testEvidencePros) {
-			sum += testEvidencePro;
-			System.out.print(testEvidencePro + "\t");
-		}
-		System.out.println(sum);
-		sum = 0;
-		for (double trainEvidencePro : trainEvidencePros) {
-			sum += trainEvidencePro;
-			System.out.print(trainEvidencePro + "\t");
-		}
-		System.out.println(sum);
-	}
 
 	@Override
-	public DataSet[] splitDataSet(DataSet dataSet, double testPro, double trainMissPro, double testMissPro, double trainLabel1Pro, double testLabel1Pro, int k) {
+	public DataSet[] splitDataSet(DataSet dataSet, double testPro, double trainMissPro, double testMissPro, double trainLabel1Pro, double testLabel1Pro, double k) {
 		Run.logger.info("测试集比例: {}", testPro);
 		Run.logger.info("训练集-缺失比例: {}", trainMissPro);
 		Run.logger.info("测试集-缺失比例: {}", testMissPro);
@@ -187,22 +141,27 @@ public class DataSetSplitImpl implements DataSetSplit {
 		Run.logger.info("测试集-缺失-0标签-预计数量: {}", testMiss0Num);
 		Run.logger.info("测试集-缺失-1标签-预计数量: {}", testMiss1Num);
 
-		//测试机
-		double x = (100 / ((trainPro / testPro) + 1)) + ((evidenceCount - 1) / 2 * k);
-		double[] trainEvidencePros = new double[evidenceCount];
-		double[] testEvidencePros = new double[evidenceCount];
-		for (int i = 0; i < testEvidencePros.length; i++) {
-			testEvidencePros[i] = (x - i * k);
-			if (testEvidencePros[i] < 0) {
-				testEvidencePros[i] = 0;
-			}
-			if (testEvidencePros[i] > 100) {
-				testEvidencePros[i] = 100;
-			}
-			testEvidencePros[i]=testEvidencePros[i]/100;
+		int count = Integer.MAX_VALUE;
+		if (count > trainPro / k) {
+			count = (int) (trainPro / k);
 		}
+		if (count > testPro / k) {
+			count = (int) (testPro / k);
+		}
+		double[] steps = new double[count];
+		for (int i = 0; i < steps.length; i++) {
+			steps[i] = k * (i + 1);
+		}
+		double[] trainEvidencePros = new double[evidenceCount];
 		for (int i = 0; i < trainEvidencePros.length; i++) {
-			trainEvidencePros[i] = 1 - testEvidencePros[i];
+			trainEvidencePros[i] = trainPro;
+		}
+		count = evidenceCount / 2;
+		for (int i = 0; i < count; ) {
+			for (int j = 0; j < steps.length && i < count; j++, i++) {
+				trainEvidencePros[2 * i] = trainEvidencePros[2 * i] + steps[j];
+				trainEvidencePros[2 * i + 1] = trainEvidencePros[2 * i + 1] - steps[j];
+			}
 		}
 
 		int trainCom0Yet = 0;
@@ -260,7 +219,7 @@ public class DataSetSplitImpl implements DataSetSplit {
 				testIdMap.put(id.getId(), id);
 				testMiss0Yet++;
 			} else if (trainMiss0Yet < trainMiss0Num && testMiss0Yet < testMiss0Num) {
-				if (Math.random() < trainPro) {
+				if (Math.random() < trainEvidencePros[countIdEvidenceHash(id, trainEvidencePros.length)]) {
 					trainIdMap.put(id.getId(), id);
 					trainMiss0Yet++;
 				} else {
@@ -277,7 +236,7 @@ public class DataSetSplitImpl implements DataSetSplit {
 				testIdMap.put(id.getId(), id);
 				testMiss1Yet++;
 			} else if (trainMiss1Yet < trainMiss1Num && testMiss1Yet < testMiss1Num) {
-				if (Math.random() < trainPro) {
+				if (Math.random() < trainEvidencePros[countIdEvidenceHash(id, trainEvidencePros.length)]) {
 					trainIdMap.put(id.getId(), id);
 					trainMiss1Yet++;
 				} else {
@@ -287,82 +246,19 @@ public class DataSetSplitImpl implements DataSetSplit {
 			}
 		}
 
-//		for (Id id : dataSet.getIds()) {
-//
-//			if (id.getEvidences().size() == evidenceCount) {
-//				if (id.getLabel() == Id.LABEL_0) {
-//					if (trainCom0Yet < trainCom0Num && testCom0Yet >= testCom0Num) {
-//						trainIdMap.put(id.getId(), id);
-//						trainCom0Yet++;
-//					} else if (trainCom0Yet >= trainCom0Num && testCom0Yet < testCom0Num) {
-//						testIdMap.put(id.getId(), id);
-//						testCom0Yet++;
-//					} else if (trainCom0Yet < trainCom0Num && testCom0Yet < testCom0Num) {
-//						if (Math.random() < trainPro) {
-//							trainIdMap.put(id.getId(), id);
-//							trainCom0Yet++;
-//						} else {
-//							testIdMap.put(id.getId(), id);
-//							testCom0Yet++;
-//						}
-//					}
-//				} else {
-//					if (trainCom1Yet < trainCom1Num && testCom1Yet >= testCom1Num) {
-//						trainIdMap.put(id.getId(), id);
-//						trainCom1Yet++;
-//					} else if (trainCom1Yet >= trainCom1Num && testCom1Yet < testCom1Num) {
-//						testIdMap.put(id.getId(), id);
-//						testCom1Yet++;
-//					} else if (trainCom1Yet < trainCom1Num && testCom1Yet < testCom1Num) {
-//						if (Math.random() < trainPro) {
-//							trainIdMap.put(id.getId(), id);
-//							trainCom1Yet++;
-//						} else {
-//							testIdMap.put(id.getId(), id);
-//							testCom1Yet++;
-//						}
-//					}
-//				}
-//			} else {
-//				if (id.getLabel() == Id.LABEL_0) {
-//					if (trainMiss0Yet < trainMiss0Num && testMiss0Yet >= testMiss0Num) {
-//						trainIdMap.put(id.getId(), id);
-//						trainMiss0Yet++;
-//					} else if (trainMiss0Yet >= trainMiss0Num && testMiss0Yet < testMiss0Num) {
-//						testIdMap.put(id.getId(), id);
-//						testMiss0Yet++;
-//					} else if (trainMiss0Yet < trainMiss0Num && testMiss0Yet < testMiss0Num) {
-//						if (Math.random() < trainPro) {
-//							trainIdMap.put(id.getId(), id);
-//							trainMiss0Yet++;
-//						} else {
-//							testIdMap.put(id.getId(), id);
-//							testMiss0Yet++;
-//						}
-//					}
-//				} else {
-//					if (id.getLabel() == Id.LABEL_0) {
-//						if (trainMiss1Yet < trainMiss1Num && testMiss1Yet >= testMiss1Num) {
-//							trainIdMap.put(id.getId(), id);
-//							trainMiss1Yet++;
-//						} else if (trainMiss1Yet >= trainMiss1Num && testMiss1Yet < testMiss1Num) {
-//							testIdMap.put(id.getId(), id);
-//							testMiss1Yet++;
-//						} else if (trainMiss1Yet < trainMiss1Num && testMiss1Yet < testMiss1Num) {
-//							if (Math.random() < trainPro) {
-//								trainIdMap.put(id.getId(), id);
-//								trainMiss1Yet++;
-//							} else {
-//								testIdMap.put(id.getId(), id);
-//								testMiss1Yet++;
-//							}
-//						}
-//					}
-//				}
-//			}
-//
-//
-//		}
+		int[] trainEvidenceCounts = new int[evidenceCount];
+		int[] testEvidenceCounts = new int[evidenceCount];
+		for (Id id : trainIdMap.values()) {
+			for (Evidence evidence : id.getEvidences()) {
+				trainEvidenceCounts[evidence.getEvidenceId() - 1] = trainEvidenceCounts[evidence.getEvidenceId() - 1] + 1;
+			}
+		}
+		for (Id id : testIdMap.values()) {
+			for (Evidence evidence : id.getEvidences()) {
+				testEvidenceCounts[evidence.getEvidenceId() - 1] = testEvidenceCounts[evidence.getEvidenceId() - 1] + 1;
+			}
+		}
+
 
 		Run.logger.info("训练集-完整-0标签-实际数量: {}", trainCom0Yet);
 		Run.logger.info("训练集-完整-1标签-实际数量: {}", trainCom1Yet);
@@ -374,6 +270,15 @@ public class DataSetSplitImpl implements DataSetSplit {
 		Run.logger.info("测试集-缺失-0标签-实际数量: {}", testMiss0Yet);
 		Run.logger.info("测试集-缺失-1标签-实际数量: {}", testMiss1Yet);
 
+		Run.logger.info("训练集-证据统计-实际数量: {}", Arrays.toString(trainEvidenceCounts));
+		Run.logger.info("测试集-证据统计-实际数量: {}", Arrays.toString(testEvidenceCounts));
+
 		return new DataSet[]{new DataSet(trainIdMap), new DataSet(testIdMap)};
+	}
+
+	private int countIdEvidenceHash(Id id, int evidenceCount) {
+		List<Integer> list = new LinkedList<>();
+		list.addAll(id.getEvidenceMap().keySet());
+		return Math.abs(list.hashCode()) % evidenceCount;
 	}
 }

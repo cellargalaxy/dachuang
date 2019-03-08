@@ -5,17 +5,16 @@ import top.cellargalaxy.dachuangspringboot.dataSet.DataSet;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by cellargalaxy on 17-9-8.
  */
 public class Hereditary {
 
-	public static HereditaryResult evolution(DataSet dataSet, HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) throws IOException {
+	public static HereditaryResult evolution(DataSet dataSet, HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) throws IOException, ExecutionException, InterruptedException {
 		HereditaryResult best = null;
 		int yetIteratorCount = 0;
 		int yetSameCount = 0;
@@ -74,10 +73,16 @@ public class Hereditary {
 		return hereditaryResults;
 	}
 
-	private static ArrayList<HereditaryResult> countEvaluation(DataSet dataSet, Chromosome[] chromosomes, Evaluation evaluation) throws IOException {
+	private static ArrayList<HereditaryResult> countEvaluation(DataSet dataSet, Chromosome[] chromosomes, Evaluation evaluation) throws IOException, ExecutionException, InterruptedException {
 		ArrayList<HereditaryResult> list = new ArrayList<>(chromosomes.length);
+		List<Future<Double>> futures = new ArrayList<>(chromosomes.length);
 		for (Chromosome chromosome : chromosomes) {
-			list.add(new HereditaryResult(evaluation.countEvaluation(dataSet, chromosome), chromosome));
+			futures.add(evaluation.countEvaluation(dataSet, chromosome));
+		}
+		int i = 0;
+		for (Future<Double> future : futures) {
+			list.add(new HereditaryResult(future.get(), chromosomes[i]));
+			i++;
 		}
 		return list;
 	}

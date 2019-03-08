@@ -1,6 +1,8 @@
 package top.cellargalaxy.dachuangspringboot.hereditary;
 
 
+import top.cellargalaxy.dachuangspringboot.run.Run;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,11 @@ public final class RouletteParentChrosChoose implements ParentChrosChoose {
 				return i;
 			}
 			i++;
+		}
+		Run.logger.error("轮盘异常");
+		Run.logger.error("sum: {}", sum);
+		for (HereditaryResult hereditaryResult : hereditaryResults) {
+			Run.logger.error("轮盘值: {}", hereditaryResult.getEvaluationValue());
 		}
 		throw new RuntimeException("轮盘异常");
 	}

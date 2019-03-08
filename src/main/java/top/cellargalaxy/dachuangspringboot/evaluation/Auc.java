@@ -10,11 +10,13 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * Created by cellargalaxy on 17-9-9.
  */
-public final class Auc implements Evaluation {
+public final class Auc extends AbstractEvaluation {
 	public static final String NAME = "auc";
 	private final EvidenceSynthesis evidenceSynthesis;
 
@@ -23,52 +25,62 @@ public final class Auc implements Evaluation {
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet) {
-		Collection<Evidence> ds1s = new LinkedList<>();
-		Collection<Evidence> ds0s = new LinkedList<>();
-		for (Id id : dataSet.getIds()) {
-			Evidence evidence = evidenceSynthesis.synthesisEvidence(id);
-			if (id.getLabel() == Id.LABEL_0) {
-				ds0s.add(evidence);
-			} else if (id.getLabel() == Id.LABEL_1) {
-				ds1s.add(evidence);
+	public Future<Double> countEvaluation(DataSet dataSet) {
+		return EXECUTOR_SERVICE.submit(new Callable<Double>() {
+			@Override
+			public Double call() {
+				Collection<Evidence> ds1s = new LinkedList<>();
+				Collection<Evidence> ds0s = new LinkedList<>();
+				for (Id id : dataSet.getIds()) {
+					Evidence evidence = evidenceSynthesis.synthesisEvidence(id);
+					if (id.getLabel() == Id.LABEL_0) {
+						ds0s.add(evidence);
+					} else if (id.getLabel() == Id.LABEL_1) {
+						ds1s.add(evidence);
+					}
+				}
+				return countAuc(ds0s, ds1s);
 			}
-		}
-		return countAuc(ds0s, ds1s);
+		});
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId) {
-		Collection<Evidence> ds1s = new LinkedList<>();
-		Collection<Evidence> ds0s = new LinkedList<>();
-		for (Id id : dataSet.getIds()) {
-			Evidence evidence = evidenceSynthesis.synthesisEvidence(id, withoutEvidenceId);
-			if (id.getLabel() == Id.LABEL_0) {
-				ds0s.add(evidence);
-			} else if (id.getLabel() == Id.LABEL_1) {
-				ds1s.add(evidence);
+	public Future<Double> countEvaluation(DataSet dataSet, Integer withoutEvidenceId) {
+		return EXECUTOR_SERVICE.submit(new Callable<Double>() {
+			@Override
+			public Double call() {
+				Collection<Evidence> ds1s = new LinkedList<>();
+				Collection<Evidence> ds0s = new LinkedList<>();
+				for (Id id : dataSet.getIds()) {
+					Evidence evidence = evidenceSynthesis.synthesisEvidence(id, withoutEvidenceId);
+					if (id.getLabel() == Id.LABEL_0) {
+						ds0s.add(evidence);
+					} else if (id.getLabel() == Id.LABEL_1) {
+						ds1s.add(evidence);
+					}
+				}
+				return countAuc(ds0s, ds1s);
 			}
-		}
-		return countAuc(ds0s, ds1s);
+		});
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds) {
+	public Future<Double> countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds) {
 		return countEvaluation(dataSet.clone(withEvidenceIds));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Chromosome chromosome) {
+	public Future<Double> countEvaluation(DataSet dataSet, Chromosome chromosome) {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(), chromosome));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId, Chromosome chromosome) {
+	public Future<Double> countEvaluation(DataSet dataSet, Integer withoutEvidenceId, Chromosome chromosome) {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withoutEvidenceId), chromosome));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds, Chromosome chromosome) {
+	public Future<Double> countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds, Chromosome chromosome) {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withEvidenceIds), chromosome));
 	}
 

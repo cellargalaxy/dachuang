@@ -10,6 +10,7 @@ import top.cellargalaxy.dachuangspringboot.hereditary.ParentChrosChoose;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 public class FeatureSelection {
 
 	public static final ArrayList<FeatureImportance> featureSelection(DataSet dataSet,
-	                                                                  FeatureSplit featureSplit, double featureSelectionDeviation,
-	                                                                  HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) throws IOException {
+																	  FeatureSplit featureSplit, double featureSelectionDeviation,
+																	  HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose, Evaluation evaluation) throws IOException, ExecutionException, InterruptedException {
 
 		HereditaryResult hereditaryResult = Hereditary.evolution(dataSet, hereditaryParameter, parentChrosChoose, evaluation);
 		double fullEvaluationValue = hereditaryResult.getEvaluationValue();

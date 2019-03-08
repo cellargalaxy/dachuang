@@ -11,44 +11,51 @@ import top.cellargalaxy.dachuangspringboot.mySvm.MySvmTrain;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * Created by cellargalaxy on 17-10-24.
  */
-public class Svm implements Evaluation {
+public class Svm extends AbstractEvaluation {
 	public static final String NAME = "svm";
 
 	@Override
-	public double countEvaluation(DataSet dataSet) throws IOException {
-		svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
-		svm_problem problem = MySvmTrain.exchangeDataSet(dataSet, parameter);
-		problem = MySvmTrain.checkDataSet(problem, parameter);
-		Writer writer = MySvmTrain.trainDataSet(problem, parameter);
-		return MySvmPredict.predict(problem, writer);
+	public Future<Double> countEvaluation(DataSet dataSet) throws IOException {
+		return EXECUTOR_SERVICE.submit(new Callable<Double>() {
+			@Override
+			public Double call() throws IOException {
+				svm_parameter parameter = MySvmTrain.createSvmDataSetParameter();
+				svm_problem problem = MySvmTrain.exchangeDataSet(dataSet, parameter);
+				problem = MySvmTrain.checkDataSet(problem, parameter);
+				Writer writer = MySvmTrain.trainDataSet(problem, parameter);
+				return MySvmPredict.predict(problem, writer);
+			}
+		});
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId) throws IOException {
+	public Future<Double> countEvaluation(DataSet dataSet, Integer withoutEvidenceId) throws IOException {
 		return countEvaluation(dataSet.clone(withoutEvidenceId));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds) throws IOException {
+	public Future<Double> countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds) throws IOException {
 		return countEvaluation(dataSet.clone(withEvidenceIds));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Chromosome chromosome) throws IOException {
+	public Future<Double> countEvaluation(DataSet dataSet, Chromosome chromosome) throws IOException {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(), chromosome));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Integer withoutEvidenceId, Chromosome chromosome) throws IOException {
+	public Future<Double> countEvaluation(DataSet dataSet, Integer withoutEvidenceId, Chromosome chromosome) throws IOException {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withoutEvidenceId), chromosome));
 	}
 
 	@Override
-	public double countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds, Chromosome chromosome) throws IOException {
+	public Future<Double> countEvaluation(DataSet dataSet, Collection<Integer> withEvidenceIds, Chromosome chromosome) throws IOException {
 		return countEvaluation(HereditaryUtils.evolution(dataSet.clone(withEvidenceIds), chromosome));
 	}
 
