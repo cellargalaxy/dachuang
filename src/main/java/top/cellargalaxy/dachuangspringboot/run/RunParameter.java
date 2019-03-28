@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSetParameter;
-import top.cellargalaxy.dachuangspringboot.evaluation.Auc;
+import top.cellargalaxy.dachuangspringboot.evaluation.Svm;
 import top.cellargalaxy.dachuangspringboot.feature.AverageFeatureSplit;
 import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryParameter;
 import top.cellargalaxy.dachuangspringboot.hereditary.RouletteParentChrosChoose;
@@ -20,7 +20,7 @@ import top.cellargalaxy.dachuangspringboot.subSpace.SnFeatureSelectionSubSpaceCr
 public class RunParameter {
 	@Getter
 	@Setter
-	private static int threadNum = 2;
+	private static int threadNum = -1;
 
 	private String dataSetPath = "";
 	private String trainDataSetPath = "";
@@ -35,7 +35,7 @@ public class RunParameter {
 	private double d1;
 	private double d2;
 
-	private String evaluationName = Auc.NAME;
+	private String evaluationName = Svm.NAME;
 
 	private String featureSplitName = AverageFeatureSplit.NAME;
 	private double splitValue;

@@ -10,7 +10,6 @@ import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
@@ -26,41 +25,35 @@ public final class Auc extends AbstractEvaluation {
 
 	@Override
 	public Future<Double> countEvaluation(DataSet dataSet) {
-		return EXECUTOR_SERVICE.submit(new Callable<Double>() {
-			@Override
-			public Double call() {
-				Collection<Evidence> ds1s = new LinkedList<>();
-				Collection<Evidence> ds0s = new LinkedList<>();
-				for (Id id : dataSet.getIds()) {
-					Evidence evidence = evidenceSynthesis.synthesisEvidence(id);
-					if (id.getLabel() == Id.LABEL_0) {
-						ds0s.add(evidence);
-					} else if (id.getLabel() == Id.LABEL_1) {
-						ds1s.add(evidence);
-					}
+		return EXECUTOR_SERVICE.submit(() -> {
+			Collection<Evidence> ds1s = new LinkedList<>();
+			Collection<Evidence> ds0s = new LinkedList<>();
+			for (Id id : dataSet.getIds()) {
+				Evidence evidence = evidenceSynthesis.synthesisEvidence(id);
+				if (id.getLabel() == Id.LABEL_0) {
+					ds0s.add(evidence);
+				} else if (id.getLabel() == Id.LABEL_1) {
+					ds1s.add(evidence);
 				}
-				return countAuc(ds0s, ds1s);
 			}
+			return countAuc(ds0s, ds1s);
 		});
 	}
 
 	@Override
 	public Future<Double> countEvaluation(DataSet dataSet, Integer withoutEvidenceId) {
-		return EXECUTOR_SERVICE.submit(new Callable<Double>() {
-			@Override
-			public Double call() {
-				Collection<Evidence> ds1s = new LinkedList<>();
-				Collection<Evidence> ds0s = new LinkedList<>();
-				for (Id id : dataSet.getIds()) {
-					Evidence evidence = evidenceSynthesis.synthesisEvidence(id, withoutEvidenceId);
-					if (id.getLabel() == Id.LABEL_0) {
-						ds0s.add(evidence);
-					} else if (id.getLabel() == Id.LABEL_1) {
-						ds1s.add(evidence);
-					}
+		return EXECUTOR_SERVICE.submit(() -> {
+			Collection<Evidence> ds1s = new LinkedList<>();
+			Collection<Evidence> ds0s = new LinkedList<>();
+			for (Id id : dataSet.getIds()) {
+				Evidence evidence = evidenceSynthesis.synthesisEvidence(id, withoutEvidenceId);
+				if (id.getLabel() == Id.LABEL_0) {
+					ds0s.add(evidence);
+				} else if (id.getLabel() == Id.LABEL_1) {
+					ds1s.add(evidence);
 				}
-				return countAuc(ds0s, ds1s);
 			}
+			return countAuc(ds0s, ds1s);
 		});
 	}
 
@@ -95,7 +88,11 @@ public final class Auc extends AbstractEvaluation {
 				}
 			}
 		}
-		return auc / ds1s.size() / ds0s.size();
+		if (auc == 0 || ds1s.size() == 0 || ds0s.size() == 0) {
+			return 0;
+		}
+		double d = auc / ds1s.size() / ds0s.size();
+		return d;
 	}
 
 

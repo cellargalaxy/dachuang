@@ -115,8 +115,8 @@ public class MySvmTrain {
 				x[j] = new svm_node();
 				x[j].index = evidence.getEvidenceId();
 				x[j].value = evidence.getFraud();
-				j++;
 				max_index = Math.max(max_index, x[j].index);
+				j++;
 			}
 			prob.x[i] = x;
 			prob.y[i] = id.getLabel();
@@ -176,8 +176,8 @@ public class MySvmTrain {
 				x[j] = new svm_node();
 				x[j].index = evidence.getEvidenceId();
 				x[j].value = evidence.getFraud();
-				j++;
 				max_index = Math.max(max_index, x[j].index);
+				j++;
 			}
 			prob.x[i] = x;
 			prob.y[i] = id.getLabel();

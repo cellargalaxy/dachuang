@@ -9,6 +9,5 @@ public class DachuangSpringbootApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DachuangSpringbootApplication.class, args);
 	}
-
 }
 

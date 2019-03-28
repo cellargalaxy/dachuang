@@ -20,6 +20,9 @@ public class HereditaryUtils {
 	}
 
 	public static final Evidence evolution(Evidence evidence, Gene gene) {
+		if (gene == null) {
+			return evidence;
+		}
 		for (int i = 0; i < evidence.getValues().length; i++) {
 			evidence.getValues()[i] *= gene.getBase(i);
 		}
