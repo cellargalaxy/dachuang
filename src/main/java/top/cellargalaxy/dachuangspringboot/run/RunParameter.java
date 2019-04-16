@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSetParameter;
+import top.cellargalaxy.dachuangspringboot.dataSet.DataSetSplitImpl;
 import top.cellargalaxy.dachuangspringboot.evaluation.Svm;
 import top.cellargalaxy.dachuangspringboot.feature.AverageFeatureSplit;
 import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryParameter;
@@ -27,6 +28,7 @@ public class RunParameter {
 	private String teatDataSettPath = "";
 
 	private DataSetParameter dataSetParameter = new DataSetParameter();
+	private String dataSetSplitName = DataSetSplitImpl.NAME;
 	private double k = 0.1;
 
 	private String evidenceSynthesisName = "";

@@ -21,7 +21,13 @@ public class DataSetSplitFactory {
 	}
 
 	public static final DataSetSplit createDataSetSplit(RunParameter runParameter) {
-		dataSetSplit = new DataSetSplitImpl();
+		if (DataSetSplitImpl.NAME.equals(runParameter.getDataSetSplitName())) {
+			dataSetSplit = new DataSetSplitImpl();
+		} else if (VirtualDataSetSplit.NAME.equals(runParameter.getDataSetSplitName())) {
+			dataSetSplit = new VirtualDataSetSplit();
+		} else {
+			dataSetSplit = new DataSetSplitImpl();
+		}
 		return dataSetSplit;
 	}
 }

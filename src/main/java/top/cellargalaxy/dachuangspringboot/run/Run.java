@@ -8,7 +8,6 @@ import ch.qos.logback.core.FileAppender;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import top.cellargalaxy.dachuangspringboot.dataSet.*;
-import top.cellargalaxy.dachuangspringboot.evaluation.AbstractEvaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.Evaluation;
 import top.cellargalaxy.dachuangspringboot.evaluation.EvaluationFactory;
 import top.cellargalaxy.dachuangspringboot.evidenceSynthesis.DsEvidenceSynthesis;
@@ -38,146 +37,11 @@ public class Run {
 	public static Logger logger = (Logger) LoggerFactory.getLogger(Run.class);
 
 	public static void main(String[] args) throws IOException {
-		int count = 0;
-//		for (double testPro = 0.1; testPro <= 0.5; testPro = testPro + 0.1) {
-//			for (int i = 0; i < 10; i++) {
-//				count++;
-//				String name = "1实验" + count;
-//
-//				logger = (Logger) LoggerFactory.getLogger(name);
-//
-//				RunParameter runParameter = new RunParameter();
-//
-//				DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-//				dataSetParameter.setIdColumnName("id");
-//				dataSetParameter.setEvidenceColumnName("evidence");
-//				dataSetParameter.setFraudColumnName("fraud");
-//				dataSetParameter.setUnfraudColumnName("unfraud");
-//				dataSetParameter.setLabelColumnName("collusion_transaction");
-//				dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
-//
-//				runParameter.setDataSetParameter(dataSetParameter);
-//
-//				runParameter.setDataSetPath("E:/g/transaction.csv");
-//
-//				runParameter.setTestPro(testPro);
-//				runParameter.setTrainMissPro(0);
-//				runParameter.setTestMissPro(0);
-//				runParameter.setTrainLabel1Pro(0.1);
-//				runParameter.setTestLabel1Pro(0.1);
-//
-//				runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//				runParameter.setSubSpaceEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//
-//				run(runParameter, name);
-//			}
-//		}
-//		for (double testPro = 0.1; testPro <= 0.5; testPro = testPro + 0.1) {
-//			for (double testMissPro = 0.1; testMissPro <= 1; testMissPro = testMissPro + 0.1) {
-//				count++;
-//				String name = "2实验" + count;
-//
-//				logger = (Logger) LoggerFactory.getLogger(name);
-//
-//				RunParameter runParameter = new RunParameter();
-//
-//				DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-//				dataSetParameter.setIdColumnName("id");
-//				dataSetParameter.setEvidenceColumnName("evidence");
-//				dataSetParameter.setFraudColumnName("fraud");
-//				dataSetParameter.setUnfraudColumnName("unfraud");
-//				dataSetParameter.setLabelColumnName("collusion_transaction");
-//				dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
-//
-//				runParameter.setDataSetParameter(dataSetParameter);
-//
-//				runParameter.setDataSetPath("E:/g/transaction.csv");
-//
-//				runParameter.setTestPro(testPro);
-//				runParameter.setTrainMissPro(0);
-//				runParameter.setTestMissPro(testMissPro);
-//				runParameter.setTrainLabel1Pro(0.1);
-//				runParameter.setTestLabel1Pro(0.1);
-//
-//				runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//				runParameter.setSubSpaceEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//
-//				run(runParameter, name);
-//			}
-//		}
-//		for (double testPro = 0.1; testPro <= 0.5; testPro = testPro + 0.1) {
-//			for (double trainMissPro = 0.1; trainMissPro <= 0.5; trainMissPro = trainMissPro + 0.1) {
-//				count++;
-//				String name = "3实验" + count;
-//
-//				logger = (Logger) LoggerFactory.getLogger(name);
-//
-//				RunParameter runParameter = new RunParameter();
-//
-//				DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-//				dataSetParameter.setIdColumnName("id");
-//				dataSetParameter.setEvidenceColumnName("evidence");
-//				dataSetParameter.setFraudColumnName("fraud");
-//				dataSetParameter.setUnfraudColumnName("unfraud");
-//				dataSetParameter.setLabelColumnName("collusion_transaction");
-//				dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
-//
-//				runParameter.setDataSetParameter(dataSetParameter);
-//
-//				runParameter.setDataSetPath("E:/g/transaction.csv");
-//
-//				runParameter.setTestPro(testPro);
-//				runParameter.setTrainMissPro(trainMissPro);
-//				runParameter.setTestMissPro(0);
-//				runParameter.setTrainLabel1Pro(0.1);
-//				runParameter.setTestLabel1Pro(0.1);
-//
-//				runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//				runParameter.setSubSpaceEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-//
-//				run(runParameter, name);
-//			}
-//		}
-		for (double testPro = 0.1; testPro <= 0.5; testPro = testPro + 0.1) {
-			for (double trainMissPro = 0.1; trainMissPro <= 0.5; trainMissPro = trainMissPro + 0.1) {
-				for (double testMissPro = 0.1; testMissPro <= 0.5; testMissPro = testMissPro + 0.1) {
-					count++;
-					String name = "5实验" + count;
-
-					logger = (Logger) LoggerFactory.getLogger(name);
-
-					RunParameter runParameter = new RunParameter();
-
-					DataSetParameter dataSetParameter = runParameter.getDataSetParameter();
-					dataSetParameter.setIdColumnName("id");
-					dataSetParameter.setEvidenceColumnName("evidence");
-					dataSetParameter.setFraudColumnName("fraud");
-					dataSetParameter.setUnfraudColumnName("unfraud");
-					dataSetParameter.setLabelColumnName("collusion_transaction");
-					dataSetParameter.setWithoutEvidences(Arrays.asList("total"));
-
-					runParameter.setDataSetParameter(dataSetParameter);
-
-					runParameter.setDataSetPath("E:/g/实验/transaction.csv");
-
-					runParameter.setTestPro(testPro);
-					runParameter.setTrainMissPro(trainMissPro);
-					runParameter.setTestMissPro(testMissPro);
-					runParameter.setTrainLabel1Pro(0.1);
-					runParameter.setTestLabel1Pro(0.1);
-
-					runParameter.setEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-					runParameter.setSubSpaceEvidenceSynthesisName(DsEvidenceSynthesis.NAME);
-
-					run(runParameter, name);
-				}
-			}
-		}
 
 
-//		toTab();
+		toTab();
 
-		AbstractEvaluation.shutdownExecutorService();
+//		AbstractEvaluation.shutdownExecutorService();
 	}
 
 	public static void run() throws IOException {
@@ -249,7 +113,7 @@ public class Run {
 				"测试集-使用子空间合成的合成算法的子空间遗传AUC"
 		);
 		Map<String, Map<String, String>> data = new HashMap<>();
-		File folder = new File("E:/git/dachuang");
+		File folder = new File("E:\\g\\实验结果 - 副本");
 		for (File file : folder.listFiles()) {
 			if (file.isDirectory() && file.getName().contains("实验")) {
 				File log = new File(file.getAbsolutePath(), "log.log");
@@ -392,10 +256,10 @@ public class Run {
 	}
 
 	private static final List<RunResult> run(RunParameter runParameter, DataSetParameter dataSetParameter, DataSetFileIO dataSetFileIO, DataSet trainDataSet, DataSet testDataSet,
-											 HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,
-											 Evaluation evaluation,
-											 SubSpaceCreate subSpaceCreate,
-											 File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException, ExecutionException, InterruptedException {
+	                                         HereditaryParameter hereditaryParameter, ParentChrosChoose parentChrosChoose,
+	                                         Evaluation evaluation,
+	                                         SubSpaceCreate subSpaceCreate,
+	                                         File trainSubSpaceDataSetFile, File testSubSpaceDataSetFile) throws IOException, ExecutionException, InterruptedException {
 
 		logger.info("训练集-原生数据集AUC: {}", evaluation.countEvaluation(trainDataSet).get());
 		HereditaryResult fullHereditaryResult = Hereditary.evolution(trainDataSet, hereditaryParameter, parentChrosChoose, evaluation);

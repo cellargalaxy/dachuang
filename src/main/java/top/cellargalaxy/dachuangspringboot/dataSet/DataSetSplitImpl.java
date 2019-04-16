@@ -11,6 +11,7 @@ import java.util.*;
  */
 @Data
 public class DataSetSplitImpl implements DataSetSplit {
+	public static final String NAME = "普通数据集分割";
 
 	@Override
 	public DataSet[] splitDataSet(DataSet dataSet, double testPro, double trainMissPro, double testMissPro, double trainLabel1Pro, double testLabel1Pro, double k) {
