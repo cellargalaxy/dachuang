@@ -282,4 +282,9 @@ public class DataSetSplitImpl implements DataSetSplit {
 		list.addAll(id.getEvidenceMap().keySet());
 		return Math.abs(list.hashCode()) % evidenceCount;
 	}
+
+	@Override
+	public String toString() {
+		return NAME;
+	}
 }

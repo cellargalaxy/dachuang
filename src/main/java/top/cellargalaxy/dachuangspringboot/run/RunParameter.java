@@ -4,14 +4,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import top.cellargalaxy.dachuangspringboot.dataSet.DataSetParameter;
-import top.cellargalaxy.dachuangspringboot.dataSet.DataSetSplitImpl;
-import top.cellargalaxy.dachuangspringboot.evaluation.Svm;
-import top.cellargalaxy.dachuangspringboot.feature.AverageFeatureSplit;
 import top.cellargalaxy.dachuangspringboot.hereditary.HereditaryParameter;
-import top.cellargalaxy.dachuangspringboot.hereditary.RouletteParentChrosChoose;
-import top.cellargalaxy.dachuangspringboot.subSpace.PowerImprotenceAdjust;
 import top.cellargalaxy.dachuangspringboot.subSpace.Sn;
-import top.cellargalaxy.dachuangspringboot.subSpace.SnFeatureSelectionSubSpaceCreate;
 
 /**
  * @author cellargalaxy
@@ -21,14 +15,19 @@ import top.cellargalaxy.dachuangspringboot.subSpace.SnFeatureSelectionSubSpaceCr
 public class RunParameter {
 	@Getter
 	@Setter
-	private static int threadNum = -1;
+	private static int threadNum = 2;
 
 	private String dataSetPath = "";
 	private String trainDataSetPath = "";
 	private String teatDataSettPath = "";
 
 	private DataSetParameter dataSetParameter = new DataSetParameter();
-	private String dataSetSplitName = DataSetSplitImpl.NAME;
+	private String dataSetSplitName = "";
+	private double testPro = 0.5;
+	private double trainMissPro = 0.2;
+	private double testMissPro = 0.2;
+	private double trainLabel1Pro = 0.2;
+	private double testLabel1Pro = 0.2;
 	private double k = 0.1;
 
 	private String evidenceSynthesisName = "";
@@ -37,18 +36,18 @@ public class RunParameter {
 	private double d1;
 	private double d2;
 
-	private String evaluationName = Svm.NAME;
+	private String evaluationName = "";
 
-	private String featureSplitName = AverageFeatureSplit.NAME;
+	private String featureSplitName = "";
 	private double splitValue;
 
-	private String parentChrosChooseName = RouletteParentChrosChoose.NAME;
+	private String parentChrosChooseName = "";
 
-	private String improtenceAdjustName = PowerImprotenceAdjust.NAME;
+	private String improtenceAdjustName = "";
 	private double adjustD;
 
 	private String subSpaceEvidenceSynthesisName = "";
-	private String subSpaceCreateName = SnFeatureSelectionSubSpaceCreate.NAME;
+	private String subSpaceCreateName = "";
 	private Sn[] sns = new Sn[]{
 			new Sn(1, 1, 1),//1
 			new Sn(3, 3, 1, 2),//4
@@ -63,10 +62,4 @@ public class RunParameter {
 	};
 	private double featureSelectionDeviation;
 	private HereditaryParameter hereditaryParameter = new HereditaryParameter();
-
-	private double testPro = 0.5;
-	private double trainMissPro = 0.2;
-	private double testMissPro = 0.2;
-	private double trainLabel1Pro = 0.2;
-	private double testLabel1Pro = 0.2;
 }
